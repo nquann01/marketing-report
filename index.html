@@ -501,7 +501,9 @@ function viewHist() {
   }
 }
 
-function saveHist(type, periodStr, htmlStr) {
+// --- HỆ THỐNG LƯU TRỮ VÀ BACKUP LÊN GOOGLE SHEETS ---
+async function saveHist(type, periodStr, htmlStr) {
+  // 1. Vẫn lưu LocalStorage để người dùng xem ngay lập tức trên máy (giữ trải nghiệm mượt mà)
   const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
   const dateStr = new Date().toLocaleString('vi-VN', {hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'});
   const keyName = periodStr ? `${type} ${periodStr}` : `Báo cáo ${type} (${dateStr})`;
@@ -510,6 +512,28 @@ function saveHist(type, periodStr, htmlStr) {
   loadHistList(); 
   document.getElementById('hist-sel').value = keyName;
   viewHist(); 
+
+  // 2. Gửi dữ liệu backup ngầm lên Google Sheets
+  // LƯU Ý: Thay link bên dưới bằng URL Web App của bạn nhé!
+  const googleSheetUrl = "https://script.google.com/macros/s/AKfycbylmUrWp-NW67WUoPZDpIdDn33Ep5mewA-iQ0PGJ20g-cusVlwPjugp8ABwKT_bkOqeyQ/exec";
+  
+  try {
+    await fetch(googleSheetUrl, {
+      method: "POST",
+      mode: "no-cors", // Thiết lập này giúp trình duyệt không báo lỗi CORS khi gửi data khác tên miền
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        type: type,
+        periodStr: periodStr,
+        htmlStr: htmlStr
+      })
+    });
+    console.log("Đã lưu backup lên Google Sheets thành công!");
+  } catch (err) {
+    console.error("Lỗi khi lưu lên Google Sheets:", err);
+  }
 }
 
 function deleteHist() {
