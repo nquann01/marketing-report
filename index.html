@@ -514,15 +514,14 @@ async function saveHist(type, periodStr, htmlStr) {
   viewHist(); 
 
   // 2. Gửi dữ liệu backup ngầm lên Google Sheets
-  // LƯU Ý: Thay link bên dưới bằng URL Web App của bạn nhé!
   const googleSheetUrl = "https://script.google.com/macros/s/AKfycbylmUrWp-NW67WUoPZDpIdDn33Ep5mewA-iQ0PGJ20g-cusVlwPjugp8ABwKT_bkOqeyQ/exec";
   
   try {
     await fetch(googleSheetUrl, {
       method: "POST",
-      mode: "no-cors", // Thiết lập này giúp trình duyệt không báo lỗi CORS khi gửi data khác tên miền
+      mode: "no-cors", // Thiết lập này giúp trình duyệt không báo lỗi CORS
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "text/plain;charset=utf-8" // ĐÃ SỬA: Bắt buộc dùng text/plain để vượt qua tường lửa của Google
       },
       body: JSON.stringify({
         type: type,
@@ -530,7 +529,7 @@ async function saveHist(type, periodStr, htmlStr) {
         htmlStr: htmlStr
       })
     });
-    console.log("Đã lưu backup lên Google Sheets thành công!");
+    console.log("Đã gửi request lưu backup lên Google Sheets!");
   } catch (err) {
     console.error("Lỗi khi lưu lên Google Sheets:", err);
   }
