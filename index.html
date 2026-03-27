@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Báo Cáo Tổng Hợp — AI</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{--bg:#0f1117;--sur:#181c27;--sur2:#1e2336;--bdr:#2a3050;--acc:#4f7cff;--acc2:#38e0b0;--warn:#ffbc57;--danger:#ff5f7e;--tx:#e8eaf6;--tx2:#8892b0;--tx3:#4a5470;--gunze:#4f7cff;--mp:#38e0b0;--eval:#a63d40;}
@@ -371,6 +373,8 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
         <button id="magic-btn" class="btn-magic" onclick="getAiInsights()" title="Dùng AI phân tích sâu & Đề xuất chiến lược">✨ Đề xuất tối ưu</button>
+        <button class="btn-copy" id="img-btn" onclick="exportImage()" title="Lưu báo cáo thành file Ảnh (PNG)">📸 Tải Ảnh</button>
+        <button class="btn-copy" id="pdf-btn" onclick="exportPDF()" title="Lưu báo cáo thành file PDF">📄 Tải PDF</button>
         <button class="btn-copy" id="cbtn" onclick="doCopy()">⎘ Sao chép</button>
       </div>
     </div>
@@ -411,7 +415,6 @@ async function saveApiKey() {
   btn.disabled = true;
 
   try {
-    // Gọi một lệnh nháp "ping" nhẹ nhất đến API để xem Key có hoạt động hay không
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
     const res = await fetch(url, {
       method: 'POST',
@@ -421,11 +424,11 @@ async function saveApiKey() {
 
     if (res.ok) {
       localStorage.setItem('gemini_api_key', key);
-      keyInput.style.borderColor = "var(--acc2)"; // Đổi viền xanh lá
+      keyInput.style.borderColor = "var(--acc2)";
       alert("✅ API Key hợp lệ và đã được lưu an toàn!");
     } else {
       const errData = await res.json();
-      keyInput.style.borderColor = "var(--danger)"; // Đổi viền đỏ cảnh báo
+      keyInput.style.borderColor = "var(--danger)";
       alert(`❌ API Key không hợp lệ hoặc bị lỗi (${res.status}):\\n${errData.error?.message || 'Vui lòng kiểm tra lại.'}`);
     }
   } catch (e) {
@@ -450,14 +453,11 @@ function getApiKey() {
   return key;
 }
 
-// Helper tự động lấy URL và Model chuẩn tuỳ theo việc có Key hay không
 function getApiUrl() {
   const key = getApiKey() || "";
-  // Nếu có API Key riêng, sử dụng bản tiêu chuẩn. Nếu không có (để trống), hệ thống proxy sẽ dùng bản preview nội bộ.
   const model = key ? "gemini-2.5-flash" : "gemini-2.5-flash-preview-09-2025";
   return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
 }
-// ----------------------
 
 function updateUI() {
   const type = document.querySelector('input[name="rtype"]:checked').value;
@@ -538,7 +538,6 @@ function deleteAllHist() {
 let imgs = { hcm: [], hn: [], kpi: [], thang_gunze: [], thang_mp: [], thang_cuahang: [] };
 let excelTextData = '';
 
-// BẢO VỆ .split(): Chỉ split khi dữ liệu thực sự tồn tại
 function handleImgs(files, region) {
   Array.from(files).forEach(f => {
     if (!f.type.startsWith('image/')) return;
@@ -557,7 +556,6 @@ function handleImgs(files, region) {
   });
 }
 
-// Hàm đọc số linh hoạt bao quát tất cả định dạng
 function parseAnyNum(str) {
   if(!str) return 0;
   let s = String(str).trim().replace(/"/g, '');
@@ -586,7 +584,6 @@ function parseAnyNum(str) {
   return parseFloat(s.replace(/[^\d.-]/g, '')) || 0;
 }
 
-// Xử lý File Excel CSV cục bộ
 function handleExcelFile(files) {
   if (!files || files.length === 0) return;
   const f = files[0];
@@ -744,7 +741,6 @@ function calcMetrics(raw, khmTotal, manualSpend) {
   return { dths, qcol, qcst, qchs };
 }
 
-// Hàm fetch hỗ trợ tự động Retry (Exponential Backoff)
 async function fetchWithRetry(url, options, retries = 5) {
   let delay = 1000;
   for (let i = 0; i < retries; i++) {
@@ -760,13 +756,11 @@ async function fetchWithRetry(url, options, retries = 5) {
   }
 }
 
-// Tính năng Sắp xếp Cột trong Bảng HTML
 function sortHtmlTable(th, colIdx) {
     const table = th.closest('table');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
     
-    // Xóa trạng thái của các cột khác, lật trạng thái cột hiện tại
     let isAsc = th.classList.contains('asc');
     table.querySelectorAll('th').forEach(h => { 
         h.classList.remove('asc', 'desc'); 
@@ -794,7 +788,6 @@ function sortHtmlTable(th, colIdx) {
     rows.forEach(r => tbody.appendChild(r));
 }
 
-// --- CÁC HÀM HIỂN THỊ GIAO DIỆN (UI) ---
 function showLoad() {
   document.getElementById('out').innerHTML = `
     <div class="s-load">
@@ -986,7 +979,6 @@ function renderThang(data, period, from, to) {
       ${mcHtml('Tiếp cận (unique)', tq.tiep_can, '', tq.tiep_can_tt ? tq.tiep_can_tt + ' so với TT' : '')}
     </div>`;
 
-    // Tính toán max để làm Data Bars
     let maxKhm = 0, maxDoPhu = 0;
     const safeParse = (v) => parseFloat(String(v).replace(/[^0-9.-]+/g,"")) || 0;
 
@@ -1003,7 +995,6 @@ function renderThang(data, period, from, to) {
       let khmPct = maxKhm > 0 ? (khmVal / maxKhm * 100) : 0;
       let doPhuPct = maxDoPhu > 0 ? (doPhuVal / maxDoPhu * 100) : 0;
 
-      // Màu nền Data Bars
       let khmBg = r.khm !== '—' && r.khm ? `linear-gradient(90deg, rgba(56,224,176,0.2) ${khmPct}%, transparent ${khmPct}%)` : '';
       let doPhuBg = r.do_phu !== '—' && r.do_phu ? `linear-gradient(90deg, rgba(79,124,255,0.2) ${doPhuPct}%, transparent ${doPhuPct}%)` : '';
 
@@ -1054,7 +1045,6 @@ function renderThang(data, period, from, to) {
   document.getElementById('out').innerHTML = html;
 }
 
-// --- HÀM TẠO BÁO CÁO CHÍNH ---
 async function gen() {
   const type = document.querySelector('input[name="rtype"]:checked').value;
   const url = getApiUrl();
@@ -1064,7 +1054,6 @@ async function gen() {
   document.getElementById('gbtn').disabled = true;
   document.getElementById('magic-btn').style.display = 'none';
   
-  // Hiển thị vòng quay loading
   showLoad();
 
   try {
@@ -1175,7 +1164,6 @@ JSON output:
       saveHist('Tuần', week, document.getElementById('out').innerHTML);
 
     } else {
-      // --- LOGIC BÁO CÁO THÁNG ---
       const period = document.getElementById('month').value.trim();
       const from = document.getElementById('m-from').value.trim();
       const to = document.getElementById('m-to').value.trim();
@@ -1286,7 +1274,6 @@ Trả về JSON thuần. Giữ format số có chấm phân cách nghìn. Cấu 
       saveHist('Tháng', period, document.getElementById('out').innerHTML);
     }
     
-    // Hiển thị nút AI Magic sau khi tạo xong báo cáo
     document.getElementById('magic-btn').style.display = 'inline-block';
 
   } catch (e) {
@@ -1308,7 +1295,6 @@ async function getAiInsights() {
   magicBtn.innerHTML = '⏳ Phân tích...';
   magicBtn.disabled = true;
 
-  // Trích xuất toàn bộ text của báo cáo hiện tại
   const reportText = rptEl.innerText;
   const prompt = `Bạn là Giám đốc Marketing (CMO) và Chuyên gia phân tích dữ liệu xuất sắc. 
 Dựa vào báo cáo kinh doanh thực tế dưới đây, hãy:
@@ -1335,7 +1321,6 @@ ${reportText}`;
 
     if (!text) throw new Error('Không lấy được phản hồi từ AI');
 
-    // Thêm khối Đề xuất vào báo cáo
     let insightBox = document.getElementById('ai-insight-box');
     if (!insightBox) {
       insightBox = document.createElement('div');
@@ -1353,10 +1338,8 @@ ${reportText}`;
       <div class="nblk ai-insight-content" style="white-space: pre-wrap; font-size: 13px; line-height: 1.7; padding: 18px 20px;">${text}</div>
     `;
 
-    // Cuộn xuống cuối để xem đề xuất
     insightBox.scrollIntoView({ behavior: 'smooth', block: 'end' });
     
-    // Lưu ngay bản HTML mới (có chứa khối insight) vào LocalStorage
     const val = document.getElementById('hist-sel').value;
     if (val) {
         const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -1372,7 +1355,6 @@ ${reportText}`;
   }
 }
 
-// --- TÍNH NĂNG MỚI: AI CHẨN ĐOÁN HIỆU QUẢ CỬA HÀNG ---
 async function analyzeStoreData(btn) {
   const pb = btn.closest('.pb');
   const table = pb.querySelector('.stbl');
@@ -1387,7 +1369,6 @@ async function analyzeStoreData(btn) {
   btn.innerHTML = '⏳ Phân tích...';
   btn.disabled = true;
 
-  // Lấy dữ liệu bảng
   let dataStr = "";
   table.querySelectorAll('tr').forEach(tr => {
     const rowData = Array.from(tr.querySelectorAll('th, td')).map(td => td.innerText).join(' | ');
@@ -1431,7 +1412,6 @@ Trình bày bằng các gạch đầu dòng ngắn gọn, chuyên nghiệp. Tuy�
     
     resultDiv.innerHTML = `<div class="analysis-title" style="color:var(--acc2); font-size:14px; margin-bottom:8px;">✨ AI Khám Phá: Điểm mù Cửa hàng</div><div class="store-ai-result-content" style="font-size: 12px; line-height: 1.6; white-space: pre-wrap; color:var(--tx);">${text}</div>`;
 
-    // Lưu ngay bản HTML mới (có chứa khối insight) vào LocalStorage
     const val = document.getElementById('hist-sel').value;
     if (val) {
         const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -1446,7 +1426,6 @@ Trình bày bằng các gạch đầu dòng ngắn gọn, chuyên nghiệp. Tuy�
   }
 }
 
-// --- TÍNH NĂNG MỚI: TẠO LẠI ĐÁNH GIÁ (REGENERATE EVALUATION) ---
 async function regenerateEval(btn, projectName) {
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -1463,7 +1442,6 @@ async function regenerateEval(btn, projectName) {
   btn.innerHTML = '⏳ Đang viết lại...';
   btn.disabled = true;
 
-  // Lấy dữ liệu các chỉ số từ bảng (mgrid) của riêng khối đó
   let dataStr = "";
   pb.querySelectorAll('.mc').forEach(mc => {
     let lbl = mc.querySelector('.mlbl')?.textContent.replace('tính', '').trim() || '';
@@ -1511,7 +1489,6 @@ Trả về JSON thuần (không chứa markdown), theo cấu trúc:
     }
     const parsed = JSON.parse(rawResponse);
 
-    // Cập nhật lại UI bằng kết quả mới
     let newEvalHtml = '';
     if (parsed.danh_gia && parsed.danh_gia.length) {
       newEvalHtml += `<ul class="eval-list">`;
@@ -1524,7 +1501,6 @@ Trả về JSON thuần (không chứa markdown), theo cấu trúc:
     
     evalContent.innerHTML = newEvalHtml;
 
-    // Lưu thay đổi vào lịch sử LocalStorage
     const val = document.getElementById('hist-sel').value;
     if (val) {
         const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -1549,7 +1525,6 @@ function doCopy() {
   el.querySelectorAll('.pb').forEach(b => {
     lines.push('=== ' + (b.querySelector('.pname')?.textContent || '').toUpperCase() + ' ===');
     
-    // Copy Metrics
     b.querySelectorAll('.mc').forEach(c => {
       const l = c.querySelector('.mlbl')?.textContent?.replace('tính', '').trim() || '';
       const v = c.querySelector('.mval')?.textContent || '';
@@ -1557,10 +1532,8 @@ function doCopy() {
       if (l && v.trim()) lines.push(`- ${l}: ${v.trim()} ${ex ? '('+ex+')' : ''}`);
     });
 
-    // Copy Info Blocks (Từ báo cáo tuần)
     b.querySelectorAll('.nblk').forEach(n => lines.push(n.textContent.trim().replace(/\s+/g, ' ')));
     
-    // Nếu khối này là của AI Insight, lấy riêng text bên trong
     if(b.classList.contains('ai-insight-box')) {
         const aiContent = b.querySelector('.ai-insight-content');
         if (aiContent) lines.push(aiContent.textContent.trim());
@@ -1570,7 +1543,6 @@ function doCopy() {
       lines.push('- ' + k.textContent.trim().replace(/\s+/g, ' '));
     });
 
-    // Copy Analysis Box (Từ báo cáo tháng)
     const evalTitle = b.querySelector('.analysis-title');
     if (evalTitle && !b.classList.contains('store-ai-result')) {
        lines.push('\nĐánh giá:');
@@ -1579,13 +1551,11 @@ function doCopy() {
        if (conc) lines.push(`\nKết luận: ${conc.parentNode.textContent.replace(/^Kết luận:\s*/i, '').trim()}`);
     }
     
-    // Copy tables (Cửa hàng)
     b.querySelectorAll('.stbl tr').forEach(r => {
       const cs = Array.from(r.querySelectorAll('th,td')).map(c => c.textContent.trim());
       if (cs.some(c => c)) lines.push(cs.join(' | '));
     });
 
-    // Copy AI Chẩn đoán cửa hàng (nếu có)
     const storeAi = b.querySelector('.store-ai-result-content');
     if (storeAi) {
        lines.push('\n✨ CHẨN ĐOÁN CỬA HÀNG (AI):');
@@ -1599,7 +1569,6 @@ function doCopy() {
   const textArea = document.createElement("textarea");
   textArea.value = textToCopy;
   
-  // Tránh việc khung text này hiển thị hay làm xô lệch giao diện
   textArea.style.position = "fixed";
   textArea.style.left = "-999999px";
   textArea.style.top = "-999999px";
@@ -1620,6 +1589,71 @@ function doCopy() {
   
   document.body.removeChild(textArea);
 }
+
+// --- TÍNH NĂNG XUẤT FILE ẢNH VÀ PDF ---
+
+// Hàm xuất báo cáo thành Ảnh (PNG)
+async function exportImage() {
+  const rptEl = document.getElementById('rpt');
+  if (!rptEl) { alert('⚠️ Chưa có báo cáo nào để tải!'); return; }
+  
+  const btn = document.getElementById('img-btn');
+  const ogText = btn.innerHTML;
+  btn.innerHTML = '⏳ Đang xử lý...';
+  btn.disabled = true;
+
+  try {
+    const canvas = await html2canvas(rptEl, { 
+      backgroundColor: '#0f1117',
+      scale: 2 // Tăng độ nét gấp đôi
+    });
+    
+    const link = document.createElement('a');
+    link.download = `Bao_Cao_${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    btn.innerHTML = '✓ Đã tải Ảnh';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.innerHTML = ogText; btn.classList.remove('ok'); }, 2000);
+  } catch(e) { 
+    alert('Lỗi xuất ảnh: ' + e); 
+    btn.innerHTML = ogText;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// Hàm xuất báo cáo thành PDF
+function exportPDF() {
+  const rptEl = document.getElementById('rpt');
+  if (!rptEl) { alert('⚠️ Chưa có báo cáo nào để tải!'); return; }
+  
+  const btn = document.getElementById('pdf-btn');
+  const ogText = btn.innerHTML;
+  btn.innerHTML = '⏳ Đang xử lý...';
+  btn.disabled = true;
+  
+  const opt = {
+    margin:       10, 
+    filename:     `Bao_Cao_${new Date().toISOString().slice(0,10)}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, backgroundColor: '#0f1117' },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(rptEl).save().then(() => {
+    btn.innerHTML = '✓ Đã tải PDF';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.innerHTML = ogText; btn.classList.remove('ok'); }, 2000);
+    btn.disabled = false;
+  }).catch(err => {
+    alert('Lỗi xuất PDF: ' + err);
+    btn.innerHTML = ogText;
+    btn.disabled = false;
+  });
+}
+
 </script>
 </body>
 </html>
