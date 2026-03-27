@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Báo Cáo Tổng Hợp — AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--bg:#0f1117;--sur:#181c27;--sur2:#1e2336;--bdr:#2a3050;--acc:#4f7cff;--acc2:#38e0b0;--warn:#ffbc57;--danger:#ff5f7e;--tx:#e8eaf6;--tx2:#8892b0;--tx3:#4a5470;--gunze:#4f7cff;--mp:#38e0b0;--eval:#a63d40;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;}
+header{padding:16px 26px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:13px;background:var(--sur);}
+.logo{width:32px;height:32px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+header h1{font-size:14px;font-weight:700;}header p{font-size:11px;color:var(--tx2);margin-top:1px;}
+.app{display:grid;grid-template-columns:430px 1fr;flex:1;height:calc(100vh - 61px);}
+.left{border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;}
+.left-scroll{overflow-y:auto;flex:1;padding:18px;}
+.sec-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:9px;margin-top:20px;}
+.sec-lbl:first-child{margin-top:0;}
+.tabs{display:flex;background:var(--sur2);border-radius:8px;padding:4px;margin-bottom:15px;border:1px solid var(--bdr);}
+.tabs input{display:none;}
+.tabs label{flex:1;text-align:center;padding:7px;font-size:11px;font-weight:600;color:var(--tx2);cursor:pointer;border-radius:6px;transition:.2s;}
+.tabs input:checked+label{background:var(--sur);color:var(--acc);box-shadow:0 1px 3px rgba(0,0,0,.3);}
+.meta-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px;}
+.meta-row input, .spend-box input{width:100%;background:var(--sur2);border:1px solid var(--bdr);border-radius:7px;color:var(--tx);font-family:'Be Vietnam Pro',sans-serif;font-size:12px;padding:8px 10px;outline:none;transition:border-color .2s;}
+.meta-row input:focus, .spend-box input:focus{border-color:var(--acc);}
+.iblock{background:var(--sur);border:1px solid var(--bdr);border-radius:11px;margin-bottom:10px;overflow:hidden;}
+.iblock-hdr{padding:10px 13px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bdr);}
+.idot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.iblock-title{font-size:12px;font-weight:600;}
+.iblock-sub{font-size:10px;color:var(--tx2);margin-left:auto;}
+.spend-box{padding:11px 13px 0;}
+textarea{width:100%;background:transparent;border:none;color:var(--tx2);font-family:'Be Vietnam Pro',sans-serif;font-size:12px;line-height:1.65;padding:11px 13px;resize:none;outline:none;min-height:90px;}
+textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
+.img-area{padding:11px 13px;}
+.drop-zone{border:1px dashed var(--bdr);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.drop-zone:hover{border-color:var(--acc2);background:rgba(56,224,176,.04);}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.drop-lbl{font-size:11px;color:var(--tx3);}
+.drop-lbl strong{color:var(--acc2);display:block;margin-bottom:3px;font-size:12px;}
+.previews{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
+.thumb{position:relative;width:68px;height:68px;border-radius:6px;overflow:hidden;border:1px solid var(--bdr);}
+.thumb img{width:100%;height:100%;object-fit:cover;}
+.thumb button{position:absolute;top:2px;right:2px;width:15px;height:15px;background:rgba(0,0,0,.75);border:none;border-radius:50%;color:white;font-size:8px;cursor:pointer;}
+.btn-gen{margin:14px 18px 18px;padding:13px;background:var(--acc);color:white;border:none;border-radius:9px;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;flex-shrink:0;}
+.btn-gen:hover:not(:disabled){background:#3a6ae0;transform:translateY(-1px);}
+.btn-gen:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.right{display:flex;flex-direction:column;overflow:hidden;}
+.out-bar{padding:11px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;background:var(--sur);flex-shrink:0;}
+.out-bar span{font-size:11px;color:var(--tx2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.hist-select{background:var(--sur2);color:var(--tx);border:1px solid var(--bdr);border-radius:6px;padding:5px 8px;font-family:'Be Vietnam Pro',sans-serif;font-size:11px;outline:none;cursor:pointer;max-width:180px;}
+
+/* CSS cho khu vực nhập API Key */
+.api-key-box { display: flex; gap: 6px; margin-bottom: 15px; }
+.api-key-box input { flex: 1; background: var(--sur2); border: 1px solid var(--bdr); border-radius: 6px; color: var(--tx); padding: 7px 10px; font-size: 11px; outline: none; transition: border .2s; font-family: 'Be Vietnam Pro', sans-serif;}
+.api-key-box input:focus { border-color: var(--acc); }
+.btn-save-key { padding: 7px 12px; background: var(--acc); border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; transition: .2s; }
+.btn-save-key:hover:not(:disabled) { background: #3a6ae0; }
+.btn-save-key:disabled { opacity: 0.7; cursor: not-allowed; }
+.btn-del-key { padding: 7px 12px; background: transparent; border: 1px solid var(--danger); border-radius: 6px; color: var(--danger); cursor: pointer; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; transition: .2s; }
+.btn-del-key:hover { background: rgba(255,95,126,.1); }
+
+/* Nút tính năng AI LLM mới */
+.btn-magic {
+  padding: 6px 13px;
+  background: rgba(255, 188, 87, 0.1);
+  border: 1px solid rgba(255, 188, 87, 0.5);
+  border-radius: 6px;
+  color: var(--warn);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .3s ease;
+  display: none;
+}
+.btn-magic:hover:not(:disabled) {
+  background: rgba(255, 188, 87, 0.2);
+  border-color: var(--warn);
+  box-shadow: 0 0 10px rgba(255, 188, 87, 0.3);
+  transform: translateY(-1px);
+}
+.btn-magic:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-copy{padding:6px 13px;background:transparent;border:1px solid var(--bdr);border-radius:6px;color:var(--tx2);font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-copy:hover{border-color:var(--acc);color:var(--acc);}
+.btn-copy.ok{border-color:var(--acc2);color:var(--acc2);}
+.btn-del-hist{padding:5px 8px;background:transparent;border:1px solid var(--bdr);border-radius:6px;color:var(--danger);cursor:pointer;transition:all .2s;display:none;font-size:11px;font-family:'Be Vietnam Pro',sans-serif;}
+.btn-del-hist:hover{background:rgba(255,95,126,.1);border-color:var(--danger);}
+.out-body{flex:1;overflow-y:auto;padding:26px 30px;}
+.s-empty,.s-load{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--tx3);}
+.s-empty .ico{font-size:36px;opacity:.3;}
+.s-empty p,.s-load p{font-size:12px;}
+.spinner{width:26px;height:26px;border:2px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lsteps{display:flex;flex-direction:column;gap:5px;margin-top:4px;}
+.lstep{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:6px;}
+.lstep.on{color:var(--acc);}.lstep.dn{color:var(--acc2);}
+.sdot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.report{max-width:680px;}
+.rh{margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--bdr);}
+.rweek{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:4px;}
+.rtitle{font-size:19px;font-weight:700;line-height:1.3;}
+.pb{margin-bottom:22px;background:var(--sur);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;}
+.phdr{padding:13px 17px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bdr);}
+.pdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.pname{font-size:13px;font-weight:700;}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bdr);}
+.mgrid.col2{grid-template-columns:repeat(2,1fr);}
+.mc{background:var(--sur);padding:12px 14px;}
+.mlbl{font-size:10px;color:var(--tx3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.mval{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--tx);}
+.mval.g{color:var(--acc2);}.mval.w{color:var(--warn);}.mval.b{color:var(--danger);}
+.mcalc{font-size:9px;color:var(--tx3);margin-top:3px;font-family:'Be Vietnam Pro',sans-serif;line-height:1.4;}
+.calc-badge{display:inline-flex;align-items:center;background:rgba(79,124,255,.15);border:1px solid rgba(79,124,255,.3);border-radius:3px;padding:0px 5px;font-size:8px;color:var(--acc);font-weight:600;letter-spacing:.04em;flex-shrink:0;}
+.nblk{padding:11px 17px;border-top:1px solid var(--bdr);font-size:12px;color:var(--tx2);line-height:1.75;}
+.nblk strong{color:var(--tx);font-weight:600;}
+.chip{display:inline-block;background:var(--sur2);border:1px solid var(--bdr);border-radius:4px;padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10px;margin:2px;}
+.ssec{padding:13px 17px;}
+.stbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;}
+.stbl th{text-align:right;padding:4px 6px;color:var(--tx3);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--bdr);}
+.stbl th:first-child{text-align:left;}
+.stbl td{padding:5px 6px;text-align:right;color:var(--tx2);font-family:'JetBrains Mono',monospace;font-size:10px;border-bottom:1px solid rgba(42,48,80,.4); transition: background 0.3s;}
+.stbl td:first-child{font-family:'Be Vietnam Pro',sans-serif;color:var(--tx);font-size:11px;font-weight:500;text-align:left;}
+.stbl tr.tot td{color:var(--tx);font-weight:700;border-top:1px solid var(--bdr);border-bottom:none;}
+.stbl .hl{color:var(--warn);font-weight:700;}
+.stbl tr:last-child td{border-bottom:none;}
+.stbl td.proj-g{color:var(--gunze);font-weight:600;}
+.stbl td.proj-m{color:var(--mp);font-weight:600;}
+
+/* CSS Cột có thể sắp xếp */
+.stbl th.sortable { cursor: pointer; transition: color 0.2s, background 0.2s; user-select: none;}
+.stbl th.sortable:hover { color: var(--tx); background: rgba(255,255,255,0.05); }
+.stbl th.sortable.asc { color: var(--acc2); }
+.stbl th.sortable.desc { color: var(--warn); }
+
+.sdiv{height:1px;background:var(--bdr);margin:3px 0 12px;}
+.d-none { display: none !important; }
+.analysis-box { background: var(--sur2); padding: 20px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; line-height: 1.8; }
+.analysis-title { font-weight: 800; color: var(--eval); margin-bottom: 12px; font-size: 18px; }
+.eval-list { padding-left: 20px; list-style-type: none; margin-bottom: 15px; color: var(--tx); }
+.eval-list li { margin-bottom: 8px; position: relative; }
+.eval-list li::before { content: "-"; position: absolute; left: -15px; color: var(--tx); font-weight: bold; }
+.ket-luan-text { font-weight: bold; color: var(--eval); }
+.khm-note{display:flex;flex-direction:column;gap:8px;padding:12px 17px;border-top:1px solid var(--bdr);background:var(--sur2);}
+.khm-item{font-size:11px;display:flex;align-items:center;justify-content:space-between;}
+.khm-item span{color:var(--tx3);}
+.khm-item strong{font-family:'JetBrains Mono',monospace;font-size:12px;}
+.khm-detail{font-size:10px;color:var(--tx3);margin-left:8px;font-family:'JetBrains Mono',monospace;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px;}
+</style>
+</head>
+<body onload="initApp()">
+<header>
+  <div class="logo">⚡</div>
+  <div><h1>Báo Cáo AI</h1><p>Hỗ trợ tổng hợp báo cáo tự động cho Tuần & Tháng</p></div>
+</header>
+<div class="app">
+  <div class="left">
+    <div class="left-scroll">
+      
+      <div class="sec-lbl">Cài đặt API Key</div>
+      <div class="api-key-box">
+        <input type="password" id="api-key-input" placeholder="Nhập Gemini API Key của bạn...">
+        <button onclick="saveApiKey()" class="btn-save-key">Lưu & Kiểm tra</button>
+        <button onclick="clearApiKey()" class="btn-del-key">Xoá</button>
+      </div>
+
+      <div class="sec-lbl">Loại báo cáo</div>
+      <div class="tabs">
+        <input type="radio" id="tw" name="rtype" value="Tuần" checked onchange="updateUI()">
+        <label for="tw">Báo cáo Tuần</label>
+        <input type="radio" id="tm" name="rtype" value="Tháng" onchange="updateUI()">
+        <label for="tm">Báo cáo Tháng</label>
+      </div>
+
+      <div id="tab-tuan">
+        <div class="sec-lbl">Thông tin báo cáo Tuần</div>
+        <div class="meta-row">
+          <input id="week" placeholder="Tuần số (VD: 12)" type="number">
+          <input id="dfrom" placeholder="Từ ngày (17/3)">
+          <input id="dto" placeholder="Đến ngày (23/3)">
+        </div>
+
+        <div class="sec-lbl">Dữ liệu từ Sale (paste text)</div>
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--gunze)"></div>
+            <div class="iblock-title" style="color:var(--gunze)">Dự án Gunze</div>
+          </div>
+          <div class="spend-box">
+            <input id="spend-g" type="text" placeholder="💰 Nhập số tiền chi tiêu QC (VD: 19.154.139)...">
+          </div>
+          <textarea id="sg" placeholder="Paste toàn bộ báo cáo Gunze từ Sale vào đây..."></textarea>
+        </div>
+
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--mp)"></div>
+            <div class="iblock-title" style="color:var(--mp)">Dự án Mỹ phẩm</div>
+          </div>
+          <div class="spend-box">
+            <input id="spend-m" type="text" placeholder="💰 Nhập số tiền chi tiêu QC (VD: 15.000.000)...">
+          </div>
+          <textarea id="sm" placeholder="Paste toàn bộ báo cáo Mỹ phẩm từ Sale vào đây..."></textarea>
+        </div>
+
+        <div class="sec-lbl">Dữ liệu từ cửa hàng (upload ảnh)</div>
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--warn)"></div>
+            <div class="iblock-title" style="color:var(--warn)">Khu vực HCM</div>
+          </div>
+          <div class="img-area">
+            <div class="drop-zone">
+              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'hcm')">
+              <div class="drop-lbl">
+                <strong>📷 Kéo thả ảnh Cửa hàng HCM</strong>
+                (Lấy cột: Doanh thu KHM)
+              </div>
+            </div>
+            <div class="previews" id="previews-hcm"></div>
+          </div>
+        </div>
+
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--danger)"></div>
+            <div class="iblock-title" style="color:var(--danger)">Khu vực HN</div>
+          </div>
+          <div class="img-area">
+            <div class="drop-zone">
+              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'hn')">
+              <div class="drop-lbl">
+                <strong>📷 Kéo thả ảnh Cửa hàng HN</strong>
+                (Lấy cột: DTT KHM)
+              </div>
+            </div>
+            <div class="previews" id="previews-hn"></div>
+          </div>
+        </div>
+
+        <div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;margin-top:4px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;">Công thức tự tính</div>
+          <div style="font-size:11px;color:var(--tx2);line-height:2.1;">
+            <span style="color:var(--gunze)">Gunze</span> KHM = KHM Đồ lót HCM + KHM Đồ lót HN<br>
+            <span style="color:var(--mp)">Mỹ phẩm</span> KHM = KHM MP HCM + KHM MP HN<br>
+            <span style="color:var(--acc2)">DT hệ thống</span> = DT thuần Sale + Tổng KHM<br>
+            <span style="color:var(--warn)">CP QC Online</span> = Chi tiêu ÷ DT thuần<br>
+            <span style="color:var(--warn)">CP QC Online sau thuế</span> = (Chi tiêu × 110%) ÷ (DT thuần ÷ 1,08)<br>
+            <span style="color:var(--warn)">CP QC hệ thống</span> = Chi tiêu ÷ DT hệ thống
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-thang" class="d-none">
+        <div class="sec-lbl">Thông tin báo cáo Tháng</div>
+        <div class="meta-row">
+          <input id="month" placeholder="Tháng số (VD: 2)" type="number">
+          <input id="m-from" placeholder="Từ ngày (1/2)">
+          <input id="m-to" placeholder="Đến ngày (28/2)">
+        </div>
+
+        <div class="sec-lbl">Input 1: Tham Chiếu KPI (Tháng Hiện Tại)</div>
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--tx2)"></div>
+            <div class="iblock-title" style="color:var(--tx2)">KPI Các Dự Án & Cửa Hàng</div>
+          </div>
+          <div class="img-area">
+            <div class="drop-zone">
+              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'kpi')">
+              <div class="drop-lbl">
+                <strong>📷 Tải lên ảnh File KPI Tháng này</strong>
+                (AI lấy mốc mục tiêu từ đây để so sánh)
+              </div>
+            </div>
+            <div class="previews" id="previews-kpi"></div>
+          </div>
+        </div>
+        
+        <div class="sec-lbl">Số liệu Kinh Doanh Từng Dự Án</div>
+        
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--gunze)"></div>
+            <div class="iblock-title" style="color:var(--gunze)">Dự án Gunze</div>
+          </div>
+          <div class="img-area">
+            <div class="drop-zone">
+              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'thang_gunze')">
+              <div class="drop-lbl">
+                <strong>📷 Tải lên số liệu Gunze</strong>
+                (File ảnh chứa kết quả Tháng này + Tháng trước)
+              </div>
+            </div>
+            <div class="previews" id="previews-thang_gunze"></div>
+          </div>
+        </div>
+
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--mp)"></div>
+            <div class="iblock-title" style="color:var(--mp)">Dự án Mỹ phẩm</div>
+          </div>
+          <div class="img-area">
+            <div class="drop-zone">
+              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'thang_mp')">
+              <div class="drop-lbl">
+                <strong>📷 Tải lên số liệu Mỹ phẩm</strong>
+                (File ảnh chứa kết quả Tháng này + Tháng trước)
+              </div>
+            </div>
+            <div class="previews" id="previews-thang_mp"></div>
+          </div>
+        </div>
+
+        <div class="sec-lbl">Dữ liệu Khối Cửa Hàng</div>
+        
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--warn)"></div>
+            <div class="iblock-title" style="color:var(--warn)">Input 2: Dữ liệu Excel Cửa hàng</div>
+          </div>
+          <div class="img-area">
+            <div class="drop-zone">
+              <input type="file" accept=".csv, .txt" onchange="handleExcelFile(this.files)">
+              <div class="drop-lbl">
+                <strong>📁 Tải lên file Excel (.csv)</strong>
+                (Chứa: Chi phí, Hiển thị, Tiếp cận...)
+              </div>
+            </div>
+            <div class="previews" id="preview-excel"></div>
+          </div>
+        </div>
+
+        <div class="iblock">
+          <div class="iblock-hdr">
+            <div class="idot" style="background:var(--warn)"></div>
+            <div class="iblock-title" style="color:var(--warn)">Input 3: Ảnh Số liệu Thực đạt</div>
+          </div>
+          <div class="img-area">
+            <div class="drop-zone">
+              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'thang_cuahang')">
+              <div class="drop-lbl">
+                <strong>📷 Tải lên ảnh Thực đạt Cửa hàng</strong>
+                (Chứa: Số lượng KH, Doanh thu, %KHM)
+              </div>
+            </div>
+            <div class="previews" id="previews-thang_cuahang"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <button class="btn-gen" id="gbtn" onclick="gen()">✦ Tạo báo cáo bằng AI</button>
+  </div>
+
+  <div class="right">
+    <div class="out-bar">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span>📄 Báo cáo</span>
+        <select id="hist-sel" class="hist-select" onchange="viewHist()">
+          <option value="">-- Xem lịch sử báo cáo --</option>
+        </select>
+        <button id="del-btn" class="btn-del-hist" onclick="deleteHist()" title="Xoá báo cáo đang xem">🗑️</button>
+        <button id="del-all-btn" class="btn-del-hist" onclick="deleteAllHist()" title="Xoá toàn bộ lịch sử">🧹 Xoá hết</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button id="magic-btn" class="btn-magic" onclick="getAiInsights()" title="Dùng AI phân tích sâu & Đề xuất chiến lược">✨ Đề xuất tối ưu</button>
+        <button class="btn-copy" id="cbtn" onclick="doCopy()">⎘ Sao chép</button>
+      </div>
+    </div>
+    <div class="out-body" id="out">
+      <div class="s-empty">
+        <div class="ico">🗂️</div>
+        <p>Chọn loại báo cáo, tải số liệu lên</p>
+        <p>rồi nhấn <strong style="color:var(--acc)">Tạo báo cáo bằng AI</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- QUẢN LÝ API KEY CHUẨN (CÓ TÍNH NĂNG KIỂM TRA LỖI) ---
+function initApp() {
+  loadHistList();
+  const savedKey = localStorage.getItem('gemini_api_key');
+  const keyInput = document.getElementById('api-key-input');
+  if (savedKey) {
+    keyInput.value = savedKey;
+    keyInput.style.borderColor = 'var(--acc2)'; // Hiện viền xanh báo hiệu đã lưu key hợp lệ
+  }
+}
+
+async function saveApiKey() {
+  const keyInput = document.getElementById('api-key-input');
+  const key = keyInput.value.trim();
+  const btn = document.querySelector('.btn-save-key');
+  
+  if (!key) {
+    alert("Vui lòng nhập API Key trước khi lưu!");
+    return;
+  }
+
+  const ogText = btn.textContent;
+  btn.textContent = "Đang kiểm tra...";
+  btn.disabled = true;
+
+  try {
+    // Gọi một lệnh nháp "ping" nhẹ nhất đến API để xem Key có hoạt động hay không
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: "ping" }] }] })
+    });
+
+    if (res.ok) {
+      localStorage.setItem('gemini_api_key', key);
+      keyInput.style.borderColor = "var(--acc2)"; // Đổi viền xanh lá
+      alert("✅ API Key hợp lệ và đã được lưu an toàn!");
+    } else {
+      const errData = await res.json();
+      keyInput.style.borderColor = "var(--danger)"; // Đổi viền đỏ cảnh báo
+      alert(`❌ API Key không hợp lệ hoặc bị lỗi (${res.status}):\\n${errData.error?.message || 'Vui lòng kiểm tra lại.'}`);
+    }
+  } catch (e) {
+    keyInput.style.borderColor = "var(--warn)";
+    alert("⚠️ Lỗi kết nối mạng, không thể kiểm tra API Key lúc này. Vui lòng kiểm tra lại internet!");
+  } finally {
+    btn.textContent = ogText;
+    btn.disabled = false;
+  }
+}
+
+function clearApiKey() {
+  localStorage.removeItem('gemini_api_key');
+  const keyInput = document.getElementById('api-key-input');
+  keyInput.value = '';
+  keyInput.style.borderColor = "var(--bdr)";
+  alert("Đã xoá API Key khỏi trình duyệt!");
+}
+
+function getApiKey() {
+  const key = localStorage.getItem('gemini_api_key') || document.getElementById('api-key-input').value.trim();
+  return key;
+}
+
+// Helper tự động lấy URL và Model chuẩn tuỳ theo việc có Key hay không
+function getApiUrl() {
+  const key = getApiKey() || "";
+  // Nếu có API Key riêng, sử dụng bản tiêu chuẩn. Nếu không có (để trống), hệ thống proxy sẽ dùng bản preview nội bộ.
+  const model = key ? "gemini-2.5-flash" : "gemini-2.5-flash-preview-09-2025";
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+}
+// ----------------------
+
+function updateUI() {
+  const type = document.querySelector('input[name="rtype"]:checked').value;
+  if (type === 'Tuần') {
+    document.getElementById('tab-tuan').classList.remove('d-none');
+    document.getElementById('tab-thang').classList.add('d-none');
+  } else {
+    document.getElementById('tab-tuan').classList.add('d-none');
+    document.getElementById('tab-thang').classList.remove('d-none');
+  }
+}
+
+// ---- HỆ THỐNG LƯU TRỮ LỊCH SỬ ----
+const STORAGE_KEY = 'ai_report_history';
+
+function loadHistList() {
+  const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const sel = document.getElementById('hist-sel');
+  const delAllBtn = document.getElementById('del-all-btn');
+  sel.innerHTML = '<option value="">-- Xem lịch sử báo cáo --</option>';
+  const keys = Object.keys(hist).sort().reverse();
+  keys.forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
+  delAllBtn.style.display = keys.length > 0 ? 'block' : 'none';
+}
+
+function viewHist() {
+  const val = document.getElementById('hist-sel').value;
+  const delBtn = document.getElementById('del-btn');
+  const magicBtn = document.getElementById('magic-btn');
+  if(!val) {
+    document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">🗂️</div><p>Chọn một báo cáo từ lịch sử để xem</p></div>`;
+    delBtn.style.display = 'none';
+    magicBtn.style.display = 'none';
+    return;
+  }
+  const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  if(hist[val]) {
+    document.getElementById('out').innerHTML = hist[val];
+    delBtn.style.display = 'block';
+    magicBtn.style.display = 'inline-block';
+  }
+}
+
+function saveHist(type, periodStr, htmlStr) {
+  const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const dateStr = new Date().toLocaleString('vi-VN', {hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'});
+  const keyName = periodStr ? `${type} ${periodStr}` : `Báo cáo ${type} (${dateStr})`;
+  hist[keyName] = htmlStr;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
+  loadHistList(); 
+  document.getElementById('hist-sel').value = keyName;
+  viewHist(); 
+}
+
+function deleteHist() {
+  const val = document.getElementById('hist-sel').value;
+  if(!val) return;
+  if(!confirm(`Bạn có chắc chắn muốn xoá vĩnh viễn báo cáo "${val}" khỏi lịch sử không?`)) return;
+  const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  delete hist[val]; 
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); 
+  loadHistList(); 
+  viewHist(); 
+}
+
+function deleteAllHist() {
+  if(!confirm(`⚠️ NGUY HIỂM: Bạn có CHẮC CHẮN muốn xoá TOÀN BỘ lịch sử báo cáo không?\n\nHành động này không thể hoàn tác!`)) return;
+  localStorage.removeItem(STORAGE_KEY);
+  loadHistList(); 
+  viewHist(); 
+}
+
+// ----------------------------------------------------
+
+let imgs = { hcm: [], hn: [], kpi: [], thang_gunze: [], thang_mp: [], thang_cuahang: [] };
+let excelTextData = '';
+
+// BẢO VỆ .split(): Chỉ split khi dữ liệu thực sự tồn tại
+function handleImgs(files, region) {
+  Array.from(files).forEach(f => {
+    if (!f.type.startsWith('image/')) return;
+    const r = new FileReader();
+    r.onload = e => { 
+      const res = e.target && e.target.result;
+      if (typeof res === 'string' && res.includes(',')) {
+        const parts = res.split(',');
+        if (parts.length > 1) {
+          imgs[region].push({ data: parts[1], type: f.type, name: f.name }); 
+          renderPrev(region); 
+        }
+      }
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+// Hàm đọc số linh hoạt bao quát tất cả định dạng
+function parseAnyNum(str) {
+  if(!str) return 0;
+  let s = String(str).trim().replace(/"/g, '');
+  if (s === '-' || s === '') return 0;
+  
+  if (s.includes(',') && s.includes('.')) {
+    if (s.indexOf(',') > s.indexOf('.')) {
+      s = s.replace(/\./g, '').replace(',', '.'); 
+    } else {
+      s = s.replace(/,/g, ''); 
+    }
+  } else if (s.includes(',')) {
+    let parts = s.split(',');
+    if (parts.length > 2) s = s.replace(/,/g, '');
+    else {
+       if (parts[1] && parts[1].length === 3) s = s.replace(/,/g, '');
+       else s = s.replace(',', '.'); 
+    }
+  } else if (s.includes('.')) {
+    let parts = s.split('.');
+    if (parts.length > 2) s = s.replace(/\./g, '');
+    else {
+       if (parts[1] && parts[1].length === 3) s = s.replace(/\./g, '');
+    }
+  }
+  return parseFloat(s.replace(/[^\d.-]/g, '')) || 0;
+}
+
+// Xử lý File Excel CSV cục bộ
+function handleExcelFile(files) {
+  if (!files || files.length === 0) return;
+  const f = files[0];
+  const r = new FileReader();
+  r.onload = e => { 
+    let rawText = e?.target?.result || ""; 
+    try {
+      excelTextData = aggregateCSV(rawText);
+    } catch(err) {
+      console.log("Lỗi phân tích CSV:", err);
+      excelTextData = "DỮ LIỆU EXCEL THÔ:\n" + (rawText ? rawText.substring(0, 5000) : ""); 
+    }
+    document.getElementById('preview-excel').innerHTML = `<div style="font-size:11px; font-weight:600; color:var(--acc2); padding-top:5px;">✓ Đã xử lý & cộng tổng số liệu file: ${f.name}</div>`;
+  };
+  r.readAsText(f);
+}
+
+function aggregateCSV(csvText) {
+  if (typeof csvText !== 'string' || !csvText) return "DỮ LIỆU RỖNG";
+  let lines = csvText.split(/\r?\n/);
+  let nameIdx = -1, spendIdx = -1, impIdx = -1, reachIdx = -1;
+  
+  function parseCSVRow(str) {
+    if (!str) return [];
+    let arr = []; let quote = false; let cell = '';
+    for (let c = 0; c < str.length; c++) {
+      if (str[c] === '"') { quote = !quote; }
+      else if (str[c] === ',' && !quote) { arr.push(cell.trim()); cell = ''; }
+      else { cell += str[c]; }
+    }
+    arr.push(cell.trim()); return arr;
+  }
+
+  let startRow = 0;
+  for (let i = 0; i < Math.min(15, lines.length); i++) {
+    let row = parseCSVRow(lines[i]);
+    let strRow = row.join('').toLowerCase();
+    if (strRow.includes('amount spent') || strRow.includes('chi tiêu') || strRow.includes('hiển thị') || strRow.includes('impressions')) {
+      let headers = row.map(h => h.toLowerCase().trim());
+      nameIdx = headers.findIndex(h => h.includes('name') || h.includes('tên'));
+      spendIdx = headers.findIndex(h => h.includes('amount spent') || h.includes('chi tiêu') || h.includes('chi phí') || h.includes('số tiền'));
+      impIdx = headers.findIndex(h => h.includes('impressions') || h.includes('hiển thị'));
+      reachIdx = headers.findIndex(h => (h.includes('reach') || h.includes('tiếp cận')) && !h.includes('cost') && !h.includes('chi phí') && !h.includes('trên') && !h.includes('rate'));
+      
+      startRow = i + 1;
+      break;
+    }
+  }
+
+  if (nameIdx === -1 || spendIdx === -1) return "DỮ LIỆU EXCEL THÔ:\n" + csvText.substring(0, 5000);
+
+  let stats = {
+    "Đỗ Quang": { spend: 0, imp: 0, reach: 0 }, "Trung Hoà": { spend: 0, imp: 0, reach: 0 },
+    "Hà Đông": { spend: 0, imp: 0, reach: 0 }, "Mỹ Đình": { spend: 0, imp: 0, reach: 0 },
+    "Trần Đăng Ninh": { spend: 0, imp: 0, reach: 0 }, "Times City": { spend: 0, imp: 0, reach: 0 },
+    "Ngoại Giao Đoàn": { spend: 0, imp: 0, reach: 0 }, "Lê Văn Sỹ": { spend: 0, imp: 0, reach: 0 },
+    "Nguyễn Thị Thập": { spend: 0, imp: 0, reach: 0 }, "Hai Bà Trưng": { spend: 0, imp: 0, reach: 0 },
+    "Tổng": { spend: 0, imp: 0, reach: 0 }
+  };
+
+  let actualTotalReach = 0; 
+
+  for (let i = startRow; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    let row = parseCSVRow(lines[i]);
+    if (row.length <= Math.max(nameIdx, spendIdx, reachIdx)) continue;
+    
+    let n = row[nameIdx] || "";
+    let nLower = n.toLowerCase();
+    
+    let spend = parseAnyNum(row[spendIdx]);
+    let imp = parseAnyNum(row[impIdx]);
+    let reach = parseAnyNum(row[reachIdx]);
+
+    if (!nLower || nLower === "total" || nLower.includes("kết quả từ tất cả") || nLower.includes("tổng cộng") || nLower === "—") {
+        if (reach > 0) actualTotalReach = reach;
+        continue;
+    }
+
+    let isStore = false;
+    if (nLower.includes("đq")) { stats["Đỗ Quang"].spend += spend; stats["Đỗ Quang"].imp += imp; stats["Đỗ Quang"].reach += reach; isStore = true; }
+    else if (nLower.includes("trung h")) { stats["Trung Hoà"].spend += spend; stats["Trung Hoà"].imp += imp; stats["Trung Hoà"].reach += reach; isStore = true; }
+    else if (nLower.includes("hđ")) { stats["Hà Đông"].spend += spend; stats["Hà Đông"].imp += imp; stats["Hà Đông"].reach += reach; isStore = true; }
+    else if (nLower.includes("quantm") && !nLower.includes("tđn")) { stats["Mỹ Đình"].spend += spend; stats["Mỹ Đình"].imp += imp; stats["Mỹ Đình"].reach += reach; isStore = true; }
+    else if (nLower.includes("tđn")) { stats["Trần Đăng Ninh"].spend += spend; stats["Trần Đăng Ninh"].imp += imp; stats["Trần Đăng Ninh"].reach += reach; isStore = true; }
+    else if (nLower.includes("times city")) { stats["Times City"].spend += spend; stats["Times City"].imp += imp; stats["Times City"].reach += reach; isStore = true; }
+    else if (nLower.includes("ngđ")) { stats["Ngoại Giao Đoàn"].spend += spend; stats["Ngoại Giao Đoàn"].imp += imp; stats["Ngoại Giao Đoàn"].reach += reach; isStore = true; }
+    else if (nLower.includes("lvs")) { stats["Lê Văn Sỹ"].spend += spend; stats["Lê Văn Sỹ"].imp += imp; stats["Lê Văn Sỹ"].reach += reach; isStore = true; }
+    else if (nLower.includes("ntt")) { stats["Nguyễn Thị Thập"].spend += spend; stats["Nguyễn Thị Thập"].imp += imp; stats["Nguyễn Thị Thập"].reach += reach; isStore = true; }
+    else if (nLower.includes("hbt")) { stats["Hai Bà Trưng"].spend += spend; stats["Hai Bà Trưng"].imp += imp; stats["Hai Bà Trưng"].reach += reach; isStore = true; }
+
+    if (isStore) {
+        stats["Tổng"].spend += spend;
+        stats["Tổng"].imp += imp;
+        stats["Tổng"].reach += reach;
+    }
+  }
+
+  if (actualTotalReach > 0) {
+      stats["Tổng"].reach = actualTotalReach;
+  }
+
+  function fmt(num) { return Math.round(num).toLocaleString('vi-VN'); }
+
+  let res = "DỮ LIỆU EXCEL CỬA HÀNG ĐÃ ĐƯỢC CỘNG TỔNG CHÍNH XÁC:\n\n";
+  for (let k in stats) {
+     if (k === "Tổng") {
+         res += `- TỔNG HỆ THỐNG: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
+     } else {
+         res += `- Cửa hàng ${k}: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
+     }
+  }
+  return res;
+}
+
+function renderPrev(region) {
+  document.getElementById(`previews-${region}`).innerHTML = imgs[region].map((img, i) =>
+    `<div class="thumb"><img src="data:${img.type};base64,${img.data}"><button onclick="rmImg(${i}, '${region}')">✕</button></div>`
+  ).join('');
+}
+
+function rmImg(i, region) { imgs[region].splice(i, 1); renderPrev(region); }
+
+function parseNum(str) { 
+  if (!str || str === '—' || str === '') return null; 
+  const n = parseFloat(String(str).replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')); 
+  return isNaN(n) ? null : n; 
+}
+function fmtPct(n) { return (n === null || n === undefined) ? '—' : (n * 100).toFixed(2).replace('.', ',') + '%'; }
+function fmtNum(n) { return (n === null || n === undefined) ? '—' : Math.round(n).toLocaleString('vi-VN'); }
+function safeAdd(a, b) { return (a === null && b === null) ? null : (a || 0) + (b || 0); }
+
+function sumKhmByCategory(stores, catName) {
+  let total = 0, found = false;
+  (stores || []).forEach(store => {
+    (store.rows || []).forEach(row => {
+      if (row.cat && String(row.cat).trim().toLowerCase() === catName.toLowerCase()) {
+        const v = parseNum(row.khm_dt);
+        if (v !== null) { total += v; found = true; }
+      }
+    });
+  });
+  return found ? total : null;
+}
+
+function calcMetrics(raw, khmTotal, manualSpend) {
+  const chitieu = manualSpend !== null ? manualSpend : parseNum(raw.chitieu);
+  if (manualSpend !== null) raw.chitieu = fmtNum(manualSpend);
+  const dtt = parseNum(raw.dtt);
+  let dths = null, qcol = null, qcst = null, qchs = null;
+  if (dtt !== null && khmTotal !== null) dths = dtt + khmTotal;
+  if (chitieu !== null && dtt !== null && dtt > 0) qcol = chitieu / dtt;
+  if (chitieu !== null && dtt !== null && dtt > 0) qcst = (chitieu * 1.10) / (dtt / 1.08);
+  if (chitieu !== null && dths !== null && dths > 0) qchs = chitieu / dths;
+  return { dths, qcol, qcst, qchs };
+}
+
+// Hàm fetch hỗ trợ tự động Retry (Exponential Backoff)
+async function fetchWithRetry(url, options, retries = 5) {
+  let delay = 1000;
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok) return res;
+      if (i === retries - 1) throw new Error(`Lỗi HTTP ${res.status}: Không thể kết nối tới Google Gemini API.`);
+    } catch (e) {
+      if (i === retries - 1) throw e;
+    }
+    await new Promise(r => setTimeout(r, delay));
+    delay *= 2;
+  }
+}
+
+// Tính năng Sắp xếp Cột trong Bảng HTML
+function sortHtmlTable(th, colIdx) {
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Xóa trạng thái của các cột khác, lật trạng thái cột hiện tại
+    let isAsc = th.classList.contains('asc');
+    table.querySelectorAll('th').forEach(h => { 
+        h.classList.remove('asc', 'desc'); 
+        h.innerHTML = h.innerHTML.replace(' ↑', '').replace(' ↓', '').replace(' ↕', '') + ' ↕'; 
+    });
+    
+    th.classList.toggle('asc', !isAsc);
+    th.classList.toggle('desc', isAsc);
+    th.innerHTML = th.innerHTML.replace(' ↕', '') + (isAsc ? ' ↓' : ' ↑');
+
+    rows.sort((a, b) => {
+        let valA = a.cells[colIdx].innerText.trim();
+        let valB = b.cells[colIdx].innerText.trim();
+        
+        let numA = parseAnyNum(valA.replace('%', ''));
+        let numB = parseAnyNum(valB.replace('%', ''));
+        
+        if (!isNaN(numA) && !isNaN(numB) && valA !== '—' && valB !== '—') {
+            return isAsc ? numA - numB : numB - numA;
+        }
+        return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    });
+
+    tbody.innerHTML = '';
+    rows.forEach(r => tbody.appendChild(r));
+}
+
+// --- CÁC HÀM HIỂN THỊ GIAO DIỆN (UI) ---
+function showLoad() {
+  document.getElementById('out').innerHTML = `
+    <div class="s-load">
+      <div class="spinner"></div>
+      <div class="lsteps">
+        <div class="lstep on" id="ls0"><div class="sdot"></div>Đang gửi dữ liệu cho AI...</div>
+        <div class="lstep" id="ls1"><div class="sdot"></div>AI đang phân tích số liệu...</div>
+        <div class="lstep" id="ls2"><div class="sdot"></div>Đang tổng hợp báo cáo...</div>
+      </div>
+    </div>`;
+}
+
+function setStep(n) {
+  for (let i = 0; i < n; i++) { const e = document.getElementById('ls' + i); if (e) { e.classList.remove('on'); e.classList.add('dn'); } }
+  const c = document.getElementById('ls' + n); if (c) c.classList.add('on');
+}
+
+function mcHtml(lbl, val, cls = '', formula = '') {
+  return `<div class="mc"><div class="mlbl">${lbl}${formula ? `<span class="calc-badge">tính</span>` : ''}</div><div class="mval ${cls}">${val || '—'}</div>${formula ? `<div class="mcalc">${formula}</div>` : ''}</div>`;
+}
+
+function nguonHtml(list) {
+  if (!list || !list.length || !list[0].kenh || list[0].kenh === '—') return '';
+  const rows = list.map(n => `<tr>
+    <td>${n.kenh || '—'}</td>
+    <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px">${n.sotien || '—'}</td>
+    <td style="text-align:right;color:var(--warn);font-family:'JetBrains Mono',monospace;font-size:11px">${n.pct || '—'}</td>
+  </tr>`).join('');
+  return `<div class="nblk"><strong>Nguồn bán hàng:</strong>
+    <table style="width:100%;margin-top:6px;border-collapse:collapse">
+      <tr style="color:var(--tx3);font-size:9px">
+        <th style="text-align:left;padding:3px 0;font-weight:700">Kênh</th>
+        <th style="text-align:right;font-weight:700">Doanh thu</th>
+        <th style="text-align:right;font-weight:700">% DTT</th>
+      </tr>${rows}
+    </table>
+  </div>`;
+}
+
+function spHtml(list) {
+  if (!list || !list.length) return '';
+  return `<div class="nblk"><strong>Sản phẩm bán chạy:</strong> ${list.map(s => `<span class="chip">${s}</span>`).join(' ')}</div>`;
+}
+
+function dgHtml(dg, yoy) {
+  if (!dg && !yoy) return '';
+  let h = '<div class="nblk">';
+  if (dg) h += `<strong>Đánh giá:</strong> ${dg}<br>`;
+  if (yoy && yoy !== '—') h += `<span style="color:var(--tx3)">So với cùng kỳ năm trước: </span><strong style="color:var(--warn)">${yoy}</strong>`;
+  return h + '</div>';
+}
+
+function storeTbl(s, regionName) {
+  if (!s || !s.rows || s.rows.length === 0) return '';
+  const rows = s.rows.map(r => {
+    const isGunze = r.cat && r.cat.toLowerCase() === 'đồ lót';
+    const isMp = r.cat && r.cat.toLowerCase() === 'mp';
+    const dtCls = isGunze ? ' class="proj-g"' : isMp ? ' class="proj-m"' : '';
+    return `<tr ${(isGunze||isMp)?'style="background:rgba(255,255,255,.02)"':''}>
+      <td${dtCls}>${r.cat||'—'}${isGunze?' <span style="font-size:9px;color:var(--gunze);opacity:.7">Gunze</span>':''}${isMp?' <span style="font-size:9px;color:var(--mp);opacity:.7">MP</span>':''}</td>
+      <td>${r.dt||'—'}</td><td${dtCls}>${r.khm_dt||'—'}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="stbl"><thead><tr><th style="text-align:left">${s.name || regionName}</th><th>Doanh Thu Thuần</th><th>Doanh Thu KHM</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderTuan(d, gc, mc, gTot, gHCM, gHN, mTot, mHCM, mHN, period, from, to) {
+  const g = d.gunze || {}, m = d.mp || {};
+  const dr = (from && to) ? ` — ${from} đến ${to}` : '';
+  const rperiod = period ? `Tuần ${period}` : '';
+  const kpiCls = v => v && parseInt(v) >= 100 ? 'g' : 'w';
+
+  const formatDetail = (hcm, hn) => {
+    let parts = [];
+    if (hcm !== null) parts.push(`HCM: ${fmtNum(hcm)}`);
+    if (hn !== null) parts.push(`HN: ${fmtNum(hn)}`);
+    return parts.length > 0 ? `(${parts.join(' + ')})` : '';
+  };
+
+  const khmNoteHtml = (gTot !== null || mTot !== null) ? `<div class="khm-note">
+    ${gTot !== null ? `<div class="khm-item"><span>Tổng KHM Đồ lót:</span><div><span class="khm-detail">${formatDetail(gHCM, gHN)}</span> <strong style="color:var(--gunze)">${fmtNum(gTot)}</strong></div></div>` : ''}
+    ${mTot !== null ? `<div class="khm-item"><span>Tổng KHM Mỹ phẩm:</span><div><span class="khm-detail">${formatDetail(mHCM, mHN)}</span> <strong style="color:var(--mp)">${fmtNum(mTot)}</strong></div></div>` : ''}
+  </div>` : '';
+
+  let storesHtml = '', storesContent = '';
+  if (d.stores_hcm && d.stores_hcm.length) storesContent += d.stores_hcm.map(s => storeTbl(s, 'Cửa hàng HCM')).join('<div class="sdiv"></div>');
+  if (d.stores_hn && d.stores_hn.length) {
+    if (storesContent) storesContent += '<div class="sdiv"></div>';
+    storesContent += d.stores_hn.map(s => storeTbl(s, 'Cửa hàng HN')).join('<div class="sdiv"></div>');
+  }
+
+  if (storesContent) storesHtml = `<div class="pb"><div class="phdr"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">Dữ liệu từ Cửa hàng</div></div>${khmNoteHtml}<div class="ssec">${storesContent}</div></div>`;
+
+  document.getElementById('out').innerHTML = `<div class="report" id="rpt">
+    <div class="rh"><div class="rweek">${rperiod}</div><div class="rtitle">Báo Cáo Tuần${dr}</div></div>
+    
+    <div class="pb">
+      <div class="phdr"><div class="pdot" style="background:var(--gunze)"></div><div class="pname" style="color:var(--gunze)">Dự án Gunze</div></div>
+      <div class="mgrid">
+        ${mcHtml('Chi tiêu', g.chitieu)} ${mcHtml('Số lượng data', g.data)} ${mcHtml('Tỷ lệ chốt đơn', g.tlchot)}
+        ${mcHtml('Doanh thu thuần', g.dtt, 'g')} ${mcHtml('% KPI tuần', g.dtt_kpi, kpiCls(g.dtt_kpi))} ${mcHtml('GTTB đơn hàng', g.gttb)}
+        ${mcHtml('DT hệ thống', gc.dths !== null ? fmtNum(gc.dths) : '—', 'g', 'DT thuần Sale + Tổng KHM Đồ lót')}
+        ${mcHtml('CP QC Online', gc.qcol !== null ? fmtPct(gc.qcol) : '—', 'w', 'Chi tiêu ÷ DT thuần')}
+        ${mcHtml('CP QC Online sau thuế', gc.qcst !== null ? fmtPct(gc.qcst) : '—', 'w', '(Chi tiêu×110%) ÷ (DT thuần÷1,08)')}
+        ${mcHtml('CP QC hệ thống', gc.qchs !== null ? fmtPct(gc.qchs) : '—', 'w', 'Chi tiêu ÷ DT hệ thống')}
+        ${mcHtml('Chiết khấu', g.chietkhau ? g.chietkhau + (g.chietkhau_pct ? ' (' + g.chietkhau_pct + ')' : '') : '—')}
+        ${mcHtml('Hàng trả lại', g.hangtralai ? g.hangtralai + (g.hangtralai_pct ? ' (' + g.hangtralai_pct + ')' : '') : '—')}
+      </div>
+      ${nguonHtml(g.nguon)}
+      ${spHtml(g.sp)}
+      ${dgHtml(g.danhgia, g.yoy)}
+    </div>
+
+    <div class="pb">
+      <div class="phdr"><div class="pdot" style="background:var(--mp)"></div><div class="pname" style="color:var(--mp)">Dự án Mỹ phẩm</div></div>
+      <div class="mgrid">
+        ${mcHtml('Chi tiêu', m.chitieu)} ${mcHtml('Doanh thu thuần', m.dtt, 'g')} ${mcHtml('% KPI tuần', m.dtt_kpi, kpiCls(m.dtt_kpi))}
+        ${mcHtml('GTTB', m.gttb)} ${mcHtml('DT hệ thống', mc.dths !== null ? fmtNum(mc.dths) : '—', 'g', 'DT thuần Sale + Tổng KHM MP')}
+        ${mcHtml('CP QC Online', mc.qcol !== null ? fmtPct(mc.qcol) : '—', 'w', 'Chi tiêu ÷ DT thuần')}
+        ${mcHtml('CP QC Online sau thuế', mc.qcst !== null ? fmtPct(mc.qcst) : '—', 'w', '(Chi tiêu×110%) ÷ (DT thuần÷1,08)')}
+        ${mcHtml('CP QC hệ thống', mc.qchs !== null ? fmtPct(mc.qchs) : '—', 'w', 'Chi tiêu ÷ DT hệ thống')}
+        ${mcHtml('Chiết khấu', m.chietkhau ? m.chietkhau + (m.chietkhau_pct ? ' (' + m.chietkhau_pct + ')' : '') : '—')}
+        ${mcHtml('Hàng trả lại', m.hangtralai ? m.hangtralai + (m.hangtralai_pct ? ' (' + m.hangtralai_pct + ')' : '') : '—')}
+      </div>
+      <div class="mgrid" style="border-top:1px solid var(--bdr)">
+        <div class="mc"><div class="mlbl">Data Web</div><div class="mval">${m.web_sl || '—'} <span style="font-size:10px;color:var(--tx2)">${m.web_dat ? '(' + m.web_dat + ')' : ''}</span></div>${m.web_chot ? `<div class="mcalc">Tỷ lệ chốt: ${m.web_chot}</div>` : ''}</div>
+        <div class="mc"><div class="mlbl">Data Page</div><div class="mval">${m.page_sl || '—'} <span style="font-size:10px;color:var(--tx2)">${m.page_dat ? '(' + m.page_dat + ')' : ''}</span></div>${m.page_chot ? `<div class="mcalc">Tỷ lệ chốt: ${m.page_chot}</div>` : ''}</div>
+        <div class="mc"></div>
+      </div>
+      ${nguonHtml(m.nguon)}
+      ${spHtml(m.sp)}
+      ${dgHtml(m.danhgia, m.yoy)}
+    </div>
+    ${storesHtml}
+  </div>`;
+}
+
+function renderThang(data, period, from, to) {
+  const dr = (from && to) ? ` — ${from} đến ${to}` : '';
+  const rperiod = period ? `Tháng ${period}` : '';
+  
+  let html = `<div class="report" id="rpt">
+    <div class="rh"><div class="rweek" style="color:var(--acc2)">${rperiod}</div><div class="rtitle">Báo Cáo Tháng${dr}</div></div>`;
+
+  const buildSection = (key, title, colorVar) => {
+    const d = data[key];
+    if (!d || !d.metrics || d.metrics.length === 0) return '';
+    
+    let gridHtml = d.metrics.map(item => {
+      let extra = item.kpi_trend && item.kpi_trend !== '—' ? `<div class="mcalc">${item.kpi_trend}</div>` : '';
+      return `<div class="mc"><div class="mlbl">${item.name}</div><div class="mval">${item.value}</div>${extra}</div>`;
+    }).join('');
+
+    let evalHtml = `<div class="eval-content">`;
+    if (d.danh_gia && d.danh_gia.length) {
+      evalHtml += `<ul class="eval-list">`;
+      d.danh_gia.forEach(item => evalHtml += `<li>${item}</li>`);
+      evalHtml += `</ul>`;
+    }
+    if (d.ket_luan) {
+      evalHtml += `<div><span class="ket-luan-text">Kết luận: </span><span class="ket-luan-text" style="font-weight:normal">${d.ket_luan.replace(/^Kết luận:\s*/i, '')}</span></div>`;
+    }
+    evalHtml += `</div>`;
+
+    return `
+      <div class="pb">
+        <div class="phdr"><div class="pdot" style="background:${colorVar}"></div><div class="pname" style="color:${colorVar}">${title}</div></div>
+        <div class="mgrid">${gridHtml}</div>
+        <div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-left:none; border-top: 1px solid var(--bdr);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+            <div class="analysis-title" style="margin-bottom:0;">Đánh giá:</div>
+            <button class="btn-magic" style="display:inline-flex; align-items:center; padding:4px 8px; font-size:10px;" onclick="regenerateEval(this, '${title}')">🔄 Viết lại đánh giá</button>
+          </div>
+          ${evalHtml}
+        </div>
+      </div>`;
+  };
+
+  html += buildSection('gunze', 'Dự án Gunze', 'var(--gunze)');
+  html += buildSection('mp', 'Dự án Mỹ phẩm', 'var(--mp)');
+
+  // KHỐI CỬA HÀNG
+  if (data.stores) {
+    const st = data.stores;
+    let tq = st.tong_quan || {};
+    let tqHtml = `<div class="mgrid">
+      ${mcHtml('Chi phí chạy cửa hàng', tq.chi_phi, 'b', tq.chi_phi_tt ? tq.chi_phi_tt + ' so với TT' : '')}
+      ${mcHtml('Hiển thị', tq.hien_thi, '', tq.hien_thi_tt ? tq.hien_thi_tt + ' so với TT' : '')}
+      ${mcHtml('Tiếp cận (unique)', tq.tiep_can, '', tq.tiep_can_tt ? tq.tiep_can_tt + ' so với TT' : '')}
+    </div>`;
+
+    // Tính toán max để làm Data Bars
+    let maxKhm = 0, maxDoPhu = 0;
+    const safeParse = (v) => parseFloat(String(v).replace(/[^0-9.-]+/g,"")) || 0;
+
+    (st.danh_sach || []).forEach(r => {
+      let khmVal = safeParse(r.khm);
+      let doPhuVal = safeParse(r.do_phu);
+      if (khmVal > maxKhm) maxKhm = khmVal;
+      if (doPhuVal > maxDoPhu) maxDoPhu = doPhuVal;
+    });
+
+    let tblRows = (st.danh_sach || []).map(r => {
+      let khmVal = safeParse(r.khm);
+      let doPhuVal = safeParse(r.do_phu);
+      let khmPct = maxKhm > 0 ? (khmVal / maxKhm * 100) : 0;
+      let doPhuPct = maxDoPhu > 0 ? (doPhuVal / maxDoPhu * 100) : 0;
+
+      // Màu nền Data Bars
+      let khmBg = r.khm !== '—' && r.khm ? `linear-gradient(90deg, rgba(56,224,176,0.2) ${khmPct}%, transparent ${khmPct}%)` : '';
+      let doPhuBg = r.do_phu !== '—' && r.do_phu ? `linear-gradient(90deg, rgba(79,124,255,0.2) ${doPhuPct}%, transparent ${doPhuPct}%)` : '';
+
+      return `
+      <tr>
+        <td style="font-weight:700; color:var(--tx)">${r.ten}</td>
+        <td>${r.chi_phi}</td><td>${r.so_kh}</td><td style="color:var(--acc2);font-weight:700">${r.doanh_thu}</td>
+        <td style="color:var(--warn)">${r.kpi_pct}</td>
+        <td style="background: ${khmBg};">${r.khm}</td>
+        <td style="background: ${doPhuBg};">${r.do_phu}</td>
+      </tr>`;
+    }).join('');
+    
+    let tblHtml = `<div style="overflow-x:auto"><table class="stbl" style="margin-bottom:0;">
+      <thead><tr>
+        <th class="sortable" onclick="sortHtmlTable(this, 0)">Cửa hàng ↕</th>
+        <th class="sortable" onclick="sortHtmlTable(this, 1)">Chi phí ↕</th>
+        <th class="sortable" onclick="sortHtmlTable(this, 2)">Số lượng KH ↕</th>
+        <th class="sortable" onclick="sortHtmlTable(this, 3)">Doanh thu ↕</th>
+        <th class="sortable" onclick="sortHtmlTable(this, 4)">So với KPI ↕</th>
+        <th class="sortable" onclick="sortHtmlTable(this, 5)">%KHM ↕</th>
+        <th class="sortable" onclick="sortHtmlTable(this, 6)">Độ phủ (hiển thị) ↕</th>
+      </tr></thead>
+      <tbody>${tblRows}</tbody>
+    </table></div>`;
+
+    let pt = st.phan_tich || {};
+    let hnHtml = (pt.hn || []).map(i => `<li>${i}</li>`).join('');
+    let hcmHtml = (pt.hcm || []).map(i => `<li>${i}</li>`).join('');
+    let phanTichHtml = `<div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-top: 1px solid var(--bdr);">
+      <div style="font-size:12px; margin-bottom:10px;"><strong>Đánh giá chung:</strong> ${pt.chung || ''}</div>
+      <div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hà Nội</div>
+      <ul class="eval-list" style="margin-bottom:5px;">${hnHtml}</ul>
+      <div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hồ Chí Minh</div>
+      <ul class="eval-list" style="margin-bottom:15px;">${hcmHtml}</ul>
+      <div><span class="ket-luan-text">Kết Luận: </span><span style="color:var(--tx)">${(pt.ket_luan || '').replace(/^Kết luận:\s*/i, '')}</span></div>
+    </div>`;
+
+    html += `<div class="pb">
+      <div class="phdr"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">MARKETING PERFORMANCE - Kênh Cửa hàng</div><button class="btn-magic" style="display:inline-flex; align-items:center; margin-left:auto; padding:4px 8px; font-size:10px;" onclick="analyzeStoreData(this)">✨ Chẩn đoán Cửa hàng</button></div>
+      ${tqHtml}
+      ${tblHtml}
+      ${phanTichHtml}
+    </div>`;
+  }
+  
+  html += `</div>`;
+  document.getElementById('out').innerHTML = html;
+}
+
+// --- HÀM TẠO BÁO CÁO CHÍNH ---
+async function gen() {
+  const type = document.querySelector('input[name="rtype"]:checked').value;
+  const url = getApiUrl();
+
+  document.getElementById('hist-sel').value = ""; 
+  viewHist(); 
+  document.getElementById('gbtn').disabled = true;
+  document.getElementById('magic-btn').style.display = 'none';
+  
+  // Hiển thị vòng quay loading
+  showLoad();
+
+  try {
+    if (type === 'Tuần') {
+      const week = document.getElementById('week').value.trim();
+      const from = document.getElementById('dfrom').value.trim();
+      const to = document.getElementById('dto').value.trim();
+      const valSpendG = parseNum(document.getElementById('spend-g').value.trim());
+      const valSpendM = parseNum(document.getElementById('spend-m').value.trim());
+      const sg = document.getElementById('sg').value.trim();
+      const sm = document.getElementById('sm').value.trim();
+
+      if (!sg && !sm && imgs.hcm.length === 0 && imgs.hn.length === 0) { 
+        alert('Vui lòng paste dữ liệu Sale hoặc upload ảnh cửa hàng!'); 
+        document.getElementById('gbtn').disabled = false;
+        document.getElementById('out').innerHTML = '';
+        return; 
+      }
+
+      const sys = `Bạn là trợ lý đọc báo cáo bán hàng. Trích xuất số liệu từ text Sale và đọc bảng từ ảnh cửa hàng. Trả về JSON thuần (không markdown, không text thêm).
+
+KHÔNG tự tính DT hệ thống, CP QC.
+Giữ nguyên định dạng số có dấu chấm phân cách nghìn. Thiếu thông tin ghi "—".
+
+LƯU Ý QUAN TRỌNG VỀ ẢNH CỬA HÀNG:
+1. Ảnh HCM: Cột "Doanh thu KHM" gán vào trường "khm_dt".
+2. Ảnh HN: Cột "DTT KHM" gán vào trường "khm_dt". Cột "Ngành hàng" gán vào "cat". Cột "Tổng DTT" gán vào "dt".
+
+JSON output:
+{
+  "gunze": {
+    "chitieu": "", "data": "", "dtt": "", "dtt_kpi": "", "tlchot": "", "gttb": "",
+    "chietkhau": "", "chietkhau_pct": "", "hangtralai": "", "hangtralai_pct": "",
+    "nguon": [{"kenh":"","sotien":"","pct":""}], "sp": [], "danhgia": "", "yoy": ""
+  },
+  "mp": {
+    "chitieu": "", "dtt": "", "dtt_kpi": "", "gttb": "",
+    "chietkhau": "", "chietkhau_pct": "", "hangtralai": "", "hangtralai_pct": "",
+    "web_sl": "", "web_dat": "", "web_chot": "",
+    "page_sl": "", "page_dat": "", "page_chot": "",
+    "nguon": [{"kenh":"","sotien":"","pct":""}], "sp": [], "danhgia": "", "yoy": ""
+  },
+  "stores_hcm": [
+    {
+      "name": "",
+      "rows": [
+        {"cat":"Thời trang","dt":"","khm_dt":""},
+        {"cat":"Đồ lót",    "dt":"","khm_dt":""},
+        {"cat":"Giày",      "dt":"","khm_dt":""},
+        {"cat":"MP",        "dt":"","khm_dt":""},
+        {"cat":"CSSK",      "dt":"","khm_dt":""}
+      ]
+    }
+  ],
+  "stores_hn": [
+    {
+      "name": "",
+      "rows": [
+        {"cat":"Giày",      "dt":"","khm_dt":""},
+        {"cat":"Đồ lót",    "dt":"","khm_dt":""},
+        {"cat":"TT",        "dt":"","khm_dt":""},
+        {"cat":"CS",        "dt":"","khm_dt":""},
+        {"cat":"MP",        "dt":"","khm_dt":""},
+        {"cat":"TP",        "dt":"","khm_dt":""},
+        {"cat":"GD",        "dt":"","khm_dt":""}
+      ]
+    }
+  ]
+}`;
+
+      const parts = [];
+      let txt = sys + '\n\n';
+      if (sg) txt += `=== SALE GUNZE ===\n${sg}\n\n`;
+      if (sm) txt += `=== SALE MỸ PHẨM ===\n${sm}\n\n`;
+      parts.push({ text: txt });
+
+      if (imgs.hcm.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG KHU VỰC HCM ===" }); imgs.hcm.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.hn.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG KHU VỰC HN ===" }); imgs.hn.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+
+      setStep(1);
+      const reqOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) };
+      const res = await fetchWithRetry(url, reqOptions);
+      
+      setStep(2);
+      const d = await res.json();
+      
+      let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      let firstIdx = rawResponse.indexOf('{');
+      let lastIdx = rawResponse.lastIndexOf('}');
+      if (firstIdx !== -1 && lastIdx !== -1) {
+          rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
+      }
+      const parsed = JSON.parse(rawResponse);
+
+      const khmGunzeHCM = sumKhmByCategory(parsed.stores_hcm, 'Đồ lót');
+      const khmMpHCM = sumKhmByCategory(parsed.stores_hcm, 'MP');
+      const khmGunzeHN = sumKhmByCategory(parsed.stores_hn, 'Đồ lót');
+      const khmMpHN = sumKhmByCategory(parsed.stores_hn, 'MP');
+      
+      const khmGunzeTotal = safeAdd(khmGunzeHCM, khmGunzeHN);
+      const khmMpTotal = safeAdd(khmMpHCM, khmMpHN);
+
+      const gc = calcMetrics(parsed.gunze || {}, khmGunzeTotal, valSpendG);
+      const mc = calcMetrics(parsed.mp || {}, khmMpTotal, valSpendM);
+
+      setStep(3);
+      renderTuan(parsed, gc, mc, khmGunzeTotal, khmGunzeHCM, khmGunzeHN, khmMpTotal, khmMpHCM, khmMpHN, week, from, to);
+      saveHist('Tuần', week, document.getElementById('out').innerHTML);
+
+    } else {
+      // --- LOGIC BÁO CÁO THÁNG ---
+      const period = document.getElementById('month').value.trim();
+      const from = document.getElementById('m-from').value.trim();
+      const to = document.getElementById('m-to').value.trim();
+
+      if (imgs.kpi.length === 0 || (imgs.thang_gunze.length === 0 && imgs.thang_mp.length === 0 && imgs.thang_cuahang.length === 0 && !excelTextData)) {
+        alert('Vui lòng upload File KPI và ít nhất 1 ảnh Số liệu dự án/cửa hàng (hoặc CSV)!'); 
+        document.getElementById('gbtn').disabled = false;
+        document.getElementById('out').innerHTML = '';
+        return;
+      }
+
+      const sysThang = `Bạn là Chuyên gia Phân tích Marketing. LÀM TỪNG BƯỚC và ĐỐI CHIẾU CHÍNH XÁC:
+
+=== DỰ ÁN GUNZE & MỸ PHẨM ===
+1. Đọc Ảnh KPI để lấy Mục tiêu (KPI) của tất cả các chỉ số.
+2. Đọc Ảnh Số liệu dự án để trích xuất đầy đủ: Doanh thu thuần (tuyệt đối KHÔNG lấy doanh thu tổng), Chi tiêu, Me/Re, Tổng Data, Đơn hàng, Tỷ lệ chốt tổng.
+3. RIÊNG DỰ ÁN MỸ PHẨM: Phải trích xuất tách biệt rõ "Data Web", "Tỷ lệ chốt Web" và "Data Page", "Tỷ lệ chốt Page".
+4. BẮT BUỘC FORMAT TẤT CẢ CHỈ SỐ: 
+   - Dòng 'value' CỦA MỌI CHỈ SỐ (Doanh thu thuần, Chi tiêu, Data, Tỷ lệ chốt...) BẮT BUỘC ghi "Thực đạt / Mục tiêu KPI" (VD: 135.000.000 / 158.942.737). Nếu thiếu KPI thì điền Thực đạt.
+   - Trường 'kpi_trend' dùng để ghi số liệu so sánh với tháng trước (VD: Tăng 15% so với TT, Giảm 5% so với TT).
+5. Viết "Đánh giá" dưới dạng mảng các câu nhận xét (bullet points). BẮT BUỘC GIỮ NGUYÊN QUY TẮC NÀY:
+   - Nhận xét tỷ lệ % hoàn thành KPI Doanh thu thuần và % tăng/giảm so với tháng trước.
+   - Nhận xét chi phí, data, tỷ lệ chốt.
+   - Riêng Mỹ phẩm: Bắt buộc phải có 1 gạch đầu dòng đánh giá và so sánh mức độ hiệu quả giữa kênh Web và kênh Page dựa trên tỷ lệ chốt của 2 hình thức này.
+6. Viết "Kết luận" tổng quan.
+
+=== KHỐI CỬA HÀNG ===
+7. TỪ DỮ LIỆU EXCEL: Lấy các số đã tính sẵn. Gán "TỔNG HỆ THỐNG" vào 'tong_quan'. ĐỐI VỚI TỪNG CỬA HÀNG trong 'danh_sach': Gán CHÍNH XÁC "Chi phí" vào 'chi_phi', "Hiển thị" vào 'do_phu' (Tuyệt đối lấy từ text Excel, không bịa số).
+8. TỪ ẢNH KPI: Lấy "Mục tiêu" làm KPI ("CH Mỗ Lao" = "Hà Đông").
+9. TỪ ẢNH THỰC ĐẠT: Lấy Số lượng KH (hoặc "Số bill") vào 'so_kh'. Doanh thu (hoặc "Số tổng") vào 'doanh_thu'. Cột chứa dấu % (như %KHM, Tỷ lệ KHM) vào 'khm'.
+10. TÍNH TOÁN CỬA HÀNG: 'kpi_pct' = (Doanh thu Thực đạt / Mục tiêu KPI) * 100, format "X%". Nếu thiếu data ghi "—".
+11. ĐÁNH GIÁ CỬA HÀNG:
+   - "chung": Tổng quan toàn hệ thống.
+   - "hn": Nhận xét Hà Nội (ĐQ, Trung H, HĐ, Mỹ Đình, TĐN, Times City, NGĐ).
+   - "hcm": Nhận xét HCM (LVS, NTT, HBT).
+   - "ket_luan": Phương hướng tháng tới.
+
+Trả về JSON thuần. Giữ format số có chấm phân cách nghìn. Cấu trúc BẮT BUỘC:
+{
+  "gunze": {
+    "metrics": [
+      {"name": "Doanh thu thuần", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Chi tiêu", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Me/Re", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Data", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Đơn hàng", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Tỷ lệ chốt", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."}
+    ],
+    "danh_gia": [
+      "Nhận xét về doanh thu thuần và KPI...",
+      "Nhận xét về chi phí, data, tỷ lệ chốt..."
+    ],
+    "ket_luan": "Kết luận tổng quan..."
+  },
+  "mp": {
+    "metrics": [
+      {"name": "Doanh thu thuần", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Chi tiêu", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Me/Re", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Data Tổng", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Data Web", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Tỷ lệ chốt Web", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Data Page", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
+      {"name": "Tỷ lệ chốt Page", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."}
+    ],
+    "danh_gia": [
+      "Nhận xét về doanh thu thuần và KPI...",
+      "Nhận xét so sánh hiệu quả chốt đơn giữa kênh Web và kênh Page...",
+      "Nhận xét về chi phí chung..."
+    ],
+    "ket_luan": "Kết luận tổng quan..."
+  },
+  "stores": {
+    "tong_quan": {"chi_phi": "...", "chi_phi_tt": "...", "hien_thi": "...", "hien_thi_tt": "...", "tiep_can": "...", "tiep_can_tt": "..."},
+    "danh_sach": [
+      {"ten": "Đỗ Quang", "chi_phi": "...", "so_kh": "...", "doanh_thu": "...", "kpi_pct": "...", "khm": "...", "do_phu": "..."}
+    ],
+    "phan_tich": {"chung": "...", "hn": ["..."], "hcm": ["..."], "ket_luan": "..."}
+  }
+}`;
+      
+      const parts = [{ text: sysThang }];
+      
+      if (excelTextData) parts.push({ text: `\n\n=== FILE DỮ LIỆU EXCEL KHỐI CỬA HÀNG ===\n${excelTextData}` });
+
+      if (imgs.kpi.length > 0) { parts.push({ text: "\n\n=== ẢNH KPI THÁNG NÀY ===" }); imgs.kpi.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_gunze.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN GUNZE (THÁNG NÀY & THÁNG TRƯỚC) ===` }); imgs.thang_gunze.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_mp.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN MỸ PHẨM (THÁNG NÀY & THÁNG TRƯỚC) ===` }); imgs.thang_mp.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_cuahang.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU THỰC ĐẠT CỬA HÀNG ===` }); imgs.thang_cuahang.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+
+      setStep(1);
+      const reqOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) };
+      const res = await fetchWithRetry(url, reqOptions);
+
+      setStep(2);
+      const d = await res.json();
+      
+      let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      let firstIdx = rawResponse.indexOf('{');
+      let lastIdx = rawResponse.lastIndexOf('}');
+      if (firstIdx !== -1 && lastIdx !== -1) {
+          rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
+      }
+      const parsed = JSON.parse(rawResponse);
+
+      setStep(3);
+      renderThang(parsed, period, from, to);
+      saveHist('Tháng', period, document.getElementById('out').innerHTML);
+    }
+    
+    // Hiển thị nút AI Magic sau khi tạo xong báo cáo
+    document.getElementById('magic-btn').style.display = 'inline-block';
+
+  } catch (e) {
+    console.error(e);
+    document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">⚠️</div><p style="color:var(--danger)">Lỗi: ${e.message}</p></div>`;
+  }
+  document.getElementById('gbtn').disabled = false;
+}
+
+// --- TÍNH NĂNG MỚI: AI CỐ VẤN CHIẾN LƯỢC ---
+async function getAiInsights() {
+  const rptEl = document.getElementById('rpt');
+  if (!rptEl) return;
+
+  const url = getApiUrl();
+
+  const magicBtn = document.getElementById('magic-btn');
+  const originalText = magicBtn.innerHTML;
+  magicBtn.innerHTML = '⏳ Phân tích...';
+  magicBtn.disabled = true;
+
+  // Trích xuất toàn bộ text của báo cáo hiện tại
+  const reportText = rptEl.innerText;
+  const prompt = `Bạn là Giám đốc Marketing (CMO) và Chuyên gia phân tích dữ liệu xuất sắc. 
+Dựa vào báo cáo kinh doanh thực tế dưới đây, hãy:
+1. Tóm tắt nhanh gọn tình hình (Executive Summary) cho Ban Giám Đốc.
+2. Đưa ra 3-5 đề xuất/hành động chiến lược TỐI ƯU NHẤT để cải thiện doanh thu, tăng tỷ lệ chốt và tối ưu chi phí quảng cáo cho giai đoạn tiếp theo.
+
+Yêu cầu trình bày: Ngắn gọn, súc tích, chia thành các gạch đầu dòng rõ ràng, không dùng các ký hiệu format phức tạp.
+
+=== DỮ LIỆU BÁO CÁO ===
+${reportText}`;
+
+  try {
+    const reqOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "text/plain" }
+      })
+    };
+    const res = await fetchWithRetry(url, reqOptions);
+    const d = await res.json();
+    const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) throw new Error('Không lấy được phản hồi từ AI');
+
+    // Thêm khối Đề xuất vào báo cáo
+    let insightBox = document.getElementById('ai-insight-box');
+    if (!insightBox) {
+      insightBox = document.createElement('div');
+      insightBox.id = 'ai-insight-box';
+      insightBox.className = 'pb ai-insight-box';
+      insightBox.style.borderColor = 'var(--warn)';
+      rptEl.appendChild(insightBox);
+    }
+
+    insightBox.innerHTML = `
+      <div class="phdr" style="background: rgba(255,188,87,0.1); border-bottom: 1px solid rgba(255,188,87,0.3);">
+        <div class="pdot" style="background:var(--warn)"></div>
+        <div class="pname" style="color:var(--warn)">✨ AI Cố Vấn: Góc Nhìn & Đề Xuất Chiến Lược</div>
+      </div>
+      <div class="nblk ai-insight-content" style="white-space: pre-wrap; font-size: 13px; line-height: 1.7; padding: 18px 20px;">${text}</div>
+    `;
+
+    // Cuộn xuống cuối để xem đề xuất
+    insightBox.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    
+    // Lưu ngay bản HTML mới (có chứa khối insight) vào LocalStorage
+    const val = document.getElementById('hist-sel').value;
+    if (val) {
+        const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        hist[val] = document.getElementById('out').innerHTML;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
+    }
+
+  } catch (e) {
+    alert('Lỗi phân tích: ' + e.message);
+  } finally {
+    magicBtn.innerHTML = originalText;
+    magicBtn.disabled = false;
+  }
+}
+
+// --- TÍNH NĂNG MỚI: AI CHẨN ĐOÁN HIỆU QUẢ CỬA HÀNG ---
+async function analyzeStoreData(btn) {
+  const pb = btn.closest('.pb');
+  const table = pb.querySelector('.stbl');
+  if (!table) {
+      alert("Không tìm thấy dữ liệu bảng cửa hàng để phân tích.");
+      return;
+  }
+
+  const url = getApiUrl();
+
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ Phân tích...';
+  btn.disabled = true;
+
+  // Lấy dữ liệu bảng
+  let dataStr = "";
+  table.querySelectorAll('tr').forEach(tr => {
+    const rowData = Array.from(tr.querySelectorAll('th, td')).map(td => td.innerText).join(' | ');
+    dataStr += rowData + '\n';
+  });
+
+  const prompt = `Bạn là Chuyên gia Phân tích Bán lẻ. Dựa vào bảng số liệu hiệu quả của các cửa hàng dưới đây, hãy:
+1. Xác định "Ngôi sao" (Cửa hàng hiệu quả nhất) và giải thích ngắn gọn (tương quan Chi phí, Doanh thu, Độ phủ, %KHM).
+2. Xác định "Báo động đỏ" (Cửa hàng kém hiệu quả nhất) và bắt bệnh (Ví dụ: Độ phủ cao nhưng không chốt được khách).
+3. Gợi ý 2 hành động tối ưu cục bộ cho các cửa hàng này.
+
+Trình bày bằng các gạch đầu dòng ngắn gọn, chuyên nghiệp. Tuyệt đối không sử dụng markdown phức tạp.
+
+=== DỮ LIỆU BẢNG ===\n${dataStr}`;
+
+  try {
+    const reqOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "text/plain" }
+      })
+    };
+    const res = await fetchWithRetry(url, reqOptions);
+    const d = await res.json();
+    const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) throw new Error('Không lấy được phản hồi từ AI');
+
+    let resultDiv = pb.querySelector('.store-ai-result');
+    if (!resultDiv) {
+      resultDiv = document.createElement('div');
+      resultDiv.className = 'store-ai-result analysis-box';
+      resultDiv.style.margin = '15px';
+      resultDiv.style.backgroundColor = 'rgba(56, 224, 176, 0.05)';
+      resultDiv.style.border = '1px solid rgba(56, 224, 176, 0.3)';
+      resultDiv.style.borderRadius = '8px';
+      pb.appendChild(resultDiv);
+    }
+    
+    resultDiv.innerHTML = `<div class="analysis-title" style="color:var(--acc2); font-size:14px; margin-bottom:8px;">✨ AI Khám Phá: Điểm mù Cửa hàng</div><div class="store-ai-result-content" style="font-size: 12px; line-height: 1.6; white-space: pre-wrap; color:var(--tx);">${text}</div>`;
+
+    // Lưu ngay bản HTML mới (có chứa khối insight) vào LocalStorage
+    const val = document.getElementById('hist-sel').value;
+    if (val) {
+        const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        hist[val] = document.getElementById('out').innerHTML;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
+    }
+  } catch (e) {
+    alert('Lỗi chẩn đoán: ' + e.message);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+// --- TÍNH NĂNG MỚI: TẠO LẠI ĐÁNH GIÁ (REGENERATE EVALUATION) ---
+async function regenerateEval(btn, projectName) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+      alert("⚠️ Cần API Key để sử dụng tính năng này!");
+      return;
+  }
+
+  const pb = btn.closest('.pb');
+  const evalContent = pb.querySelector('.eval-content');
+  if (!evalContent) return;
+
+  const url = getApiUrl();
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ Đang viết lại...';
+  btn.disabled = true;
+
+  // Lấy dữ liệu các chỉ số từ bảng (mgrid) của riêng khối đó
+  let dataStr = "";
+  pb.querySelectorAll('.mc').forEach(mc => {
+    let lbl = mc.querySelector('.mlbl')?.textContent.replace('tính', '').trim() || '';
+    let val = mc.querySelector('.mval')?.textContent.trim() || '';
+    let extra = mc.querySelector('.mcalc')?.textContent.trim() || '';
+    if (lbl) dataStr += `- ${lbl}: ${val} ${extra ? '('+extra+')' : ''}\n`;
+  });
+
+  const isMp = projectName.toLowerCase().includes('mỹ phẩm');
+  
+  const prompt = `Bạn là Chuyên gia Marketing. Dựa vào các chỉ số kinh doanh thực tế của ${projectName} dưới đây, hãy phân tích lại và viết phần đánh giá mới.
+  
+=== SỐ LIỆU HIỆN TẠI ===
+${dataStr}
+
+=== YÊU CẦU ===
+1. Đưa ra 3-4 gạch đầu dòng nhận xét chuyên sâu (đánh giá mức độ hoàn thành KPI, biến động chi phí, data, tỷ lệ chốt). ${isMp ? 'BẮT BUỘC so sánh hiệu quả chốt đơn giữa kênh Web và Page.' : ''}
+2. Đưa ra 1 câu kết luận định hướng (không viết lan man, tập trung vào số liệu).
+
+Trả về JSON thuần (không chứa markdown), theo cấu trúc:
+{
+  "danh_gia": ["nhận xét 1", "nhận xét 2", "nhận xét 3"],
+  "ket_luan": "câu kết luận"
+}`;
+
+  try {
+    const reqOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json" }
+      })
+    };
+    const res = await fetchWithRetry(url, reqOptions);
+    const d = await res.json();
+    
+    if (!d.candidates || !d.candidates[0]) throw new Error(d.error?.message || "AI từ chối phản hồi.");
+    
+    let rawResponse = d.candidates[0].content?.parts?.[0]?.text || "";
+    let firstIdx = rawResponse.indexOf('{');
+    let lastIdx = rawResponse.lastIndexOf('}');
+    if (firstIdx !== -1 && lastIdx !== -1) {
+        rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
+    }
+    const parsed = JSON.parse(rawResponse);
+
+    // Cập nhật lại UI bằng kết quả mới
+    let newEvalHtml = '';
+    if (parsed.danh_gia && parsed.danh_gia.length) {
+      newEvalHtml += `<ul class="eval-list">`;
+      parsed.danh_gia.forEach(item => newEvalHtml += `<li>${item}</li>`);
+      newEvalHtml += `</ul>`;
+    }
+    if (parsed.ket_luan) {
+      newEvalHtml += `<div><span class="ket-luan-text">Kết luận: </span><span class="ket-luan-text" style="font-weight:normal">${parsed.ket_luan.replace(/^Kết luận:\s*/i, '')}</span></div>`;
+    }
+    
+    evalContent.innerHTML = newEvalHtml;
+
+    // Lưu thay đổi vào lịch sử LocalStorage
+    const val = document.getElementById('hist-sel').value;
+    if (val) {
+        const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        hist[val] = document.getElementById('out').innerHTML;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
+    }
+  } catch (e) {
+    alert('Lỗi tạo lại đánh giá: ' + e.message);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+function doCopy() {
+  const el = document.getElementById('rpt');
+  if (!el) return;
+  const lines = [];
+  el.querySelectorAll('.rweek,.rtitle').forEach(e => lines.push(e.textContent.trim()));
+  lines.push('');
+  
+  el.querySelectorAll('.pb').forEach(b => {
+    lines.push('=== ' + (b.querySelector('.pname')?.textContent || '').toUpperCase() + ' ===');
+    
+    // Copy Metrics
+    b.querySelectorAll('.mc').forEach(c => {
+      const l = c.querySelector('.mlbl')?.textContent?.replace('tính', '').trim() || '';
+      const v = c.querySelector('.mval')?.textContent || '';
+      const ex = c.querySelector('.mcalc')?.textContent || '';
+      if (l && v.trim()) lines.push(`- ${l}: ${v.trim()} ${ex ? '('+ex+')' : ''}`);
+    });
+
+    // Copy Info Blocks (Từ báo cáo tuần)
+    b.querySelectorAll('.nblk').forEach(n => lines.push(n.textContent.trim().replace(/\s+/g, ' ')));
+    
+    // Nếu khối này là của AI Insight, lấy riêng text bên trong
+    if(b.classList.contains('ai-insight-box')) {
+        const aiContent = b.querySelector('.ai-insight-content');
+        if (aiContent) lines.push(aiContent.textContent.trim());
+    }
+
+    b.querySelectorAll('.khm-item').forEach(k => {
+      lines.push('- ' + k.textContent.trim().replace(/\s+/g, ' '));
+    });
+
+    // Copy Analysis Box (Từ báo cáo tháng)
+    const evalTitle = b.querySelector('.analysis-title');
+    if (evalTitle && !b.classList.contains('store-ai-result')) {
+       lines.push('\nĐánh giá:');
+       b.querySelectorAll('.eval-list li').forEach(li => lines.push(`- ${li.textContent.trim()}`));
+       const conc = b.querySelector('.ket-luan-text');
+       if (conc) lines.push(`\nKết luận: ${conc.parentNode.textContent.replace(/^Kết luận:\s*/i, '').trim()}`);
+    }
+    
+    // Copy tables (Cửa hàng)
+    b.querySelectorAll('.stbl tr').forEach(r => {
+      const cs = Array.from(r.querySelectorAll('th,td')).map(c => c.textContent.trim());
+      if (cs.some(c => c)) lines.push(cs.join(' | '));
+    });
+
+    // Copy AI Chẩn đoán cửa hàng (nếu có)
+    const storeAi = b.querySelector('.store-ai-result-content');
+    if (storeAi) {
+       lines.push('\n✨ CHẨN ĐOÁN CỬA HÀNG (AI):');
+       lines.push(storeAi.textContent.trim());
+    }
+
+    lines.push('');
+  });
+  
+  const textToCopy = lines.join('\n');
+  const textArea = document.createElement("textarea");
+  textArea.value = textToCopy;
+  
+  // Tránh việc khung text này hiển thị hay làm xô lệch giao diện
+  textArea.style.position = "fixed";
+  textArea.style.left = "-999999px";
+  textArea.style.top = "-999999px";
+  document.body.appendChild(textArea);
+  
+  textArea.focus();
+  textArea.select();
+
+  try {
+    document.execCommand('copy');
+    const b = document.getElementById('cbtn');
+    b.textContent = '✓ Đã sao chép'; b.classList.add('ok');
+    setTimeout(() => { b.innerHTML = '⎘ Sao chép'; b.classList.remove('ok'); }, 2200);
+  } catch (err) {
+    console.error('Không thể sao chép', err);
+    alert('Trình duyệt của bạn chặn sao chép tự động. Vui lòng bôi đen văn bản để copy thủ công.');
+  }
+  
+  document.body.removeChild(textArea);
+}
+</script>
+</body>
+</html>
