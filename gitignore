@@ -1,0 +1,39 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Node modules (nếu sau này bạn có cài đặt công cụ dev)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment variables (đề phòng bạn lưu key ra file text/env ở local)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.key
+
+# Test data / Dummy files
+*.csv
+*.xlsx
+*.png
+*.jpg
+*.jpeg
+/test-data/
+/temp/
