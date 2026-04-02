@@ -940,15 +940,20 @@ function resetChat() {
 
 async function sendChat() {
   const inputEl = document.getElementById('chat-input');
+  const btnEl = inputEl.nextElementSibling; // Tìm nút Gửi
   const text = inputEl.value.trim();
   if (!text) return;
 
   const rptEl = document.getElementById('rpt');
   if (!rptEl) { alert("Vui lòng tạo báo cáo trước khi chat!"); return; }
 
+  // 1. KHOÁ Ô NHẬP ĐỂ CHỐNG LỖI BẤM ĐÚP (DOUBLE-CLICK)
+  inputEl.disabled = true;
+  btnEl.disabled = true;
+
   const chatHist = document.getElementById('chat-hist');
   
-  // 1. In câu hỏi ra màn hình
+  // In câu hỏi ra màn hình
   chatHist.innerHTML += `<div style="background: rgba(79, 124, 255, 0.1); border: 1px solid rgba(79, 124, 255, 0.3); color: var(--tx); padding: 8px 12px; border-radius: 8px; align-self: flex-end; max-width: 85%; line-height: 1.5;">${text}</div>`;
   inputEl.value = '';
   chatHist.scrollTop = chatHist.scrollHeight;
@@ -957,12 +962,11 @@ async function sendChat() {
   chatHist.innerHTML += `<div id="${aiWaitId}" style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;">⏳ Đang suy nghĩ và phân tích...</div>`;
   chatHist.scrollTop = chatHist.scrollHeight;
 
-  // Lấy dữ liệu gốc để đối chiếu (Self-correction)
   const rawSaleG = document.getElementById('sg') ? document.getElementById('sg').value.trim() : '';
   const rawSaleM = document.getElementById('sm') ? document.getElementById('sm').value.trim() : '';
   const rawExcel = typeof excelTextData !== 'undefined' ? excelTextData : '';
 
-  // 2. Xây dựng Trí nhớ
+  // 2. XÂY DỰNG TRÍ NHỚ (MỞ KHÓA 100% DỮ LIỆU)
   if (chatContext.length === 0) {
     chatContext.push({
       role: "user",
@@ -988,16 +992,23 @@ ${text}` }]
     chatContext.push({ role: "user", parts: [{ text: text }] });
   }
 
-  // 3. Gửi đi (Nhiệt độ 0.4 cho phép văn phong tự nhiên)
+  // 3. GỬI ĐI VÀ BẮT LỖI TRỰC TIẾP
   try {
-    const res = await fetchWithRetry(getApiUrl(), {
+    const res = await fetch(getApiUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: chatContext, generationConfig: { temperature: 0.4 } })
     });
     
     const d = await res.json();
-    const reply = d.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi gặp sự cố khi phân tích câu này.";
+    
+    // NẾU CÓ LỖI TỪ GOOGLE, IN CHÍNH XÁC LỖI ĐÓ RA
+    if (!res.ok) {
+        throw new Error(d.error?.message || `Lỗi HTTP ${res.status} không xác định`);
+    }
+    
+    const reply = d.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!reply) throw new Error("AI trả về kết quả rỗng (Có thể do lỗi kiểm duyệt nội dung).");
     
     chatContext.push({ role: "model", parts: [{ text: reply }] });
 
@@ -1009,8 +1020,13 @@ ${text}` }]
     chatHist.scrollTop = chatHist.scrollHeight;
     
   } catch (e) {
-    chatContext.pop(); 
-    document.getElementById(aiWaitId).outerHTML = `<div style="background: rgba(255, 95, 126, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 8px; align-self: flex-start;">⚠️ Lỗi kết nối AI hoặc hết hạn ngạch.</div>`;
+    chatContext.pop(); // Rút câu hỏi ra để tránh bị kẹt luồng
+    document.getElementById(aiWaitId).outerHTML = `<div style="background: rgba(255, 95, 126, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 8px; align-self: flex-start;">⚠️ Lỗi API: ${e.message}</div>`;
+  } finally {
+    // MỞ KHÓA Ô NHẬP ĐỂ CHAT TIẾP
+    inputEl.disabled = false;
+    btnEl.disabled = false;
+    inputEl.focus();
   }
 }
 </script>
