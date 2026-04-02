@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Báo Cáo Tổng Hợp — AI</title>
-  <script src="[https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js](https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js)"></script>
-<script src="[https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js](https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js)"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-@import url('[https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap](https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap)');
-:root{--bg:#0f1117;--sur:#181c27;--sur2:#1e2336;--bdr:#2a3050;--acc:#4f7cff;--acc2:#38e0b0;--warn:#ffbc57;--danger:#ff5f7e;--tx:#e8eaf6;--tx2:#8892b0;--tx3:#4a5470;--gunze:#4f7cff;--mp:#38e0b0;--eval:#a63d40;}
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--bg:#0f1117;--sur:#181c27;--sur2:#1e2336;--bdr:#2a3050;--acc:#4f7cff;--acc2:#38e0b0;--warn:#ffbc57;--danger:#ff5f7e;--tx:#e8eaf6;--tx2:#8892b0;--tx3:#4a5470;--gunze:#4f7cff;--mp:#38e0b0;--eval:#a63d40;--fc:#b388ff;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;}
 header{padding:16px 26px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:13px;background:var(--sur);}
@@ -44,15 +45,15 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
 .thumb{position:relative;width:68px;height:68px;border-radius:6px;overflow:hidden;border:1px solid var(--bdr);}
 .thumb img{width:100%;height:100%;object-fit:cover;}
 .thumb button{position:absolute;top:2px;right:2px;width:15px;height:15px;background:rgba(0,0,0,.75);border:none;border-radius:50%;color:white;font-size:8px;cursor:pointer;}
+.thumb-excel{width:auto; height:auto; padding:6px 12px 6px 6px; background:var(--sur2); border:1px solid var(--bdr); border-radius:6px; display:flex; align-items:center; gap:6px; font-size:10px; color:var(--acc2); position:relative;}
+.thumb-excel button{position:absolute; top:2px; right:2px; width:12px; height:12px; background:rgba(255,95,126,.8); border:none; border-radius:50%; color:white; font-size:7px; cursor:pointer;}
 .btn-gen{margin:14px 18px 18px;padding:13px;background:var(--acc);color:white;border:none;border-radius:9px;font-family:'Be Vietnam Pro',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;flex-shrink:0;}
 .btn-gen:hover:not(:disabled){background:#3a6ae0;transform:translateY(-1px);}
 .btn-gen:disabled{opacity:.45;cursor:not-allowed;transform:none;}
 .right{display:flex;flex-direction:column;overflow:hidden;}
-.out-bar{padding:11px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;background:var(--sur);flex-shrink:0;}
+.out-bar{padding:11px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;background:var(--sur);flex-shrink:0; flex-wrap:wrap; gap: 10px;}
 .out-bar span{font-size:11px;color:var(--tx2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
 .hist-select{background:var(--sur2);color:var(--tx);border:1px solid var(--bdr);border-radius:6px;padding:5px 8px;font-family:'Be Vietnam Pro',sans-serif;font-size:11px;outline:none;cursor:pointer;max-width:180px;}
-
-/* CSS cho khu vực nhập API Key */
 .api-key-box { display: flex; gap: 6px; margin-bottom: 15px; }
 .api-key-box input { flex: 1; background: var(--sur2); border: 1px solid var(--bdr); border-radius: 6px; color: var(--tx); padding: 7px 10px; font-size: 11px; outline: none; transition: border .2s; font-family: 'Be Vietnam Pro', sans-serif;}
 .api-key-box input:focus { border-color: var(--acc); }
@@ -61,12 +62,12 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
 .btn-save-key:disabled { opacity: 0.7; cursor: not-allowed; }
 .btn-del-key { padding: 7px 12px; background: transparent; border: 1px solid var(--danger); border-radius: 6px; color: var(--danger); cursor: pointer; font-size: 11px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; transition: .2s; }
 .btn-del-key:hover { background: rgba(255,95,126,.1); }
-
-/* Nút tính năng AI LLM mới */
-.btn-magic { padding: 6px 13px; background: rgba(255, 188, 87, 0.1); border: 1px solid rgba(255, 188, 87, 0.5); border-radius: 6px; color: var(--warn); font-family: 'Be Vietnam Pro', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; transition: all .3s ease; display: none; }
-.btn-magic:hover:not(:disabled) { background: rgba(255, 188, 87, 0.2); border-color: var(--warn); box-shadow: 0 0 10px rgba(255, 188, 87, 0.3); transform: translateY(-1px); }
+.btn-magic { padding: 6px 13px; border-radius: 6px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; transition: all .3s ease; display: none; }
+.btn-magic.opt { background: rgba(255, 188, 87, 0.1); border: 1px solid rgba(255, 188, 87, 0.5); color: var(--warn); }
+.btn-magic.opt:hover:not(:disabled) { background: rgba(255, 188, 87, 0.2); border-color: var(--warn); box-shadow: 0 0 10px rgba(255, 188, 87, 0.3); transform: translateY(-1px); }
+.btn-magic.fc { background: rgba(179, 136, 255, 0.1); border: 1px solid rgba(179, 136, 255, 0.5); color: var(--fc); }
+.btn-magic.fc:hover:not(:disabled) { background: rgba(179, 136, 255, 0.2); border-color: var(--fc); box-shadow: 0 0 10px rgba(179, 136, 255, 0.3); transform: translateY(-1px); }
 .btn-magic:disabled { opacity: 0.6; cursor: not-allowed; }
-
 .btn-copy{padding:6px 13px;background:transparent;border:1px solid var(--bdr);border-radius:6px;color:var(--tx2);font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;}
 .btn-copy:hover{border-color:var(--acc);color:var(--acc);}
 .btn-copy.ok{border-color:var(--acc2);color:var(--acc2);}
@@ -135,7 +136,7 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
 <body onload="initApp()">
 <header>
   <div class="logo">⚡</div>
-  <div><h1>Báo Cáo AI</h1><p>Hỗ trợ tổng hợp báo cáo tự động cho Tuần & Tháng</p></div>
+  <div><h1>Báo Cáo AI (Bản Tối Thượng)</h1><p>Đọc Excel/Ảnh, Hỏi đáp đối chiếu & Dự báo tương lai</p></div>
 </header>
 <div class="app">
   <div class="left">
@@ -187,7 +188,7 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
           <textarea id="sm" placeholder="Paste toàn bộ báo cáo Mỹ phẩm từ Sale vào đây..."></textarea>
         </div>
 
-        <div class="sec-lbl">Dữ liệu từ cửa hàng (upload ảnh)</div>
+        <div class="sec-lbl">Dữ liệu từ cửa hàng (Ảnh / Excel)</div>
         <div class="iblock">
           <div class="iblock-hdr">
             <div class="idot" style="background:var(--warn)"></div>
@@ -195,9 +196,9 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
           </div>
           <div class="img-area">
             <div class="drop-zone">
-              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'hcm')">
+              <input type="file" accept="image/*, .xlsx, .xls, .csv" multiple onchange="handleFiles(this.files, 'hcm')">
               <div class="drop-lbl">
-                <strong>📷 Kéo thả ảnh Cửa hàng HCM</strong>
+                <strong>📷 Tải Ảnh hoặc File Excel Cửa hàng HCM</strong>
                 (Lấy cột: Doanh thu KHM)
               </div>
             </div>
@@ -212,9 +213,9 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
           </div>
           <div class="img-area">
             <div class="drop-zone">
-              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'hn')">
+              <input type="file" accept="image/*, .xlsx, .xls, .csv" multiple onchange="handleFiles(this.files, 'hn')">
               <div class="drop-lbl">
-                <strong>📷 Kéo thả ảnh Cửa hàng HN</strong>
+                <strong>📷 Tải Ảnh hoặc File Excel Cửa hàng HN</strong>
                 (Lấy cột: DTT KHM)
               </div>
             </div>
@@ -236,7 +237,7 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
       </div>
 
       <div id="tab-thang" class="d-none">
-        <div class="sec-lbl">Thông tin báo cáo Tháng</div>
+        <div class="sec-lbl">ThôngChứng cáo Tháng</div>
         <div class="meta-row">
           <input id="month" placeholder="Tháng số (VD: 2)" type="number">
           <input id="m-from" placeholder="Từ ngày (1/2)">
@@ -251,9 +252,9 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
           </div>
           <div class="img-area">
             <div class="drop-zone">
-              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'kpi')">
+              <input type="file" accept="image/*, .xlsx, .xls, .csv" multiple onchange="handleFiles(this.files, 'kpi')">
               <div class="drop-lbl">
-                <strong>📷 Tải lên ảnh File KPI Tháng này</strong>
+                <strong>📷 Tải lên Ảnh hoặc File Excel KPI</strong>
                 (AI lấy mốc mục tiêu từ đây để so sánh)
               </div>
             </div>
@@ -270,10 +271,10 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
           </div>
           <div class="img-area">
             <div class="drop-zone">
-              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'thang_gunze')">
+              <input type="file" accept="image/*, .xlsx, .xls, .csv" multiple onchange="handleFiles(this.files, 'thang_gunze')">
               <div class="drop-lbl">
-                <strong>📷 Tải lên số liệu Gunze</strong>
-                (File ảnh chứa kết quả Tháng này + Tháng trước)
+                <strong>📷 Tải Ảnh hoặc File Excel Gunze</strong>
+                (Chứa kết quả Tháng này + Tháng trước)
               </div>
             </div>
             <div class="previews" id="previews-thang_gunze"></div>
@@ -287,10 +288,10 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
           </div>
           <div class="img-area">
             <div class="drop-zone">
-              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'thang_mp')">
+              <input type="file" accept="image/*, .xlsx, .xls, .csv" multiple onchange="handleFiles(this.files, 'thang_mp')">
               <div class="drop-lbl">
-                <strong>📷 Tải lên số liệu Mỹ phẩm</strong>
-                (File ảnh chứa kết quả Tháng này + Tháng trước)
+                <strong>📷 Tải Ảnh hoặc File Excel Mỹ phẩm</strong>
+                (Chứa kết quả Tháng này + Tháng trước)
               </div>
             </div>
             <div class="previews" id="previews-thang_mp"></div>
@@ -302,13 +303,13 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
         <div class="iblock">
           <div class="iblock-hdr">
             <div class="idot" style="background:var(--warn)"></div>
-            <div class="iblock-title" style="color:var(--warn)">Input 2: Dữ liệu Excel Cửa hàng</div>
+            <div class="iblock-title" style="color:var(--warn)">Input 2: Dữ liệu Facebook/Cửa hàng</div>
           </div>
           <div class="img-area">
             <div class="drop-zone">
-              <input type="file" accept=".csv, .txt" onchange="handleExcelFile(this.files)">
+              <input type="file" accept=".xlsx, .xls, .csv, .txt" onchange="handleSpecialExcelFile(this.files)">
               <div class="drop-lbl">
-                <strong>📁 Tải lên file Excel (.csv)</strong>
+                <strong>📁 Tải lên file Excel / CSV (Ads)</strong>
                 (Chứa: Chi phí, Hiển thị, Tiếp cận...)
               </div>
             </div>
@@ -319,13 +320,13 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
         <div class="iblock">
           <div class="iblock-hdr">
             <div class="idot" style="background:var(--warn)"></div>
-            <div class="iblock-title" style="color:var(--warn)">Input 3: Ảnh Số liệu Thực đạt</div>
+            <div class="iblock-title" style="color:var(--warn)">Input 3: Số liệu Thực đạt Cửa hàng</div>
           </div>
           <div class="img-area">
             <div class="drop-zone">
-              <input type="file" accept="image/*" multiple onchange="handleImgs(this.files, 'thang_cuahang')">
+              <input type="file" accept="image/*, .xlsx, .xls, .csv" multiple onchange="handleFiles(this.files, 'thang_cuahang')">
               <div class="drop-lbl">
-                <strong>📷 Tải lên ảnh Thực đạt Cửa hàng</strong>
+                <strong>📷 Tải Ảnh hoặc Excel Thực đạt CH</strong>
                 (Chứa: Số lượng KH, Doanh thu, %KHM)
               </div>
             </div>
@@ -335,8 +336,8 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
       </div>
 
       <div class="sec-lbl" style="margin-top: 15px;">Ghi chú thêm cho AI (Tùy chọn)</div>
-      <textarea id="ai-custom-note" placeholder="VD: Hãy viết kết luận thật ngắn gọn, nhấn mạnh vào việc giảm chi phí..." style="min-height: 60px; margin-bottom: 15px; border: 1px solid var(--bdr); border-radius: 8px; background: var(--sur); padding: 10px; color: var(--tx); font-size: 11px;"></textarea>
-      
+      <textarea id="ai-custom-note" placeholder="VD: Nhấn mạnh vào lý do hụt doanh thu, hoặc phân tích sâu về hiệu quả chốt đơn..." style="min-height: 60px; margin-bottom: 15px; border: 1px solid var(--bdr); border-radius: 8px; background: var(--sur); padding: 10px; color: var(--tx); font-size: 11px;"></textarea>
+
     </div>
     <button class="btn-gen" id="gbtn" onclick="gen()">✦ Tạo báo cáo bằng AI</button>
   </div>
@@ -352,7 +353,8 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
         <button id="del-all-btn" class="btn-del-hist" onclick="deleteAllHist()" title="Xoá toàn bộ lịch sử">🧹 Xoá hết</button>
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
-        <button id="magic-btn" class="btn-magic" onclick="getAiInsights()" title="Dùng AI phân tích sâu & Đề xuất chiến lược">✨ Đề xuất tối ưu</button>
+        <button id="magic-btn" class="btn-magic opt" onclick="getAiInsights()" title="Đề xuất chiến lược tối ưu">✨ Đề xuất</button>
+        <button id="forecast-btn" class="btn-magic fc" onclick="forecastFuture()" title="Dự báo doanh thu chu kỳ tới">🔮 Dự báo</button>
         <button class="btn-copy" id="img-btn" onclick="exportImage()" title="Lưu báo cáo thành file Ảnh (PNG)">📸 Tải Ảnh</button>
         <button class="btn-copy" id="pdf-btn" onclick="exportPDF()" title="Lưu báo cáo thành file PDF">📄 Tải PDF</button>
         <button class="btn-copy" id="cbtn" onclick="doCopy()">⎘ Sao chép</button>
@@ -369,13 +371,13 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
     
     <div class="chat-box" id="ai-chat-box" style="display: none; flex-direction: column; height: 260px; border-top: 1px solid var(--bdr); background: var(--sur); flex-shrink: 0;">
       <div style="padding: 10px 22px; font-size: 11px; font-weight: 700; color: var(--warn); border-bottom: 1px solid var(--bdr); background: rgba(255, 188, 87, 0.05); text-transform: uppercase;">
-        💬 Hỏi đáp với số liệu báo cáo
+        💬 Hỏi đáp & Cố vấn dữ liệu
       </div>
       <div class="chat-hist" id="chat-hist" style="flex: 1; overflow-y: auto; padding: 15px 22px; font-size: 12px; display: flex; flex-direction: column; gap: 10px;">
-        <div class="msg ai" style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;">Chào bạn! Tôi đã nắm được dữ liệu. Bạn muốn hỏi thêm điều gì?</div>
+        <div class="msg ai" style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;">Chào sếp! Tôi là Trợ lý Dữ liệu cấp cao. Tôi đã đọc xong báo cáo, sếp cần kiểm tra chéo, phân tích hay bóc tách số liệu nào cứ bảo tôi nhé!</div>
       </div>
       <div class="chat-input-area" style="display: flex; padding: 10px 22px; gap: 8px; border-top: 1px solid var(--bdr); background: var(--bg);">
-        <input type="text" id="chat-input" placeholder="Hỏi AI về báo cáo này..." style="flex: 1; background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx); padding: 8px 12px; border-radius: 6px; font-size: 12px; outline: none; font-family: 'Be Vietnam Pro', sans-serif;" onkeypress="if(event.key === 'Enter') sendChat()">
+        <input type="text" id="chat-input" placeholder="Hỏi AI kiểm tra số liệu, giải thích nguyên nhân..." style="flex: 1; background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx); padding: 8px 12px; border-radius: 6px; font-size: 12px; outline: none; font-family: 'Be Vietnam Pro', sans-serif;" onkeypress="if(event.key === 'Enter') sendChat()">
         <button onclick="sendChat()" style="background: var(--acc); color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Gửi</button>
       </div>
     </div>
@@ -384,43 +386,27 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
 </div>
 
 <script>
+// --- QUẢN LÝ APP CHUNG ---
 function initApp() {
   loadHistList();
   const savedKey = localStorage.getItem('gemini_api_key');
   const keyInput = document.getElementById('api-key-input');
-  if (savedKey) {
-    keyInput.value = savedKey;
-    keyInput.style.borderColor = 'var(--acc2)'; 
-  }
+  if (savedKey) { keyInput.value = savedKey; keyInput.style.borderColor = 'var(--acc2)'; }
 }
 
 async function saveApiKey() {
   const keyInput = document.getElementById('api-key-input');
   const key = keyInput.value.trim();
   const btn = document.querySelector('.btn-save-key');
-  
   if (!key) { alert("Vui lòng nhập API Key trước khi lưu!"); return; }
-
-  const ogText = btn.textContent;
-  btn.textContent = "Đang kiểm tra...";
-  btn.disabled = true;
-
+  const ogText = btn.textContent; btn.textContent = "Đang kiểm tra..."; btn.disabled = true;
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
     const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "ping" }] }] }) });
-    if (res.ok) {
-      localStorage.setItem('gemini_api_key', key);
-      keyInput.style.borderColor = "var(--acc2)";
-      alert("✅ API Key hợp lệ và đã được lưu an toàn!");
-    } else {
-      const errData = await res.json();
-      keyInput.style.borderColor = "var(--danger)";
-      alert(`❌ API Key không hợp lệ hoặc bị lỗi (${res.status}):\n${errData.error?.message || 'Vui lòng kiểm tra lại.'}`);
-    }
-  } catch (e) {
-    keyInput.style.borderColor = "var(--warn)";
-    alert("⚠️ Lỗi kết nối mạng, không thể kiểm tra API Key lúc này. Vui lòng kiểm tra lại internet!");
-  } finally { btn.textContent = ogText; btn.disabled = false; }
+    if (res.ok) { localStorage.setItem('gemini_api_key', key); keyInput.style.borderColor = "var(--acc2)"; alert("✅ API Key hợp lệ và đã được lưu!"); } 
+    else { const errData = await res.json(); keyInput.style.borderColor = "var(--danger)"; alert(`❌ API Key bị lỗi (${res.status}):\n${errData.error?.message}`); }
+  } catch (e) { keyInput.style.borderColor = "var(--warn)"; alert("⚠️ Lỗi mạng, không thể kiểm tra lúc này."); } 
+  finally { btn.textContent = ogText; btn.disabled = false; }
 }
 
 function clearApiKey() {
@@ -430,33 +416,19 @@ function clearApiKey() {
   alert("Đã xoá API Key khỏi trình duyệt!");
 }
 
-function getApiKey() {
-  return localStorage.getItem('gemini_api_key') || document.getElementById('api-key-input').value.trim();
-}
-
-function getApiUrl() {
-  const key = getApiKey() || "";
-  const model = key ? "gemini-2.5-flash" : "gemini-2.5-flash-preview-09-2025";
-  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-}
+function getApiKey() { return localStorage.getItem('gemini_api_key') || document.getElementById('api-key-input').value.trim(); }
+function getApiUrl() { const key = getApiKey() || ""; const model = key ? "gemini-2.5-flash" : "gemini-2.5-flash-preview-09-2025"; return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`; }
 
 function updateUI() {
   const type = document.querySelector('input[name="rtype"]:checked').value;
-  if (type === 'Tuần') {
-    document.getElementById('tab-tuan').classList.remove('d-none');
-    document.getElementById('tab-thang').classList.add('d-none');
-  } else {
-    document.getElementById('tab-tuan').classList.add('d-none');
-    document.getElementById('tab-thang').classList.remove('d-none');
-  }
+  if (type === 'Tuần') { document.getElementById('tab-tuan').classList.remove('d-none'); document.getElementById('tab-thang').classList.add('d-none'); } 
+  else { document.getElementById('tab-tuan').classList.add('d-none'); document.getElementById('tab-thang').classList.remove('d-none'); }
 }
 
 const STORAGE_KEY = 'ai_report_history';
-
 function loadHistList() {
   const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  const sel = document.getElementById('hist-sel');
-  const delAllBtn = document.getElementById('del-all-btn');
+  const sel = document.getElementById('hist-sel'); const delAllBtn = document.getElementById('del-all-btn');
   sel.innerHTML = '<option value="">-- Xem lịch sử báo cáo --</option>';
   const keys = Object.keys(hist).sort().reverse();
   keys.forEach(k => { sel.innerHTML += `<option value="${k}">${k}</option>`; });
@@ -465,23 +437,21 @@ function loadHistList() {
 
 function viewHist() {
   const val = document.getElementById('hist-sel').value;
-  const delBtn = document.getElementById('del-btn');
-  const magicBtn = document.getElementById('magic-btn');
+  const delBtn = document.getElementById('del-btn'); 
+  const magicBtn = document.getElementById('magic-btn'); 
+  const forecastBtn = document.getElementById('forecast-btn');
   const chatBox = document.getElementById('ai-chat-box');
   
+  resetChat(); // Reset não cá vàng của Chatbot
+
   if(!val) {
     document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">🗂️</div><p>Chọn một báo cáo từ lịch sử để xem</p></div>`;
-    delBtn.style.display = 'none';
-    magicBtn.style.display = 'none';
-    if(chatBox) chatBox.style.display = 'none';
-    return;
+    delBtn.style.display = 'none'; magicBtn.style.display = 'none'; forecastBtn.style.display = 'none'; if(chatBox) chatBox.style.display = 'none'; return;
   }
   const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
   if(hist[val]) {
     document.getElementById('out').innerHTML = hist[val];
-    delBtn.style.display = 'block';
-    magicBtn.style.display = 'inline-block';
-    if(chatBox) chatBox.style.display = 'flex';
+    delBtn.style.display = 'block'; magicBtn.style.display = 'inline-block'; forecastBtn.style.display = 'inline-block'; if(chatBox) chatBox.style.display = 'flex';
   }
 }
 
@@ -489,199 +459,146 @@ function saveHist(type, periodStr, htmlStr) {
   const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
   const dateStr = new Date().toLocaleString('vi-VN', {hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'});
   const keyName = periodStr ? `${type} ${periodStr}` : `Báo cáo ${type} (${dateStr})`;
-  hist[keyName] = htmlStr;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
+  hist[keyName] = htmlStr; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
   loadHistList(); document.getElementById('hist-sel').value = keyName; viewHist(); 
 }
 
 function deleteHist() {
-  const val = document.getElementById('hist-sel').value;
-  if(!val) return;
-  if(!confirm(`Bạn có chắc chắn muốn xoá vĩnh viễn báo cáo "${val}" khỏi lịch sử không?`)) return;
-  const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  delete hist[val]; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); 
+  const val = document.getElementById('hist-sel').value; if(!val) return;
+  if(!confirm(`Bạn có chắc muốn xoá báo cáo "${val}"?`)) return;
+  const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); delete hist[val]; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); 
   loadHistList(); viewHist(); 
 }
+function deleteAllHist() { if(!confirm(`⚠️ NGUY HIỂM: Xoá TOÀN BỘ lịch sử báo cáo?`)) return; localStorage.removeItem(STORAGE_KEY); loadHistList(); viewHist(); }
 
-function deleteAllHist() {
-  if(!confirm(`⚠️ NGUY HIỂM: Bạn có CHẮC CHẮN muốn xoá TOÀN BỘ lịch sử báo cáo không?\n\nHành động này không thể hoàn tác!`)) return;
-  localStorage.removeItem(STORAGE_KEY); loadHistList(); viewHist(); 
-}
 
+// --- XỬ LÝ FILE (ẢNH & EXCEL) DUAL-SUPPORT ---
 let imgs = { hcm: [], hn: [], kpi: [], thang_gunze: [], thang_mp: [], thang_cuahang: [] };
+let excels = { hcm: [], hn: [], kpi: [], thang_gunze: [], thang_mp: [], thang_cuahang: [] };
 let excelTextData = '';
 
-function handleImgs(files, region) {
+function handleFiles(files, region) {
   Array.from(files).forEach(f => {
-    if (!f.type.startsWith('image/')) return;
-    const r = new FileReader();
-    r.onload = e => { 
-      const res = e.target && e.target.result;
-      if (typeof res === 'string' && res.includes(',')) {
-        const parts = res.split(',');
-        if (parts.length > 1) { imgs[region].push({ data: parts[1], type: f.type, name: f.name }); renderPrev(region); }
-      }
-    };
-    r.readAsDataURL(f);
+    if (f.type.startsWith('image/')) {
+      const r = new FileReader();
+      r.onload = e => { 
+        const res = e.target.result;
+        if (typeof res === 'string' && res.includes(',')) {
+          imgs[region].push({ data: res.split(',')[1], type: f.type, name: f.name }); renderPrev(region); 
+        }
+      };
+      r.readAsDataURL(f);
+    } else if (f.name.match(/\.(xlsx|xls|csv)$/i)) {
+      const r = new FileReader();
+      r.onload = e => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        let text = `\n--- DỮ LIỆU EXCEL: ${f.name} ---\n`;
+        workbook.SheetNames.forEach(sheet => { text += `[Sheet: ${sheet}]\n` + XLSX.utils.sheet_to_csv(workbook.Sheets[sheet]) + '\n'; });
+        excels[region].push({ text: text, name: f.name }); renderPrev(region);
+      };
+      r.readAsArrayBuffer(f);
+    }
   });
 }
 
-function parseAnyNum(str) {
-  if(!str) return 0;
-  let s = String(str).trim().replace(/"/g, '');
-  if (s === '-' || s === '') return 0;
-  if (s.includes(',') && s.includes('.')) {
-    if (s.indexOf(',') > s.indexOf('.')) { s = s.replace(/\./g, '').replace(',', '.'); } 
-    else { s = s.replace(/,/g, ''); }
-  } else if (s.includes(',')) {
-    let parts = s.split(',');
-    if (parts.length > 2) s = s.replace(/,/g, '');
-    else { if (parts[1] && parts[1].length === 3) s = s.replace(/,/g, ''); else s = s.replace(',', '.'); }
-  } else if (s.includes('.')) {
-    let parts = s.split('.');
-    if (parts.length > 2) s = s.replace(/\./g, '');
-    else { if (parts[1] && parts[1].length === 3) s = s.replace(/\./g, ''); }
-  }
-  return parseFloat(s.replace(/[^\d.-]/g, '')) || 0;
-}
-
-function handleExcelFile(files) {
-  if (!files || files.length === 0) return;
-  const f = files[0]; const r = new FileReader();
-  r.onload = e => { 
-    let rawText = e?.target?.result || ""; 
-    try { excelTextData = aggregateCSV(rawText); } 
-    catch(err) { excelTextData = "DỮ LIỆU EXCEL THÔ:\n" + (rawText ? rawText.substring(0, 5000) : ""); }
-    document.getElementById('preview-excel').innerHTML = `<div style="font-size:11px; font-weight:600; color:var(--acc2); padding-top:5px;">✓ Đã xử lý & cộng tổng số liệu file: ${f.name}</div>`;
-  };
-  r.readAsText(f);
-}
-
-function aggregateCSV(csvText) {
-  if (typeof csvText !== 'string' || !csvText) return "DỮ LIỆU RỖNG";
-  let lines = csvText.split(/\r?\n/);
-  let nameIdx = -1, spendIdx = -1, impIdx = -1, reachIdx = -1;
-  function parseCSVRow(str) {
-    if (!str) return []; let arr = []; let quote = false; let cell = '';
-    for (let c = 0; c < str.length; c++) {
-      if (str[c] === '"') { quote = !quote; }
-      else if (str[c] === ',' && !quote) { arr.push(cell.trim()); cell = ''; }
-      else { cell += str[c]; }
-    }
-    arr.push(cell.trim()); return arr;
-  }
-  let startRow = 0;
-  for (let i = 0; i < Math.min(15, lines.length); i++) {
-    let row = parseCSVRow(lines[i]); let strRow = row.join('').toLowerCase();
-    if (strRow.includes('amount spent') || strRow.includes('chi tiêu') || strRow.includes('hiển thị') || strRow.includes('impressions')) {
-      let headers = row.map(h => h.toLowerCase().trim());
-      nameIdx = headers.findIndex(h => h.includes('name') || h.includes('tên'));
-      spendIdx = headers.findIndex(h => h.includes('amount spent') || h.includes('chi tiêu') || h.includes('chi phí') || h.includes('số tiền'));
-      impIdx = headers.findIndex(h => h.includes('impressions') || h.includes('hiển thị'));
-      reachIdx = headers.findIndex(h => (h.includes('reach') || h.includes('tiếp cận')) && !h.includes('cost') && !h.includes('chi phí') && !h.includes('trên') && !h.includes('rate'));
-      startRow = i + 1; break;
-    }
-  }
-  if (nameIdx === -1 || spendIdx === -1) return "DỮ LIỆU EXCEL THÔ:\n" + csvText.substring(0, 5000);
-  let stats = { "Đỗ Quang": { spend: 0, imp: 0, reach: 0 }, "Trung Hoà": { spend: 0, imp: 0, reach: 0 }, "Hà Đông": { spend: 0, imp: 0, reach: 0 }, "Mỹ Đình": { spend: 0, imp: 0, reach: 0 }, "Trần Đăng Ninh": { spend: 0, imp: 0, reach: 0 }, "Times City": { spend: 0, imp: 0, reach: 0 }, "Ngoại Giao Đoàn": { spend: 0, imp: 0, reach: 0 }, "Lê Văn Sỹ": { spend: 0, imp: 0, reach: 0 }, "Nguyễn Thị Thập": { spend: 0, imp: 0, reach: 0 }, "Hai Bà Trưng": { spend: 0, imp: 0, reach: 0 }, "Tổng": { spend: 0, imp: 0, reach: 0 } };
-  let actualTotalReach = 0; 
-  for (let i = startRow; i < lines.length; i++) {
-    if (!lines[i].trim()) continue;
-    let row = parseCSVRow(lines[i]);
-    if (row.length <= Math.max(nameIdx, spendIdx, reachIdx)) continue;
-    let n = row[nameIdx] || ""; let nLower = n.toLowerCase();
-    let spend = parseAnyNum(row[spendIdx]); let imp = parseAnyNum(row[impIdx]); let reach = parseAnyNum(row[reachIdx]);
-    if (!nLower || nLower === "total" || nLower.includes("kết quả từ tất cả") || nLower.includes("tổng cộng") || nLower === "—") { if (reach > 0) actualTotalReach = reach; continue; }
-    let isStore = false;
-    if (nLower.includes("đq")) { stats["Đỗ Quang"].spend += spend; stats["Đỗ Quang"].imp += imp; stats["Đỗ Quang"].reach += reach; isStore = true; }
-    else if (nLower.includes("trung h")) { stats["Trung Hoà"].spend += spend; stats["Trung Hoà"].imp += imp; stats["Trung Hoà"].reach += reach; isStore = true; }
-    else if (nLower.includes("hđ")) { stats["Hà Đông"].spend += spend; stats["Hà Đông"].imp += imp; stats["Hà Đông"].reach += reach; isStore = true; }
-    else if (nLower.includes("quantm") && !nLower.includes("tđn")) { stats["Mỹ Đình"].spend += spend; stats["Mỹ Đình"].imp += imp; stats["Mỹ Đình"].reach += reach; isStore = true; }
-    else if (nLower.includes("tđn")) { stats["Trần Đăng Ninh"].spend += spend; stats["Trần Đăng Ninh"].imp += imp; stats["Trần Đăng Ninh"].reach += reach; isStore = true; }
-    else if (nLower.includes("times city")) { stats["Times City"].spend += spend; stats["Times City"].imp += imp; stats["Times City"].reach += reach; isStore = true; }
-    else if (nLower.includes("ngđ")) { stats["Ngoại Giao Đoàn"].spend += spend; stats["Ngoại Giao Đoàn"].imp += imp; stats["Ngoại Giao Đoàn"].reach += reach; isStore = true; }
-    else if (nLower.includes("lvs")) { stats["Lê Văn Sỹ"].spend += spend; stats["Lê Văn Sỹ"].imp += imp; stats["Lê Văn Sỹ"].reach += reach; isStore = true; }
-    else if (nLower.includes("ntt")) { stats["Nguyễn Thị Thập"].spend += spend; stats["Nguyễn Thị Thập"].imp += imp; stats["Nguyễn Thị Thập"].reach += reach; isStore = true; }
-    else if (nLower.includes("hbt")) { stats["Hai Bà Trưng"].spend += spend; stats["Hai Bà Trưng"].imp += imp; stats["Hai Bà Trưng"].reach += reach; isStore = true; }
-    if (isStore) { stats["Tổng"].spend += spend; stats["Tổng"].imp += imp; stats["Tổng"].reach += reach; }
-  }
-  if (actualTotalReach > 0) stats["Tổng"].reach = actualTotalReach;
-  function fmt(num) { return Math.round(num).toLocaleString('vi-VN'); }
-  let res = "DỮ LIỆU EXCEL CỬA HÀNG ĐÃ ĐƯỢC CỘNG TỔNG CHÍNH XÁC:\n\n";
-  for (let k in stats) {
-     if (k === "Tổng") res += `- TỔNG HỆ THỐNG: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
-     else res += `- Cửa hàng ${k}: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
-  }
-  return res;
-}
-
 function renderPrev(region) {
-  document.getElementById(`previews-${region}`).innerHTML = imgs[region].map((img, i) =>
-    `<div class="thumb"><img src="data:${img.type};base64,${img.data}"><button onclick="rmImg(${i}, '${region}')">✕</button></div>`
-  ).join('');
+  let html = imgs[region].map((img, i) => `<div class="thumb"><img src="data:${img.type};base64,${img.data}"><button onclick="rmImg(${i}, '${region}')">✕</button></div>`).join('');
+  html += excels[region].map((ex, i) => `<div class="thumb-excel">📊 ${ex.name}<button onclick="rmExcel(${i}, '${region}')">✕</button></div>`).join('');
+  document.getElementById(`previews-${region}`).innerHTML = html;
 }
 function rmImg(i, region) { imgs[region].splice(i, 1); renderPrev(region); }
-function parseNum(str) { 
-  if (!str || str === '—' || str === '') return null; 
-  const n = parseFloat(String(str).replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')); 
-  return isNaN(n) ? null : n; 
+function rmExcel(i, region) { excels[region].splice(i, 1); renderPrev(region); }
+
+// XỬ LÝ RIÊNG EXCEL ADS
+function handleSpecialExcelFile(files) {
+  if (!files || files.length === 0) return;
+  const f = files[0];
+  if (f.name.match(/\.(xlsx|xls)$/i)) {
+      const r = new FileReader();
+      r.onload = e => { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; processSpecialCSV(XLSX.utils.sheet_to_csv(firstSheet), f.name); };
+      r.readAsArrayBuffer(f);
+  } else {
+      const r = new FileReader(); r.onload = e => processSpecialCSV(e.target.result, f.name); r.readAsText(f);
+  }
 }
+function processSpecialCSV(rawText, filename) {
+  try { excelTextData = aggregateCSV(rawText); } 
+  catch(err) { excelTextData = "DỮ LIỆU EXCEL THÔ:\n" + (rawText ? rawText.substring(0, 5000) : ""); }
+  document.getElementById('preview-excel').innerHTML = `<div style="font-size:11px; font-weight:600; color:var(--acc2); padding-top:5px;">✓ Đã xử lý Ads File: ${filename}</div>`;
+}
+
+// --- CÁC HÀM TÍNH TOÁN & HIỂN THỊ UI ---
+function parseAnyNum(str) {
+  if(!str) return 0; let s = String(str).trim().replace(/"/g, ''); if (s === '-' || s === '') return 0;
+  if (s.includes(',') && s.includes('.')) { if (s.indexOf(',') > s.indexOf('.')) { s = s.replace(/\./g, '').replace(',', '.'); } else { s = s.replace(/,/g, ''); } } 
+  else if (s.includes(',')) { let parts = s.split(','); if (parts.length > 2) s = s.replace(/,/g, ''); else { if (parts[1] && parts[1].length === 3) s = s.replace(/,/g, ''); else s = s.replace(',', '.'); } } 
+  else if (s.includes('.')) { let parts = s.split('.'); if (parts.length > 2) s = s.replace(/\./g, ''); else { if (parts[1] && parts[1].length === 3) s = s.replace(/\./g, ''); } }
+  return parseFloat(s.replace(/[^\d.-]/g, '')) || 0;
+}
+function parseNum(str) { if (!str || str === '—' || str === '') return null; const n = parseFloat(String(str).replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')); return isNaN(n) ? null : n; }
 function fmtPct(n) { return (n === null || n === undefined) ? '—' : (n * 100).toFixed(2).replace('.', ',') + '%'; }
 function fmtNum(n) { return (n === null || n === undefined) ? '—' : Math.round(n).toLocaleString('vi-VN'); }
 function safeAdd(a, b) { return (a === null && b === null) ? null : (a || 0) + (b || 0); }
 function sumKhmByCategory(stores, catName) {
   let total = 0, found = false;
-  (stores || []).forEach(store => {
-    (store.rows || []).forEach(row => {
-      if (row.cat && String(row.cat).trim().toLowerCase() === catName.toLowerCase()) {
-        const v = parseNum(row.khm_dt); if (v !== null) { total += v; found = true; }
-      }
-    });
-  });
+  (stores || []).forEach(store => { (store.rows || []).forEach(row => { if (row.cat && String(row.cat).trim().toLowerCase() === catName.toLowerCase()) { const v = parseNum(row.khm_dt); if (v !== null) { total += v; found = true; } } }); });
   return found ? total : null;
 }
 function calcMetrics(raw, khmTotal, manualSpend) {
-  const chitieu = manualSpend !== null ? manualSpend : parseNum(raw.chitieu);
-  if (manualSpend !== null) raw.chitieu = fmtNum(manualSpend);
-  const dtt = parseNum(raw.dtt);
-  let dths = null, qcol = null, qcst = null, qchs = null;
+  const chitieu = manualSpend !== null ? manualSpend : parseNum(raw.chitieu); if (manualSpend !== null) raw.chitieu = fmtNum(manualSpend);
+  const dtt = parseNum(raw.dtt); let dths = null, qcol = null, qcst = null, qchs = null;
   if (dtt !== null && khmTotal !== null) dths = dtt + khmTotal;
   if (chitieu !== null && dtt !== null && dtt > 0) qcol = chitieu / dtt;
   if (chitieu !== null && dtt !== null && dtt > 0) qcst = (chitieu * 1.10) / (dtt / 1.08);
   if (chitieu !== null && dths !== null && dths > 0) qchs = chitieu / dths;
   return { dths, qcol, qcst, qchs };
 }
+function aggregateCSV(csvText) {
+  if (typeof csvText !== 'string' || !csvText) return "DỮ LIỆU RỖNG"; let lines = csvText.split(/\r?\n/); let nameIdx = -1, spendIdx = -1, impIdx = -1, reachIdx = -1;
+  function parseCSVRow(str) { if (!str) return []; let arr = []; let quote = false; let cell = ''; for (let c = 0; c < str.length; c++) { if (str[c] === '"') { quote = !quote; } else if (str[c] === ',' && !quote) { arr.push(cell.trim()); cell = ''; } else { cell += str[c]; } } arr.push(cell.trim()); return arr; }
+  let startRow = 0;
+  for (let i = 0; i < Math.min(15, lines.length); i++) {
+    let row = parseCSVRow(lines[i]); let strRow = row.join('').toLowerCase();
+    if (strRow.includes('amount spent') || strRow.includes('chi tiêu') || strRow.includes('hiển thị') || strRow.includes('impressions')) {
+      let headers = row.map(h => h.toLowerCase().trim()); nameIdx = headers.findIndex(h => h.includes('name') || h.includes('tên')); spendIdx = headers.findIndex(h => h.includes('amount spent') || h.includes('chi tiêu') || h.includes('chi phí') || h.includes('số tiền')); impIdx = headers.findIndex(h => h.includes('impressions') || h.includes('hiển thị')); reachIdx = headers.findIndex(h => (h.includes('reach') || h.includes('tiếp cận')) && !h.includes('cost') && !h.includes('chi phí') && !h.includes('trên') && !h.includes('rate')); startRow = i + 1; break;
+    }
+  }
+  if (nameIdx === -1 || spendIdx === -1) return "DỮ LIỆU EXCEL THÔ:\n" + csvText.substring(0, 5000);
+  let stats = { "Đỗ Quang": { spend: 0, imp: 0, reach: 0 }, "Trung Hoà": { spend: 0, imp: 0, reach: 0 }, "Hà Đông": { spend: 0, imp: 0, reach: 0 }, "Mỹ Đình": { spend: 0, imp: 0, reach: 0 }, "Trần Đăng Ninh": { spend: 0, imp: 0, reach: 0 }, "Times City": { spend: 0, imp: 0, reach: 0 }, "Ngoại Giao Đoàn": { spend: 0, imp: 0, reach: 0 }, "Lê Văn Sỹ": { spend: 0, imp: 0, reach: 0 }, "Nguyễn Thị Thập": { spend: 0, imp: 0, reach: 0 }, "Hai Bà Trưng": { spend: 0, imp: 0, reach: 0 }, "Tổng": { spend: 0, imp: 0, reach: 0 } };
+  let actualTotalReach = 0; 
+  for (let i = startRow; i < lines.length; i++) {
+    if (!lines[i].trim()) continue; let row = parseCSVRow(lines[i]); if (row.length <= Math.max(nameIdx, spendIdx, reachIdx)) continue;
+    let n = row[nameIdx] || ""; let nLower = n.toLowerCase(); let spend = parseAnyNum(row[spendIdx]); let imp = parseAnyNum(row[impIdx]); let reach = parseAnyNum(row[reachIdx]);
+    if (!nLower || nLower === "total" || nLower.includes("tổng cộng") || nLower === "—") { if (reach > 0) actualTotalReach = reach; continue; } let isStore = false;
+    if (nLower.includes("đq")) { stats["Đỗ Quang"].spend += spend; stats["Đỗ Quang"].imp += imp; stats["Đỗ Quang"].reach += reach; isStore = true; } else if (nLower.includes("trung h")) { stats["Trung Hoà"].spend += spend; stats["Trung Hoà"].imp += imp; stats["Trung Hoà"].reach += reach; isStore = true; } else if (nLower.includes("hđ")) { stats["Hà Đông"].spend += spend; stats["Hà Đông"].imp += imp; stats["Hà Đông"].reach += reach; isStore = true; } else if (nLower.includes("quantm") && !nLower.includes("tđn")) { stats["Mỹ Đình"].spend += spend; stats["Mỹ Đình"].imp += imp; stats["Mỹ Đình"].reach += reach; isStore = true; } else if (nLower.includes("tđn")) { stats["Trần Đăng Ninh"].spend += spend; stats["Trần Đăng Ninh"].imp += imp; stats["Trần Đăng Ninh"].reach += reach; isStore = true; } else if (nLower.includes("times city")) { stats["Times City"].spend += spend; stats["Times City"].imp += imp; stats["Times City"].reach += reach; isStore = true; } else if (nLower.includes("ngđ")) { stats["Ngoại Giao Đoàn"].spend += spend; stats["Ngoại Giao Đoàn"].imp += imp; stats["Ngoại Giao Đoàn"].reach += reach; isStore = true; } else if (nLower.includes("lvs")) { stats["Lê Văn Sỹ"].spend += spend; stats["Lê Văn Sỹ"].imp += imp; stats["Lê Văn Sỹ"].reach += reach; isStore = true; } else if (nLower.includes("ntt")) { stats["Nguyễn Thị Thập"].spend += spend; stats["Nguyễn Thị Thập"].imp += imp; stats["Nguyễn Thị Thập"].reach += reach; isStore = true; } else if (nLower.includes("hbt")) { stats["Hai Bà Trưng"].spend += spend; stats["Hai Bà Trưng"].imp += imp; stats["Hai Bà Trưng"].reach += reach; isStore = true; }
+    if (isStore) { stats["Tổng"].spend += spend; stats["Tổng"].imp += imp; stats["Tổng"].reach += reach; }
+  }
+  if (actualTotalReach > 0) stats["Tổng"].reach = actualTotalReach;
+  function fmt(num) { return Math.round(num).toLocaleString('vi-VN'); } let res = "DỮ LIỆU EXCEL CỬA HÀNG ĐÃ ĐƯỢC CỘNG TỔNG CHÍNH XÁC:\n\n";
+  for (let k in stats) { if (k === "Tổng") res += `- TỔNG HỆ THỐNG: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`; else res += `- Cửa hàng ${k}: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`; }
+  return res;
+}
 
 async function fetchWithRetry(url, options, retries = 5) {
   let delay = 1000;
   for (let i = 0; i < retries; i++) {
-    try { const res = await fetch(url, options); if (res.ok) return res; if (i === retries - 1) throw new Error(`Lỗi HTTP ${res.status}: Không thể kết nối tới Google Gemini API.`); } 
+    try { const res = await fetch(url, options); if (res.ok) return res; if (i === retries - 1) throw new Error(`Lỗi HTTP ${res.status}: Không kết nối được Google Gemini API.`); } 
     catch (e) { if (i === retries - 1) throw e; }
     await new Promise(r => setTimeout(r, delay)); delay *= 2;
   }
 }
-
 function sortHtmlTable(th, colIdx) {
-    const table = th.closest('table'); const tbody = table.querySelector('tbody'); const rows = Array.from(tbody.querySelectorAll('tr'));
-    let isAsc = th.classList.contains('asc');
+    const table = th.closest('table'); const tbody = table.querySelector('tbody'); const rows = Array.from(tbody.querySelectorAll('tr')); let isAsc = th.classList.contains('asc');
     table.querySelectorAll('th').forEach(h => { h.classList.remove('asc', 'desc'); h.innerHTML = h.innerHTML.replace(' ↑', '').replace(' ↓', '').replace(' ↕', '') + ' ↕'; });
     th.classList.toggle('asc', !isAsc); th.classList.toggle('desc', isAsc); th.innerHTML = th.innerHTML.replace(' ↕', '') + (isAsc ? ' ↓' : ' ↑');
     rows.sort((a, b) => {
-        let valA = a.cells[colIdx].innerText.trim(); let valB = b.cells[colIdx].innerText.trim();
-        let numA = parseAnyNum(valA.replace('%', '')); let numB = parseAnyNum(valB.replace('%', ''));
-        if (!isNaN(numA) && !isNaN(numB) && valA !== '—' && valB !== '—') return isAsc ? numA - numB : numB - numA;
-        return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-    });
-    tbody.innerHTML = ''; rows.forEach(r => tbody.appendChild(r));
+        let valA = a.cells[colIdx].innerText.trim(); let valB = b.cells[colIdx].innerText.trim(); let numA = parseAnyNum(valA.replace('%', '')); let numB = parseAnyNum(valB.replace('%', ''));
+        if (!isNaN(numA) && !isNaN(numB) && valA !== '—' && valB !== '—') return isAsc ? numA - numB : numB - numA; return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }); tbody.innerHTML = ''; rows.forEach(r => tbody.appendChild(r));
 }
-
-function showLoad() {
-  document.getElementById('out').innerHTML = `<div class="s-load"><div class="spinner"></div><div class="lsteps"><div class="lstep on" id="ls0"><div class="sdot"></div>Đang gửi dữ liệu cho AI...</div><div class="lstep" id="ls1"><div class="sdot"></div>AI đang phân tích số liệu...</div><div class="lstep" id="ls2"><div class="sdot"></div>Đang tổng hợp báo cáo...</div></div></div>`;
-}
-function setStep(n) {
-  for (let i = 0; i < n; i++) { const e = document.getElementById('ls' + i); if (e) { e.classList.remove('on'); e.classList.add('dn'); } }
-  const c = document.getElementById('ls' + n); if (c) c.classList.add('on');
-}
+function showLoad() { document.getElementById('out').innerHTML = `<div class="s-load"><div class="spinner"></div><div class="lsteps"><div class="lstep on" id="ls0"><div class="sdot"></div>Đang gửi dữ liệu cho AI...</div><div class="lstep" id="ls1"><div class="sdot"></div>AI đang phân tích số liệu...</div><div class="lstep" id="ls2"><div class="sdot"></div>Đang tổng hợp báo cáo...</div></div></div>`; }
+function setStep(n) { for (let i = 0; i < n; i++) { const e = document.getElementById('ls' + i); if (e) { e.classList.remove('on'); e.classList.add('dn'); } } const c = document.getElementById('ls' + n); if (c) c.classList.add('on'); }
 function mcHtml(lbl, val, cls = '', formula = '') { return `<div class="mc"><div class="mlbl">${lbl}${formula ? `<span class="calc-badge">tính</span>` : ''}</div><div class="mval ${cls}">${val || '—'}</div>${formula ? `<div class="mcalc">${formula}</div>` : ''}</div>`; }
 function nguonHtml(list) {
   if (!list || !list.length || !list[0].kenh || list[0].kenh === '—') return '';
@@ -690,24 +607,19 @@ function nguonHtml(list) {
 }
 function spHtml(list) { if (!list || !list.length) return ''; return `<div class="nblk"><strong>Sản phẩm bán chạy:</strong> ${list.map(s => `<span class="chip">${s}</span>`).join(' ')}</div>`; }
 function dgHtml(dg, yoy) {
-  if (!dg && !yoy) return '';
-  let h = '<div class="nblk">'; if (dg) h += `<strong>Đánh giá:</strong> ${dg}<br>`; if (yoy && yoy !== '—') h += `<span style="color:var(--tx3)">So với cùng kỳ năm trước: </span><strong style="color:var(--warn)">${yoy}</strong>`;
-  return h + '</div>';
+  if (!dg && !yoy) return ''; let h = '<div class="nblk">'; if (dg) h += `<strong>Đánh giá:</strong> ${dg}<br>`; if (yoy && yoy !== '—') h += `<span style="color:var(--tx3)">So với cùng kỳ năm trước: </span><strong style="color:var(--warn)">${yoy}</strong>`; return h + '</div>';
 }
 function storeTbl(s, regionName) {
   if (!s || !s.rows || s.rows.length === 0) return '';
   const rows = s.rows.map(r => {
-    const isGunze = r.cat && r.cat.toLowerCase() === 'đồ lót'; const isMp = r.cat && r.cat.toLowerCase() === 'mp';
-    const dtCls = isGunze ? ' class="proj-g"' : isMp ? ' class="proj-m"' : '';
+    const isGunze = r.cat && r.cat.toLowerCase() === 'đồ lót'; const isMp = r.cat && r.cat.toLowerCase() === 'mp'; const dtCls = isGunze ? ' class="proj-g"' : isMp ? ' class="proj-m"' : '';
     return `<tr ${(isGunze||isMp)?'style="background:rgba(255,255,255,.02)"':''}><td${dtCls}>${r.cat||'—'}${isGunze?' <span style="font-size:9px;color:var(--gunze);opacity:.7">Gunze</span>':''}${isMp?' <span style="font-size:9px;color:var(--mp);opacity:.7">MP</span>':''}</td><td>${r.dt||'—'}</td><td${dtCls}>${r.khm_dt||'—'}</td></tr>`;
   }).join('');
   return `<table class="stbl"><thead><tr><th style="text-align:left">${s.name || regionName}</th><th>Doanh Thu Thuần</th><th>Doanh Thu KHM</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderTuan(d, gc, mc, gTot, gHCM, gHN, mTot, mHCM, mHN, period, from, to) {
-  const g = d.gunze || {}, m = d.mp || {};
-  const dr = (from && to) ? ` — ${from} đến ${to}` : ''; const rperiod = period ? `Tuần ${period}` : '';
-  const kpiCls = v => v && parseInt(v) >= 100 ? 'g' : 'w';
+  const g = d.gunze || {}, m = d.mp || {}; const dr = (from && to) ? ` — ${from} đến ${to}` : ''; const rperiod = period ? `Tuần ${period}` : ''; const kpiCls = v => v && parseInt(v) >= 100 ? 'g' : 'w';
   const formatDetail = (hcm, hn) => { let parts = []; if (hcm !== null) parts.push(`HCM: ${fmtNum(hcm)}`); if (hn !== null) parts.push(`HN: ${fmtNum(hn)}`); return parts.length > 0 ? `(${parts.join(' + ')})` : ''; };
   const khmNoteHtml = (gTot !== null || mTot !== null) ? `<div class="khm-note">${gTot !== null ? `<div class="khm-item"><span>Tổng KHM Đồ lót:</span><div><span class="khm-detail">${formatDetail(gHCM, gHN)}</span> <strong style="color:var(--gunze)">${fmtNum(gTot)}</strong></div></div>` : ''}${mTot !== null ? `<div class="khm-item"><span>Tổng KHM Mỹ phẩm:</span><div><span class="khm-detail">${formatDetail(mHCM, mHN)}</span> <strong style="color:var(--mp)">${fmtNum(mTot)}</strong></div></div>` : ''}</div>` : '';
   let storesHtml = '', storesContent = '';
@@ -764,7 +676,7 @@ function renderThang(data, period, from, to) {
     if (d.danh_gia && d.danh_gia.length) { evalHtml += `<ul class="eval-list">`; d.danh_gia.forEach(item => evalHtml += `<li>${item}</li>`); evalHtml += `</ul>`; }
     if (d.ket_luan) { evalHtml += `<div><span class="ket-luan-text">Kết luận: </span><span class="ket-luan-text" style="font-weight:normal">${d.ket_luan.replace(/^Kết luận:\s*/i, '')}</span></div>`; }
     evalHtml += `</div>`;
-    return `<div class="pb"><div class="phdr"><div class="pdot" style="background:${colorVar}"></div><div class="pname" style="color:${colorVar}">${title}</div></div><div class="mgrid">${gridHtml}</div><div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-left:none; border-top: 1px solid var(--bdr);"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;"><div class="analysis-title" style="margin-bottom:0;">Đánh giá:</div><button class="btn-magic" style="display:inline-flex; align-items:center; padding:4px 8px; font-size:10px;" onclick="regenerateEval(this, '${title}')">🔄 Viết lại đánh giá</button></div>${evalHtml}</div></div>`;
+    return `<div class="pb"><div class="phdr"><div class="pdot" style="background:${colorVar}"></div><div class="pname" style="color:${colorVar}">${title}</div></div><div class="mgrid">${gridHtml}</div><div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-left:none; border-top: 1px solid var(--bdr);"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;"><div class="analysis-title" style="margin-bottom:0;">Đánh giá:</div><button class="btn-magic opt" style="display:inline-flex; align-items:center; padding:4px 8px; font-size:10px;" onclick="regenerateEval(this, '${title}')">🔄 Viết lại đánh giá</button></div>${evalHtml}</div></div>`;
   };
 
   html += buildSection('gunze', 'Dự án Gunze', 'var(--gunze)'); html += buildSection('mp', 'Dự án Mỹ phẩm', 'var(--mp)');
@@ -783,29 +695,35 @@ function renderThang(data, period, from, to) {
     let tblHtml = `<div style="overflow-x:auto"><table class="stbl" style="margin-bottom:0;"><thead><tr><th class="sortable" onclick="sortHtmlTable(this, 0)">Cửa hàng ↕</th><th class="sortable" onclick="sortHtmlTable(this, 1)">Chi phí ↕</th><th class="sortable" onclick="sortHtmlTable(this, 2)">Số lượng KH ↕</th><th class="sortable" onclick="sortHtmlTable(this, 3)">Doanh thu ↕</th><th class="sortable" onclick="sortHtmlTable(this, 4)">So với KPI ↕</th><th class="sortable" onclick="sortHtmlTable(this, 5)">%KHM ↕</th><th class="sortable" onclick="sortHtmlTable(this, 6)">Độ phủ (hiển thị) ↕</th></tr></thead><tbody>${tblRows}</tbody></table></div>`;
     let pt = st.phan_tich || {}; let hnHtml = (pt.hn || []).map(i => `<li>${i}</li>`).join(''); let hcmHtml = (pt.hcm || []).map(i => `<li>${i}</li>`).join('');
     let phanTichHtml = `<div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-top: 1px solid var(--bdr);"><div style="font-size:12px; margin-bottom:10px;"><strong>Đánh giá chung:</strong> ${pt.chung || ''}</div><div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hà Nội</div><ul class="eval-list" style="margin-bottom:5px;">${hnHtml}</ul><div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hồ Chí Minh</div><ul class="eval-list" style="margin-bottom:15px;">${hcmHtml}</ul><div><span class="ket-luan-text">Kết Luận: </span><span style="color:var(--tx)">${(pt.ket_luan || '').replace(/^Kết luận:\s*/i, '')}</span></div></div>`;
-    html += `<div class="pb"><div class="phdr"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">MARKETING PERFORMANCE - Kênh Cửa hàng</div><button class="btn-magic" style="display:inline-flex; align-items:center; margin-left:auto; padding:4px 8px; font-size:10px;" onclick="analyzeStoreData(this)">✨ Chẩn đoán Cửa hàng</button></div>${tqHtml}${tblHtml}${phanTichHtml}</div>`;
+    html += `<div class="pb"><div class="phdr"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">MARKETING PERFORMANCE - Kênh Cửa hàng</div><button class="btn-magic opt" style="display:inline-flex; align-items:center; margin-left:auto; padding:4px 8px; font-size:10px;" onclick="analyzeStoreData(this)">✨ Chẩn đoán Cửa hàng</button></div>${tqHtml}${tblHtml}${phanTichHtml}</div>`;
   }
   html += `</div>`; document.getElementById('out').innerHTML = html;
 }
 
+// --- HÀM GỌI AI CHÍNH ĐỂ LẬP BÁO CÁO (Nhiệt độ = 0) ---
 async function gen() {
   const type = document.querySelector('input[name="rtype"]:checked').value;
   const url = getApiUrl();
-  document.getElementById('hist-sel').value = ""; viewHist(); 
-  document.getElementById('gbtn').disabled = true; document.getElementById('magic-btn').style.display = 'none';
+  document.getElementById('hist-sel').value = ""; resetChat(); viewHist(); 
+  document.getElementById('gbtn').disabled = true; 
+  document.getElementById('magic-btn').style.display = 'none';
+  document.getElementById('forecast-btn').style.display = 'none';
   showLoad();
 
   const customNote = document.getElementById('ai-custom-note') ? document.getElementById('ai-custom-note').value.trim() : '';
-  const extraPrompt = customNote ? `\n\n=== LƯU Ý ĐẶC BIỆT TỪ NGƯỜI DÙNG ===\n${customNote}\n(Hãy BẮT BUỘC tuân thủ lưu ý này khi viết phần Đánh giá và Kết luận).` : '';
+  const extraPrompt = customNote ? `\n\n=== LƯU Ý ĐẶC BIỆT TỪ NGƯỜI DÙNG ===\n${customNote}\n(Hãy BẮT BUỘC tuân thủ lưu ý này khi phân tích dữ liệu, viết phần Đánh giá và Kết luận).` : '';
 
   try {
     if (type === 'Tuần') {
       const week = document.getElementById('week').value.trim(); const from = document.getElementById('dfrom').value.trim(); const to = document.getElementById('dto').value.trim();
       const valSpendG = parseNum(document.getElementById('spend-g').value.trim()); const valSpendM = parseNum(document.getElementById('spend-m').value.trim());
       const sg = document.getElementById('sg').value.trim(); const sm = document.getElementById('sm').value.trim();
-      if (!sg && !sm && imgs.hcm.length === 0 && imgs.hn.length === 0) { alert('Vui lòng paste dữ liệu Sale hoặc upload ảnh cửa hàng!'); document.getElementById('gbtn').disabled = false; document.getElementById('out').innerHTML = ''; return; }
+      
+      if (!sg && !sm && imgs.hcm.length === 0 && imgs.hn.length === 0 && excels.hcm.length === 0 && excels.hn.length === 0) { 
+        alert('Vui lòng cung cấp dữ liệu Sale hoặc ảnh/file Excel cửa hàng!'); document.getElementById('gbtn').disabled = false; document.getElementById('out').innerHTML = ''; return; 
+      }
 
-      const sys = `Bạn là trợ lý đọc báo cáo bán hàng. Trích xuất số liệu từ text Sale và đọc bảng từ ảnh cửa hàng. Trả về JSON thuần. KHÔNG tự tính DT hệ thống, CP QC. Giữ nguyên định dạng số có dấu chấm phân cách nghìn. Thiếu thông tin ghi "—". LƯU Ý QUAN TRỌNG VỀ ẢNH CỬA HÀNG: 1. Ảnh HCM: Cột "Doanh thu KHM" gán vào trường "khm_dt". 2. Ảnh HN: Cột "DTT KHM" gán vào trường "khm_dt". Cột "Ngành hàng" gán vào "cat". Cột "Tổng DTT" gán vào "dt".
+      const sys = `Bạn là trợ lý dữ liệu bán hàng. Trích xuất số liệu từ text Sale và dữ liệu ảnh/file Excel cửa hàng. Trả về JSON thuần. KHÔNG tự tính DT hệ thống, CP QC. Giữ nguyên định dạng số có dấu chấm phân cách nghìn. Thiếu thông tin ghi "—". LƯU Ý QUAN TRỌNG VỀ CỬA HÀNG: 1. HCM: Lấy cột "Doanh thu KHM" gán vào "khm_dt". 2. HN: Cột "DTT KHM" gán vào "khm_dt". Cột "Ngành hàng" gán vào "cat". Cột "Tổng DTT" gán vào "dt".
 JSON output:
 {
   "gunze": { "chitieu": "", "data": "", "dtt": "", "dtt_kpi": "", "tlchot": "", "gttb": "", "chietkhau": "", "chietkhau_pct": "", "hangtralai": "", "hangtralai_pct": "", "nguon": [{"kenh":"","sotien":"","pct":""}], "sp": [], "danhgia": "", "yoy": "" },
@@ -816,10 +734,16 @@ JSON output:
       const parts = []; let txt = sys + extraPrompt + '\n\n';
       if (sg) txt += `=== SALE GUNZE ===\n${sg}\n\n`; if (sm) txt += `=== SALE MỸ PHẨM ===\n${sm}\n\n`;
       parts.push({ text: txt });
-      if (imgs.hcm.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG KHU VỰC HCM ===" }); imgs.hcm.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-      if (imgs.hn.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG KHU VỰC HN ===" }); imgs.hn.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      
+      // Thêm Ảnh & Excel
+      if (imgs.hcm.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG HCM ===" }); imgs.hcm.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.hn.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG HN ===" }); imgs.hn.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (excels.hcm.length > 0) { parts.push({ text: "\n\n=== TEXT EXCEL CỬA HÀNG HCM ===" + excels.hcm.map(e => e.text).join('\n') }); }
+      if (excels.hn.length > 0) { parts.push({ text: "\n\n=== TEXT EXCEL CỬA HÀNG HN ===" + excels.hn.map(e => e.text).join('\n') }); }
+
       setStep(1);
-      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) });
+      // KHÓA NHIỆT ĐỘ VỀ 0 ĐỂ CHÍNH XÁC TUYỆT ĐỐI
+      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json", temperature: 0 } }) });
       setStep(2);
       const d = await res.json();
       let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || ""; let firstIdx = rawResponse.indexOf('{'); let lastIdx = rawResponse.lastIndexOf('}');
@@ -830,21 +754,26 @@ JSON output:
       const gc = calcMetrics(parsed.gunze || {}, khmGunzeTotal, valSpendG); const mc = calcMetrics(parsed.mp || {}, khmMpTotal, valSpendM);
       setStep(3); renderTuan(parsed, gc, mc, khmGunzeTotal, khmGunzeHCM, khmGunzeHN, khmMpTotal, khmMpHCM, khmMpHN, week, from, to);
       saveHist('Tuần', week, document.getElementById('out').innerHTML);
+
     } else {
       const period = document.getElementById('month').value.trim(); const from = document.getElementById('m-from').value.trim(); const to = document.getElementById('m-to').value.trim();
-      if (imgs.kpi.length === 0 || (imgs.thang_gunze.length === 0 && imgs.thang_mp.length === 0 && imgs.thang_cuahang.length === 0 && !excelTextData)) { alert('Vui lòng upload File KPI và ít nhất 1 ảnh Số liệu dự án/cửa hàng (hoặc CSV)!'); document.getElementById('gbtn').disabled = false; document.getElementById('out').innerHTML = ''; return; }
+      
+      const hasKpi = imgs.kpi.length > 0 || excels.kpi.length > 0;
+      const hasData = imgs.thang_gunze.length > 0 || excels.thang_gunze.length > 0 || imgs.thang_mp.length > 0 || excels.thang_mp.length > 0 || imgs.thang_cuahang.length > 0 || excels.thang_cuahang.length > 0 || excelTextData;
+      if (!hasKpi || !hasData) { alert('Vui lòng tải lên KPI và ít nhất 1 dữ liệu Dự án/Cửa hàng!'); document.getElementById('gbtn').disabled = false; document.getElementById('out').innerHTML = ''; return; }
+
       const sysThang = `Bạn là Chuyên gia Phân tích Marketing. LÀM TỪNG BƯỚC và ĐỐI CHIẾU CHÍNH XÁC:
 === DỰ ÁN GUNZE & MỸ PHẨM ===
-1. Đọc Ảnh KPI để lấy Mục tiêu (KPI) của tất cả các chỉ số.
-2. Đọc Ảnh Số liệu dự án để trích xuất đầy đủ: Doanh thu thuần (tuyệt đối KHÔNG lấy doanh thu tổng), Chi tiêu, Me/Re, Tổng Data, Đơn hàng, Tỷ lệ chốt tổng.
+1. Đọc Ảnh/Text KPI để lấy Mục tiêu (KPI) của tất cả các chỉ số.
+2. Đọc Ảnh/Text Số liệu dự án để trích xuất đầy đủ: Doanh thu thuần (tuyệt đối KHÔNG lấy doanh thu tổng), Chi tiêu, Me/Re, Tổng Data, Đơn hàng, Tỷ lệ chốt tổng.
 3. RIÊNG DỰ ÁN MỸ PHẨM: Phải trích xuất tách biệt rõ "Data Web", "Tỷ lệ chốt Web" và "Data Page", "Tỷ lệ chốt Page".
 4. BẮT BUỘC FORMAT TẤT CẢ CHỈ SỐ: - Dòng 'value' CỦA MỌI CHỈ SỐ BẮT BUỘC ghi "Thực đạt / Mục tiêu KPI". Nếu thiếu KPI thì điền Thực đạt. - Trường 'kpi_trend' dùng để ghi số liệu so sánh với tháng trước.
 5. Viết "Đánh giá" dưới dạng mảng các câu nhận xét (bullet points). BẮT BUỘC GIỮ NGUYÊN QUY TẮC NÀY: - Nhận xét tỷ lệ % hoàn thành KPI Doanh thu thuần và % tăng/giảm so với tháng trước. - Nhận xét chi phí, data, tỷ lệ chốt. - Riêng Mỹ phẩm: Bắt buộc phải có 1 gạch đầu dòng đánh giá và so sánh mức độ hiệu quả giữa kênh Web và kênh Page.
 6. Viết "Kết luận" tổng quan.
 === KHỐI CỬA HÀNG ===
 7. TỪ DỮ LIỆU EXCEL: Lấy các số đã tính sẵn. Gán "TỔNG HỆ THỐNG" vào 'tong_quan'. ĐỐI VỚI TỪNG CỬA HÀNG: Gán CHÍNH XÁC "Chi phí" vào 'chi_phi', "Hiển thị" vào 'do_phu'.
-8. TỪ ẢNH KPI: Lấy "Mục tiêu" làm KPI ("CH Mỗ Lao" = "Hà Đông").
-9. TỪ ẢNH THỰC ĐẠT: Lấy Số lượng KH (hoặc "Số bill") vào 'so_kh'. Doanh thu (hoặc "Số tổng") vào 'doanh_thu'. Cột chứa dấu % (như %KHM, Tỷ lệ KHM) vào 'khm'.
+8. TỪ ẢNH/TEXT KPI: Lấy "Mục tiêu" làm KPI ("CH Mỗ Lao" = "Hà Đông").
+9. TỪ ẢNH/TEXT THỰC ĐẠT: Lấy Số lượng KH (hoặc "Số bill") vào 'so_kh'. Doanh thu (hoặc "Số tổng") vào 'doanh_thu'. Cột chứa dấu % (như %KHM, Tỷ lệ KHM) vào 'khm'.
 10. TÍNH TOÁN CỬA HÀNG: 'kpi_pct' = (Doanh thu Thực đạt / Mục tiêu KPI) * 100, format "X%". Nếu thiếu data ghi "—".
 11. ĐÁNH GIÁ CỬA HÀNG: - "chung": Tổng quan. - "hn": Nhận xét Hà Nội. - "hcm": Nhận xét HCM. - "ket_luan": Phương hướng.
 Trả về JSON thuần. Cấu trúc BẮT BUỘC:
@@ -854,13 +783,21 @@ Trả về JSON thuần. Cấu trúc BẮT BUỘC:
   "stores": { "tong_quan": {"chi_phi": "...", "chi_phi_tt": "...", "hien_thi": "...", "hien_thi_tt": "...", "tiep_can": "...", "tiep_can_tt": "..."}, "danh_sach": [ {"ten": "Đỗ Quang", "chi_phi": "...", "so_kh": "...", "doanh_thu": "...", "kpi_pct": "...", "khm": "...", "do_phu": "..."} ], "phan_tich": {"chung": "...", "hn": ["..."], "hcm": ["..."], "ket_luan": "..."} }
 }`;
       const parts = [{ text: sysThang + extraPrompt }];
-      if (excelTextData) parts.push({ text: `\n\n=== FILE DỮ LIỆU EXCEL KHỐI CỬA HÀNG ===\n${excelTextData}` });
-      if (imgs.kpi.length > 0) { parts.push({ text: "\n\n=== ẢNH KPI THÁNG NÀY ===" }); imgs.kpi.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-      if (imgs.thang_gunze.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN GUNZE ===` }); imgs.thang_gunze.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-      if (imgs.thang_mp.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN MỸ PHẨM ===` }); imgs.thang_mp.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-      if (imgs.thang_cuahang.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU THỰC ĐẠT CỬA HÀNG ===` }); imgs.thang_cuahang.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (excelTextData) parts.push({ text: `\n\n=== TEXT EXCEL ADS CỬA HÀNG ===\n${excelTextData}` });
+      
+      // Thêm Ảnh & Excel
+      if (imgs.kpi.length > 0) { parts.push({ text: "\n\n=== ẢNH KPI ===" }); imgs.kpi.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_gunze.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU GUNZE ===` }); imgs.thang_gunze.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_mp.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU MỸ PHẨM ===` }); imgs.thang_mp.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_cuahang.length > 0) { parts.push({ text: `\n\n=== ẢNH THỰC ĐẠT CỬA HÀNG ===` }); imgs.thang_cuahang.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (excels.kpi.length > 0) parts.push({ text: "\n\n=== TEXT EXCEL KPI ===\n" + excels.kpi.map(e => e.text).join('\n') });
+      if (excels.thang_gunze.length > 0) parts.push({ text: "\n\n=== TEXT EXCEL GUNZE ===\n" + excels.thang_gunze.map(e => e.text).join('\n') });
+      if (excels.thang_mp.length > 0) parts.push({ text: "\n\n=== TEXT EXCEL MỸ PHẨM ===\n" + excels.thang_mp.map(e => e.text).join('\n') });
+      if (excels.thang_cuahang.length > 0) parts.push({ text: "\n\n=== TEXT EXCEL THỰC ĐẠT CỬA HÀNG ===\n" + excels.thang_cuahang.map(e => e.text).join('\n') });
+
       setStep(1);
-      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) });
+      // KHÓA NHIỆT ĐỘ VỀ 0 ĐỂ CHÍNH XÁC TUYỆT ĐỐI
+      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json", temperature: 0 } }) });
       setStep(2);
       const d = await res.json();
       let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || ""; let firstIdx = rawResponse.indexOf('{'); let lastIdx = rawResponse.lastIndexOf('}');
@@ -869,30 +806,52 @@ Trả về JSON thuần. Cấu trúc BẮT BUỘC:
       setStep(3); renderThang(parsed, period, from, to);
       saveHist('Tháng', period, document.getElementById('out').innerHTML);
     }
-    document.getElementById('magic-btn').style.display = 'inline-block';
     
-    // Hiện khung chat sau khi tạo xong
-    const chatBox = document.getElementById('ai-chat-box');
-    if(chatBox) chatBox.style.display = 'flex';
+    document.getElementById('magic-btn').style.display = 'inline-block';
+    document.getElementById('forecast-btn').style.display = 'inline-block';
+    const chatBox = document.getElementById('ai-chat-box'); if(chatBox) chatBox.style.display = 'flex';
 
   } catch (e) { document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">⚠️</div><p style="color:var(--danger)">Lỗi: ${e.message}</p></div>`; }
   document.getElementById('gbtn').disabled = false;
 }
 
+// --- CÁC HÀM AI CỐ VẤN CHUYÊN SÂU (Nhiệt độ 0.4 - Cho phép sáng tạo) ---
 async function getAiInsights() {
   const rptEl = document.getElementById('rpt'); if (!rptEl) return; const url = getApiUrl();
   const magicBtn = document.getElementById('magic-btn'); const originalText = magicBtn.innerHTML; magicBtn.innerHTML = '⏳ Phân tích...'; magicBtn.disabled = true;
   const prompt = `Bạn là Giám đốc Marketing (CMO). Dựa vào báo cáo kinh doanh thực tế dưới đây: 1. Tóm tắt nhanh gọn tình hình. 2. Đưa ra 3-5 đề xuất chiến lược TỐI ƯU NHẤT để cải thiện. Trình bày ngắn gọn, gạch đầu dòng rõ ràng, không dùng các ký hiệu format phức tạp. === DỮ LIỆU ===\n${rptEl.innerText}`;
   try {
-    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "text/plain" } }) });
+    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4 } }) });
     const d = await res.json(); const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Không lấy được phản hồi');
     let insightBox = document.getElementById('ai-insight-box');
     if (!insightBox) { insightBox = document.createElement('div'); insightBox.id = 'ai-insight-box'; insightBox.className = 'pb ai-insight-box'; insightBox.style.borderColor = 'var(--warn)'; rptEl.appendChild(insightBox); }
-    insightBox.innerHTML = `<div class="phdr" style="background: rgba(255,188,87,0.1); border-bottom: 1px solid rgba(255,188,87,0.3);"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">✨ AI Cố Vấn: Góc Nhìn & Đề Xuất Chiến Lược</div></div><div class="nblk ai-insight-content" style="white-space: pre-wrap; font-size: 13px; line-height: 1.7; padding: 18px 20px;">${text}</div>`;
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--tx)">$1</strong>').replace(/\*/g, '•');
+    insightBox.innerHTML = `<div class="phdr" style="background: rgba(255,188,87,0.1); border-bottom: 1px solid rgba(255,188,87,0.3);"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">✨ AI Cố Vấn: Góc Nhìn & Đề Xuất Chiến Lược</div></div><div class="nblk ai-insight-content" style="white-space: pre-wrap; font-size: 13px; line-height: 1.7; padding: 18px 20px;">${formattedText}</div>`;
     insightBox.scrollIntoView({ behavior: 'smooth', block: 'end' });
     const val = document.getElementById('hist-sel').value; if (val) { const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); hist[val] = document.getElementById('out').innerHTML; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); }
   } catch (e) { alert('Lỗi phân tích: ' + e.message); } finally { magicBtn.innerHTML = originalText; magicBtn.disabled = false; }
+}
+
+async function forecastFuture() {
+  const rptEl = document.getElementById('rpt'); if (!rptEl) return; const url = getApiUrl();
+  const btn = document.getElementById('forecast-btn'); const originalText = btn.innerHTML; btn.innerHTML = '⏳ Đang dự báo...'; btn.disabled = true;
+  const prompt = `Bạn là Chuyên gia Phân tích Dữ liệu và Dự báo (Forecasting Analyst). Dựa vào dữ liệu kinh doanh của kỳ này dưới đây:
+1. Ước tính doanh thu và chi phí cho kỳ tiếp theo (tuần tới/tháng tới) nếu giữ nguyên ngân sách.
+2. Nêu ra 2 rủi ro có thể cản trở việc đạt mục tiêu và 1 cơ hội để tăng trưởng đột phá.
+Trình bày ngắn gọn, súc tích, dùng gạch đầu dòng và bôi đậm các con số dự báo. KHÔNG dùng định dạng markdown phức tạp.
+=== DỮ LIỆU KỲ NÀY ===\n${rptEl.innerText}`;
+  try {
+    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4 } }) });
+    const d = await res.json(); const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Không lấy được phản hồi');
+    let box = document.getElementById('ai-forecast-box');
+    if (!box) { box = document.createElement('div'); box.id = 'ai-forecast-box'; box.className = 'pb ai-insight-box'; box.style.borderColor = 'var(--fc)'; rptEl.appendChild(box); }
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--tx)">$1</strong>').replace(/\*/g, '•');
+    box.innerHTML = `<div class="phdr" style="background: rgba(179,136,255,0.1); border-bottom: 1px solid rgba(179,136,255,0.3);"><div class="pdot" style="background:var(--fc)"></div><div class="pname" style="color:var(--fc)">🔮 AI Dự Báo: Chu kỳ tiếp theo</div></div><div class="nblk ai-insight-content" style="white-space: pre-wrap; font-size: 13px; line-height: 1.7; padding: 18px 20px;">${formattedText}</div>`;
+    box.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    const val = document.getElementById('hist-sel').value; if (val) { const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); hist[val] = document.getElementById('out').innerHTML; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); }
+  } catch (e) { alert('Lỗi dự báo: ' + e.message); } finally { btn.innerHTML = originalText; btn.disabled = false; }
 }
 
 async function analyzeStoreData(btn) {
@@ -901,12 +860,13 @@ async function analyzeStoreData(btn) {
   let dataStr = ""; table.querySelectorAll('tr').forEach(tr => { const rowData = Array.from(tr.querySelectorAll('th, td')).map(td => td.innerText).join(' | '); dataStr += rowData + '\n'; });
   const prompt = `Bạn là Chuyên gia Phân tích Bán lẻ. Dựa vào bảng số liệu sau, hãy: 1. Xác định "Ngôi sao" và giải thích ngắn gọn. 2. Xác định "Báo động đỏ" và bắt bệnh. 3. Gợi ý hành động. Trình bày ngắn gọn, không dùng markdown phức tạp.\n=== DỮ LIỆU ===\n${dataStr}`;
   try {
-    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "text/plain" } }) });
+    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4 } }) });
     const d = await res.json(); const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Không lấy được phản hồi');
     let resultDiv = pb.querySelector('.store-ai-result');
     if (!resultDiv) { resultDiv = document.createElement('div'); resultDiv.className = 'store-ai-result analysis-box'; resultDiv.style.margin = '15px'; resultDiv.style.backgroundColor = 'rgba(56, 224, 176, 0.05)'; resultDiv.style.border = '1px solid rgba(56, 224, 176, 0.3)'; resultDiv.style.borderRadius = '8px'; pb.appendChild(resultDiv); }
-    resultDiv.innerHTML = `<div class="analysis-title" style="color:var(--acc2); font-size:14px; margin-bottom:8px;">✨ AI Khám Phá: Điểm mù Cửa hàng</div><div class="store-ai-result-content" style="font-size: 12px; line-height: 1.6; white-space: pre-wrap; color:var(--tx);">${text}</div>`;
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--tx)">$1</strong>').replace(/\*/g, '•');
+    resultDiv.innerHTML = `<div class="analysis-title" style="color:var(--acc2); font-size:14px; margin-bottom:8px;">✨ AI Khám Phá: Điểm mù Cửa hàng</div><div class="store-ai-result-content" style="font-size: 12px; line-height: 1.6; white-space: pre-wrap; color:var(--tx);">${formattedText}</div>`;
     const val = document.getElementById('hist-sel').value; if (val) { const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); hist[val] = document.getElementById('out').innerHTML; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); }
   } catch (e) { alert('Lỗi chẩn đoán: ' + e.message); } finally { btn.innerHTML = originalText; btn.disabled = false; }
 }
@@ -919,7 +879,7 @@ async function regenerateEval(btn, projectName) {
   const isMp = projectName.toLowerCase().includes('mỹ phẩm');
   const prompt = `Bạn là Chuyên gia Marketing. Dựa vào các chỉ số kinh doanh thực tế dưới đây, hãy phân tích lại và viết phần đánh giá mới.\n=== SỐ LIỆU ===\n${dataStr}\n=== YÊU CẦU ===\n1. Đưa ra 3-4 gạch đầu dòng nhận xét chuyên sâu. ${isMp ? 'BẮT BUỘC so sánh hiệu quả kênh Web và Page.' : ''}\n2. Đưa ra 1 câu kết luận.\nTrả về JSON thuần: {"danh_gia": ["..."], "ket_luan": "..."}`;
   try {
-    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
+    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json", temperature: 0.4 } }) });
     const d = await res.json(); if (!d.candidates || !d.candidates[0]) throw new Error("AI từ chối phản hồi.");
     let rawResponse = d.candidates[0].content?.parts?.[0]?.text || ""; let firstIdx = rawResponse.indexOf('{'); let lastIdx = rawResponse.lastIndexOf('}');
     if (firstIdx !== -1 && lastIdx !== -1) rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
@@ -932,6 +892,7 @@ async function regenerateEval(btn, projectName) {
   } catch (e) { alert('Lỗi: ' + e.message); } finally { btn.innerHTML = originalText; btn.disabled = false; }
 }
 
+// --- CÁC HÀM XUẤT FILE (ẢNH, PDF, COPY) ---
 function doCopy() {
   const el = document.getElementById('rpt'); if (!el) return; const lines = [];
   el.querySelectorAll('.rweek,.rtitle').forEach(e => lines.push(e.textContent.trim())); lines.push('');
@@ -949,7 +910,7 @@ function doCopy() {
   });
   const textToCopy = lines.join('\n'); const textArea = document.createElement("textarea"); textArea.value = textToCopy; textArea.style.position = "fixed"; textArea.style.left = "-999999px"; textArea.style.top = "-999999px"; document.body.appendChild(textArea); textArea.focus(); textArea.select();
   try { document.execCommand('copy'); const b = document.getElementById('cbtn'); b.textContent = '✓ Đã sao chép'; b.classList.add('ok'); setTimeout(() => { b.innerHTML = '⎘ Sao chép'; b.classList.remove('ok'); }, 2200); } 
-  catch (err) { alert('Trình duyệt chặn sao chép tự động.'); } document.body.removeChild(textArea);
+  catch (err) { alert('Trình duyệt chặn sao chép tự động. Bôi đen văn bản để copy thủ công.'); } document.body.removeChild(textArea);
 }
 
 async function exportImage() {
@@ -966,7 +927,17 @@ function exportPDF() {
   html2pdf().set(opt).from(rptEl).save().then(() => { btn.innerHTML = '✓ Đã tải PDF'; btn.classList.add('ok'); setTimeout(() => { btn.innerHTML = ogText; btn.classList.remove('ok'); }, 2000); btn.disabled = false; }).catch(err => { alert('Lỗi: ' + err); btn.innerHTML = ogText; btn.disabled = false; });
 }
 
-// --- LOGIC XỬ LÝ CHATBOT ---
+// --- LOGIC XỬ LÝ CHATBOT NÂNG CẤP TỰ ĐỐI CHIẾU & TRÍ NHỚ ---
+let chatContext = [];
+
+function resetChat() {
+  chatContext = [];
+  const chatHist = document.getElementById('chat-hist');
+  if(chatHist) {
+    chatHist.innerHTML = `<div class="msg ai" style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;">Chào sếp! Tôi là Trợ lý Dữ liệu cấp cao. Tôi đã đọc xong báo cáo này, sếp cần phân tích hay bóc tách số liệu nào cứ bảo tôi nhé!</div>`;
+  }
+}
+
 async function sendChat() {
   const inputEl = document.getElementById('chat-input');
   const text = inputEl.value.trim();
@@ -977,31 +948,69 @@ async function sendChat() {
 
   const chatHist = document.getElementById('chat-hist');
   
+  // 1. In câu hỏi ra màn hình
   chatHist.innerHTML += `<div style="background: rgba(79, 124, 255, 0.1); border: 1px solid rgba(79, 124, 255, 0.3); color: var(--tx); padding: 8px 12px; border-radius: 8px; align-self: flex-end; max-width: 85%; line-height: 1.5;">${text}</div>`;
   inputEl.value = '';
   chatHist.scrollTop = chatHist.scrollHeight;
 
   const aiWaitId = 'ai-wait-' + Date.now();
-  chatHist.innerHTML += `<div id="${aiWaitId}" style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;">⏳ Đang suy nghĩ...</div>`;
+  chatHist.innerHTML += `<div id="${aiWaitId}" style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;">⏳ Đang suy nghĩ và phân tích...</div>`;
   chatHist.scrollTop = chatHist.scrollHeight;
 
-  const prompt = `Bạn là trợ lý dữ liệu. Dựa vào báo cáo kinh doanh sau đây, hãy trả lời câu hỏi của người dùng thật ngắn gọn, chính xác. Tuyệt đối KHÔNG dùng định dạng markdown phức tạp (*, #).
+  // Lấy dữ liệu gốc để đối chiếu (Self-correction)
+  const rawSaleG = document.getElementById('sg') ? document.getElementById('sg').value.trim() : '';
+  const rawSaleM = document.getElementById('sm') ? document.getElementById('sm').value.trim() : '';
+  const rawExcel = typeof excelTextData !== 'undefined' ? excelTextData : '';
 
-=== DỮ LIỆU BÁO CÁO ===\n${rptEl.innerText}\n\n=== CÂU HỎI CỦA NGƯỜI DÙNG ===\n${text}`;
+  // 2. Xây dựng Trí nhớ
+  if (chatContext.length === 0) {
+    chatContext.push({
+      role: "user",
+      parts: [{ text: `Bạn là Chuyên gia Phân tích Dữ liệu Cấp cao (Senior Data Analyst). Hãy trả lời câu hỏi dựa trên Báo Cáo Kinh Doanh dưới đây.
 
+=== BẢNG BÁO CÁO ĐÃ TỔNG HỢP ===
+${rptEl.innerText}
+
+=== DỮ LIỆU GỐC (ĐỂ ĐỐI CHIẾU NẾU CẦN) ===
+Sale Gunze: ${rawSaleG}
+Sale Mỹ Phẩm: ${rawSaleM}
+Excel Ads: ${rawExcel}
+
+LƯU Ý DÀNH CHO BẠN: 
+- Nếu sếp bảo "Số liệu sai", "Kiểm tra lại", hãy lập tức rà soát lại phần "DỮ LIỆU GỐC" xem có chênh lệch so với BẢNG BÁO CÁO không.
+- Nếu tìm thấy lỗi, hãy xin lỗi, báo số ĐÚNG từ dữ liệu gốc và tự động tính toán lại.
+- Trình bày chuyên nghiệp, dùng in đậm (**text**) hoặc gạch đầu dòng (*) để trình bày mạch lạc.
+
+=== CÂU HỎI CỦA SẾP ===
+${text}` }]
+    });
+  } else {
+    chatContext.push({ role: "user", parts: [{ text: text }] });
+  }
+
+  // 3. Gửi đi (Nhiệt độ 0.4 cho phép văn phong tự nhiên)
   try {
     const res = await fetchWithRetry(getApiUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+      body: JSON.stringify({ contents: chatContext, generationConfig: { temperature: 0.4 } })
     });
-    const d = await res.json();
-    const reply = d.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi không thể xử lý câu hỏi này.";
     
-    document.getElementById(aiWaitId).outerHTML = `<div style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%; line-height: 1.5;">${reply.replace(/\n/g, '<br>')}</div>`;
+    const d = await res.json();
+    const reply = d.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, tôi gặp sự cố khi phân tích câu này.";
+    
+    chatContext.push({ role: "model", parts: [{ text: reply }] });
+
+    let formattedReply = reply.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--tx)">$1</strong>')
+                              .replace(/\*/g, '•')
+                              .replace(/\n/g, '<br>');
+
+    document.getElementById(aiWaitId).outerHTML = `<div style="background: var(--sur2); border: 1px solid var(--bdr); color: var(--tx2); padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%; line-height: 1.6;">${formattedReply}</div>`;
     chatHist.scrollTop = chatHist.scrollHeight;
+    
   } catch (e) {
-    document.getElementById(aiWaitId).outerHTML = `<div style="background: rgba(255, 95, 126, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 8px; align-self: flex-start;">⚠️ Lỗi kết nối AI.</div>`;
+    chatContext.pop(); 
+    document.getElementById(aiWaitId).outerHTML = `<div style="background: rgba(255, 95, 126, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 8px; align-self: flex-start;">⚠️ Lỗi kết nối AI hoặc hết hạn ngạch.</div>`;
   }
 }
 </script>
