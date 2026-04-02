@@ -743,7 +743,7 @@ JSON output:
 
       setStep(1);
       // KHÓA NHIỆT ĐỘ VỀ 0 ĐỂ CHÍNH XÁC TUYỆT ĐỐI
-      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json", temperature: 0 } }) });
+      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) });
       setStep(2);
       const d = await res.json();
       let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || ""; let firstIdx = rawResponse.indexOf('{'); let lastIdx = rawResponse.lastIndexOf('}');
