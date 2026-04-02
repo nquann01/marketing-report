@@ -1,0 +1,45 @@
+# ==========================================
+# FILE GITIGNORE CHUẨN CHO DỰ ÁN AI BÁO CÁO
+# ==========================================
+
+# 1. Tệp hệ thống (Sinh ra bởi Hệ điều hành, không có tác dụng với code)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 2. Tệp cấu hình của các Trình soạn thảo (IDE)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 3. Dữ liệu Test nhạy cảm của công ty (TUYỆT ĐỐI KHÔNG PUSH LÊN MẠNG)
+# (Ngăn việc nhân viên lỡ tay commit file báo cáo chứa doanh thu thật)
+*.xlsx
+*.xls
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.pdf
+test-data/
+data/
+nhap/
+
+# 4. File cấu hình Mật khẩu/API Key (Dự phòng cho tương lai)
+# (Hiện tại app nhập API trên giao diện, nhưng cứ chặn trước cho an toàn)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+config.json
+credentials.json
+secrets/
