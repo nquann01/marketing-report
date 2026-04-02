@@ -63,29 +63,9 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
 .btn-del-key:hover { background: rgba(255,95,126,.1); }
 
 /* Nút tính năng AI LLM mới */
-.btn-magic {
-  padding: 6px 13px;
-  background: rgba(255, 188, 87, 0.1);
-  border: 1px solid rgba(255, 188, 87, 0.5);
-  border-radius: 6px;
-  color: var(--warn);
-  font-family: 'Be Vietnam Pro', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .3s ease;
-  display: none;
-}
-.btn-magic:hover:not(:disabled) {
-  background: rgba(255, 188, 87, 0.2);
-  border-color: var(--warn);
-  box-shadow: 0 0 10px rgba(255, 188, 87, 0.3);
-  transform: translateY(-1px);
-}
-.btn-magic:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.btn-magic { padding: 6px 13px; background: rgba(255, 188, 87, 0.1); border: 1px solid rgba(255, 188, 87, 0.5); border-radius: 6px; color: var(--warn); font-family: 'Be Vietnam Pro', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; transition: all .3s ease; display: none; }
+.btn-magic:hover:not(:disabled) { background: rgba(255, 188, 87, 0.2); border-color: var(--warn); box-shadow: 0 0 10px rgba(255, 188, 87, 0.3); transform: translateY(-1px); }
+.btn-magic:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .btn-copy{padding:6px 13px;background:transparent;border:1px solid var(--bdr);border-radius:6px;color:var(--tx2);font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;}
 .btn-copy:hover{border-color:var(--acc);color:var(--acc);}
@@ -132,13 +112,10 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
 .stbl tr:last-child td{border-bottom:none;}
 .stbl td.proj-g{color:var(--gunze);font-weight:600;}
 .stbl td.proj-m{color:var(--mp);font-weight:600;}
-
-/* CSS Cột có thể sắp xếp */
 .stbl th.sortable { cursor: pointer; transition: color 0.2s, background 0.2s; user-select: none;}
 .stbl th.sortable:hover { color: var(--tx); background: rgba(255,255,255,0.05); }
 .stbl th.sortable.asc { color: var(--acc2); }
 .stbl th.sortable.desc { color: var(--warn); }
-
 .sdiv{height:1px;background:var(--bdr);margin:3px 0 12px;}
 .d-none { display: none !important; }
 .analysis-box { background: var(--sur2); padding: 20px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; line-height: 1.8; }
@@ -357,20 +334,10 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
         </div>
       </div>
 
-    </div>
-    <div class="sec-lbl" style="margin-top: 15px;">Ghi chú thêm cho AI (Tùy chọn)</div>
+      <div class="sec-lbl" style="margin-top: 15px;">Ghi chú thêm cho AI (Tùy chọn)</div>
       <textarea id="ai-custom-note" placeholder="VD: Hãy viết kết luận thật ngắn gọn, nhấn mạnh vào việc giảm chi phí..." style="min-height: 60px; margin-bottom: 15px; border: 1px solid var(--bdr); border-radius: 8px; background: var(--sur); padding: 10px; color: var(--tx); font-size: 11px;"></textarea>
-      ```
-
-**Bước 2: Sửa logic code (JavaScript)**
-1. Kéo xuống tìm hàm `async function gen() {` (Khoảng dòng 620).
-2. Tìm dòng code này (ngay đầu hàm `gen()`): 
-   `const url = getApiUrl();`
-3. **Dán đoạn code lấy ghi chú vào NGAY BÊN DƯỚI nó:**
-
-```javascript
-  const customNote = document.getElementById('ai-custom-note') ? document.getElementById('ai-custom-note').value.trim() : '';
-  const extraPrompt = customNote ? `\n\n=== LƯU Ý ĐẶC BIỆT TỪ NGƯỜI DÙNG ===\n${customNote}\n(Hãy BẮT BUỘC tuân thủ lưu ý này khi viết phần Đánh giá và Kết luận).` : '';
+      
+    </div>
     <button class="btn-gen" id="gbtn" onclick="gen()">✦ Tạo báo cáo bằng AI</button>
   </div>
 
@@ -391,7 +358,8 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
         <button class="btn-copy" id="cbtn" onclick="doCopy()">⎘ Sao chép</button>
       </div>
     </div>
-   <div class="out-body" id="out">
+    
+    <div class="out-body" id="out">
       <div class="s-empty">
         <div class="ico">🗂️</div>
         <p>Chọn loại báo cáo, tải số liệu lên</p>
@@ -411,51 +379,18 @@ textarea::placeholder{color:var(--tx3);}textarea:focus{color:var(--tx);}
         <button onclick="sendChat()" style="background: var(--acc); color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Gửi</button>
       </div>
     </div>
-    ```
 
----
-
-### Bước 2: Thay thế hàm xem lịch sử để Chatbox tự động hiện ra
-Để tránh lỗi chèn nhầm, mình đã viết lại sẵn hàm `viewHist()` cho bạn. 
-
-1. Bạn ấn `Ctrl + F` tìm từ khoá: `function viewHist() {`
-2. Bạn bôi đen từ chữ `function viewHist() {` cho đến dấu `}` đóng của hàm đó (khoảng 15 dòng).
-3. **Thay thế** toàn bộ khối đó bằng đoạn code này:
-
-```javascript
-function viewHist() {
-  const val = document.getElementById('hist-sel').value;
-  const delBtn = document.getElementById('del-btn');
-  const magicBtn = document.getElementById('magic-btn');
-  const chatBox = document.getElementById('ai-chat-box'); // Gọi khung chat
-  
-  if(!val) {
-    document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">🗂️</div><p>Chọn một báo cáo từ lịch sử để xem</p></div>`;
-    delBtn.style.display = 'none';
-    magicBtn.style.display = 'none';
-    if(chatBox) chatBox.style.display = 'none'; // Ẩn khung chat
-    return;
-  }
-  const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  if(hist[val]) {
-    document.getElementById('out').innerHTML = hist[val];
-    delBtn.style.display = 'block';
-    magicBtn.style.display = 'inline-block';
-    if(chatBox) chatBox.style.display = 'flex'; // Hiện khung chat
-  }
-}
   </div>
 </div>
 
 <script>
-// --- QUẢN LÝ API KEY CHUẨN (CÓ TÍNH NĂNG KIỂM TRA LỖI) ---
 function initApp() {
   loadHistList();
   const savedKey = localStorage.getItem('gemini_api_key');
   const keyInput = document.getElementById('api-key-input');
   if (savedKey) {
     keyInput.value = savedKey;
-    keyInput.style.borderColor = 'var(--acc2)'; // Hiện viền xanh báo hiệu đã lưu key hợp lệ
+    keyInput.style.borderColor = 'var(--acc2)'; 
   }
 }
 
@@ -464,10 +399,7 @@ async function saveApiKey() {
   const key = keyInput.value.trim();
   const btn = document.querySelector('.btn-save-key');
   
-  if (!key) {
-    alert("Vui lòng nhập API Key trước khi lưu!");
-    return;
-  }
+  if (!key) { alert("Vui lòng nhập API Key trước khi lưu!"); return; }
 
   const ogText = btn.textContent;
   btn.textContent = "Đang kiểm tra...";
@@ -475,12 +407,7 @@ async function saveApiKey() {
 
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: "ping" }] }] })
-    });
-
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "ping" }] }] }) });
     if (res.ok) {
       localStorage.setItem('gemini_api_key', key);
       keyInput.style.borderColor = "var(--acc2)";
@@ -488,28 +415,23 @@ async function saveApiKey() {
     } else {
       const errData = await res.json();
       keyInput.style.borderColor = "var(--danger)";
-      alert(`❌ API Key không hợp lệ hoặc bị lỗi (${res.status}):\\n${errData.error?.message || 'Vui lòng kiểm tra lại.'}`);
+      alert(`❌ API Key không hợp lệ hoặc bị lỗi (${res.status}):\n${errData.error?.message || 'Vui lòng kiểm tra lại.'}`);
     }
   } catch (e) {
     keyInput.style.borderColor = "var(--warn)";
     alert("⚠️ Lỗi kết nối mạng, không thể kiểm tra API Key lúc này. Vui lòng kiểm tra lại internet!");
-  } finally {
-    btn.textContent = ogText;
-    btn.disabled = false;
-  }
+  } finally { btn.textContent = ogText; btn.disabled = false; }
 }
 
 function clearApiKey() {
   localStorage.removeItem('gemini_api_key');
   const keyInput = document.getElementById('api-key-input');
-  keyInput.value = '';
-  keyInput.style.borderColor = "var(--bdr)";
+  keyInput.value = ''; keyInput.style.borderColor = "var(--bdr)";
   alert("Đã xoá API Key khỏi trình duyệt!");
 }
 
 function getApiKey() {
-  const key = localStorage.getItem('gemini_api_key') || document.getElementById('api-key-input').value.trim();
-  return key;
+  return localStorage.getItem('gemini_api_key') || document.getElementById('api-key-input').value.trim();
 }
 
 function getApiUrl() {
@@ -529,7 +451,6 @@ function updateUI() {
   }
 }
 
-// ---- HỆ THỐNG LƯU TRỮ LỊCH SỬ ----
 const STORAGE_KEY = 'ai_report_history';
 
 function loadHistList() {
@@ -546,10 +467,13 @@ function viewHist() {
   const val = document.getElementById('hist-sel').value;
   const delBtn = document.getElementById('del-btn');
   const magicBtn = document.getElementById('magic-btn');
+  const chatBox = document.getElementById('ai-chat-box');
+  
   if(!val) {
     document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">🗂️</div><p>Chọn một báo cáo từ lịch sử để xem</p></div>`;
     delBtn.style.display = 'none';
     magicBtn.style.display = 'none';
+    if(chatBox) chatBox.style.display = 'none';
     return;
   }
   const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -557,21 +481,17 @@ function viewHist() {
     document.getElementById('out').innerHTML = hist[val];
     delBtn.style.display = 'block';
     magicBtn.style.display = 'inline-block';
+    if(chatBox) chatBox.style.display = 'flex';
   }
 }
 
-// --- HỆ THỐNG LƯU TRỮ LỊCH SỬ (CHỈ LƯU LOCAL) ---
 function saveHist(type, periodStr, htmlStr) {
   const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
   const dateStr = new Date().toLocaleString('vi-VN', {hour: '2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'});
   const keyName = periodStr ? `${type} ${periodStr}` : `Báo cáo ${type} (${dateStr})`;
-  
   hist[keyName] = htmlStr;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
-  
-  loadHistList(); 
-  document.getElementById('hist-sel').value = keyName;
-  viewHist(); 
+  loadHistList(); document.getElementById('hist-sel').value = keyName; viewHist(); 
 }
 
 function deleteHist() {
@@ -579,20 +499,14 @@ function deleteHist() {
   if(!val) return;
   if(!confirm(`Bạn có chắc chắn muốn xoá vĩnh viễn báo cáo "${val}" khỏi lịch sử không?`)) return;
   const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  delete hist[val]; 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); 
-  loadHistList(); 
-  viewHist(); 
+  delete hist[val]; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); 
+  loadHistList(); viewHist(); 
 }
 
 function deleteAllHist() {
   if(!confirm(`⚠️ NGUY HIỂM: Bạn có CHẮC CHẮN muốn xoá TOÀN BỘ lịch sử báo cáo không?\n\nHành động này không thể hoàn tác!`)) return;
-  localStorage.removeItem(STORAGE_KEY);
-  loadHistList(); 
-  viewHist(); 
+  localStorage.removeItem(STORAGE_KEY); loadHistList(); viewHist(); 
 }
-
-// ----------------------------------------------------
 
 let imgs = { hcm: [], hn: [], kpi: [], thang_gunze: [], thang_mp: [], thang_cuahang: [] };
 let excelTextData = '';
@@ -605,10 +519,7 @@ function handleImgs(files, region) {
       const res = e.target && e.target.result;
       if (typeof res === 'string' && res.includes(',')) {
         const parts = res.split(',');
-        if (parts.length > 1) {
-          imgs[region].push({ data: parts[1], type: f.type, name: f.name }); 
-          renderPrev(region); 
-        }
+        if (parts.length > 1) { imgs[region].push({ data: parts[1], type: f.type, name: f.name }); renderPrev(region); }
       }
     };
     r.readAsDataURL(f);
@@ -619,42 +530,28 @@ function parseAnyNum(str) {
   if(!str) return 0;
   let s = String(str).trim().replace(/"/g, '');
   if (s === '-' || s === '') return 0;
-  
   if (s.includes(',') && s.includes('.')) {
-    if (s.indexOf(',') > s.indexOf('.')) {
-      s = s.replace(/\./g, '').replace(',', '.'); 
-    } else {
-      s = s.replace(/,/g, ''); 
-    }
+    if (s.indexOf(',') > s.indexOf('.')) { s = s.replace(/\./g, '').replace(',', '.'); } 
+    else { s = s.replace(/,/g, ''); }
   } else if (s.includes(',')) {
     let parts = s.split(',');
     if (parts.length > 2) s = s.replace(/,/g, '');
-    else {
-       if (parts[1] && parts[1].length === 3) s = s.replace(/,/g, '');
-       else s = s.replace(',', '.'); 
-    }
+    else { if (parts[1] && parts[1].length === 3) s = s.replace(/,/g, ''); else s = s.replace(',', '.'); }
   } else if (s.includes('.')) {
     let parts = s.split('.');
     if (parts.length > 2) s = s.replace(/\./g, '');
-    else {
-       if (parts[1] && parts[1].length === 3) s = s.replace(/\./g, '');
-    }
+    else { if (parts[1] && parts[1].length === 3) s = s.replace(/\./g, ''); }
   }
   return parseFloat(s.replace(/[^\d.-]/g, '')) || 0;
 }
 
 function handleExcelFile(files) {
   if (!files || files.length === 0) return;
-  const f = files[0];
-  const r = new FileReader();
+  const f = files[0]; const r = new FileReader();
   r.onload = e => { 
     let rawText = e?.target?.result || ""; 
-    try {
-      excelTextData = aggregateCSV(rawText);
-    } catch(err) {
-      console.log("Lỗi phân tích CSV:", err);
-      excelTextData = "DỮ LIỆU EXCEL THÔ:\n" + (rawText ? rawText.substring(0, 5000) : ""); 
-    }
+    try { excelTextData = aggregateCSV(rawText); } 
+    catch(err) { excelTextData = "DỮ LIỆU EXCEL THÔ:\n" + (rawText ? rawText.substring(0, 5000) : ""); }
     document.getElementById('preview-excel').innerHTML = `<div style="font-size:11px; font-weight:600; color:var(--acc2); padding-top:5px;">✓ Đã xử lý & cộng tổng số liệu file: ${f.name}</div>`;
   };
   r.readAsText(f);
@@ -664,10 +561,8 @@ function aggregateCSV(csvText) {
   if (typeof csvText !== 'string' || !csvText) return "DỮ LIỆU RỖNG";
   let lines = csvText.split(/\r?\n/);
   let nameIdx = -1, spendIdx = -1, impIdx = -1, reachIdx = -1;
-  
   function parseCSVRow(str) {
-    if (!str) return [];
-    let arr = []; let quote = false; let cell = '';
+    if (!str) return []; let arr = []; let quote = false; let cell = '';
     for (let c = 0; c < str.length; c++) {
       if (str[c] === '"') { quote = !quote; }
       else if (str[c] === ',' && !quote) { arr.push(cell.trim()); cell = ''; }
@@ -675,53 +570,28 @@ function aggregateCSV(csvText) {
     }
     arr.push(cell.trim()); return arr;
   }
-
   let startRow = 0;
   for (let i = 0; i < Math.min(15, lines.length); i++) {
-    let row = parseCSVRow(lines[i]);
-    let strRow = row.join('').toLowerCase();
+    let row = parseCSVRow(lines[i]); let strRow = row.join('').toLowerCase();
     if (strRow.includes('amount spent') || strRow.includes('chi tiêu') || strRow.includes('hiển thị') || strRow.includes('impressions')) {
       let headers = row.map(h => h.toLowerCase().trim());
       nameIdx = headers.findIndex(h => h.includes('name') || h.includes('tên'));
       spendIdx = headers.findIndex(h => h.includes('amount spent') || h.includes('chi tiêu') || h.includes('chi phí') || h.includes('số tiền'));
       impIdx = headers.findIndex(h => h.includes('impressions') || h.includes('hiển thị'));
       reachIdx = headers.findIndex(h => (h.includes('reach') || h.includes('tiếp cận')) && !h.includes('cost') && !h.includes('chi phí') && !h.includes('trên') && !h.includes('rate'));
-      
-      startRow = i + 1;
-      break;
+      startRow = i + 1; break;
     }
   }
-
   if (nameIdx === -1 || spendIdx === -1) return "DỮ LIỆU EXCEL THÔ:\n" + csvText.substring(0, 5000);
-
-  let stats = {
-    "Đỗ Quang": { spend: 0, imp: 0, reach: 0 }, "Trung Hoà": { spend: 0, imp: 0, reach: 0 },
-    "Hà Đông": { spend: 0, imp: 0, reach: 0 }, "Mỹ Đình": { spend: 0, imp: 0, reach: 0 },
-    "Trần Đăng Ninh": { spend: 0, imp: 0, reach: 0 }, "Times City": { spend: 0, imp: 0, reach: 0 },
-    "Ngoại Giao Đoàn": { spend: 0, imp: 0, reach: 0 }, "Lê Văn Sỹ": { spend: 0, imp: 0, reach: 0 },
-    "Nguyễn Thị Thập": { spend: 0, imp: 0, reach: 0 }, "Hai Bà Trưng": { spend: 0, imp: 0, reach: 0 },
-    "Tổng": { spend: 0, imp: 0, reach: 0 }
-  };
-
+  let stats = { "Đỗ Quang": { spend: 0, imp: 0, reach: 0 }, "Trung Hoà": { spend: 0, imp: 0, reach: 0 }, "Hà Đông": { spend: 0, imp: 0, reach: 0 }, "Mỹ Đình": { spend: 0, imp: 0, reach: 0 }, "Trần Đăng Ninh": { spend: 0, imp: 0, reach: 0 }, "Times City": { spend: 0, imp: 0, reach: 0 }, "Ngoại Giao Đoàn": { spend: 0, imp: 0, reach: 0 }, "Lê Văn Sỹ": { spend: 0, imp: 0, reach: 0 }, "Nguyễn Thị Thập": { spend: 0, imp: 0, reach: 0 }, "Hai Bà Trưng": { spend: 0, imp: 0, reach: 0 }, "Tổng": { spend: 0, imp: 0, reach: 0 } };
   let actualTotalReach = 0; 
-
   for (let i = startRow; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
     let row = parseCSVRow(lines[i]);
     if (row.length <= Math.max(nameIdx, spendIdx, reachIdx)) continue;
-    
-    let n = row[nameIdx] || "";
-    let nLower = n.toLowerCase();
-    
-    let spend = parseAnyNum(row[spendIdx]);
-    let imp = parseAnyNum(row[impIdx]);
-    let reach = parseAnyNum(row[reachIdx]);
-
-    if (!nLower || nLower === "total" || nLower.includes("kết quả từ tất cả") || nLower.includes("tổng cộng") || nLower === "—") {
-        if (reach > 0) actualTotalReach = reach;
-        continue;
-    }
-
+    let n = row[nameIdx] || ""; let nLower = n.toLowerCase();
+    let spend = parseAnyNum(row[spendIdx]); let imp = parseAnyNum(row[impIdx]); let reach = parseAnyNum(row[reachIdx]);
+    if (!nLower || nLower === "total" || nLower.includes("kết quả từ tất cả") || nLower.includes("tổng cộng") || nLower === "—") { if (reach > 0) actualTotalReach = reach; continue; }
     let isStore = false;
     if (nLower.includes("đq")) { stats["Đỗ Quang"].spend += spend; stats["Đỗ Quang"].imp += imp; stats["Đỗ Quang"].reach += reach; isStore = true; }
     else if (nLower.includes("trung h")) { stats["Trung Hoà"].spend += spend; stats["Trung Hoà"].imp += imp; stats["Trung Hoà"].reach += reach; isStore = true; }
@@ -733,27 +603,14 @@ function aggregateCSV(csvText) {
     else if (nLower.includes("lvs")) { stats["Lê Văn Sỹ"].spend += spend; stats["Lê Văn Sỹ"].imp += imp; stats["Lê Văn Sỹ"].reach += reach; isStore = true; }
     else if (nLower.includes("ntt")) { stats["Nguyễn Thị Thập"].spend += spend; stats["Nguyễn Thị Thập"].imp += imp; stats["Nguyễn Thị Thập"].reach += reach; isStore = true; }
     else if (nLower.includes("hbt")) { stats["Hai Bà Trưng"].spend += spend; stats["Hai Bà Trưng"].imp += imp; stats["Hai Bà Trưng"].reach += reach; isStore = true; }
-
-    if (isStore) {
-        stats["Tổng"].spend += spend;
-        stats["Tổng"].imp += imp;
-        stats["Tổng"].reach += reach;
-    }
+    if (isStore) { stats["Tổng"].spend += spend; stats["Tổng"].imp += imp; stats["Tổng"].reach += reach; }
   }
-
-  if (actualTotalReach > 0) {
-      stats["Tổng"].reach = actualTotalReach;
-  }
-
+  if (actualTotalReach > 0) stats["Tổng"].reach = actualTotalReach;
   function fmt(num) { return Math.round(num).toLocaleString('vi-VN'); }
-
   let res = "DỮ LIỆU EXCEL CỬA HÀNG ĐÃ ĐƯỢC CỘNG TỔNG CHÍNH XÁC:\n\n";
   for (let k in stats) {
-     if (k === "Tổng") {
-         res += `- TỔNG HỆ THỐNG: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
-     } else {
-         res += `- Cửa hàng ${k}: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
-     }
+     if (k === "Tổng") res += `- TỔNG HỆ THỐNG: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
+     else res += `- Cửa hàng ${k}: Chi phí: ${fmt(stats[k].spend)} | Hiển thị: ${fmt(stats[k].imp)} | Tiếp cận: ${fmt(stats[k].reach)}\n`;
   }
   return res;
 }
@@ -763,9 +620,7 @@ function renderPrev(region) {
     `<div class="thumb"><img src="data:${img.type};base64,${img.data}"><button onclick="rmImg(${i}, '${region}')">✕</button></div>`
   ).join('');
 }
-
 function rmImg(i, region) { imgs[region].splice(i, 1); renderPrev(region); }
-
 function parseNum(str) { 
   if (!str || str === '—' || str === '') return null; 
   const n = parseFloat(String(str).replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')); 
@@ -774,20 +629,17 @@ function parseNum(str) {
 function fmtPct(n) { return (n === null || n === undefined) ? '—' : (n * 100).toFixed(2).replace('.', ',') + '%'; }
 function fmtNum(n) { return (n === null || n === undefined) ? '—' : Math.round(n).toLocaleString('vi-VN'); }
 function safeAdd(a, b) { return (a === null && b === null) ? null : (a || 0) + (b || 0); }
-
 function sumKhmByCategory(stores, catName) {
   let total = 0, found = false;
   (stores || []).forEach(store => {
     (store.rows || []).forEach(row => {
       if (row.cat && String(row.cat).trim().toLowerCase() === catName.toLowerCase()) {
-        const v = parseNum(row.khm_dt);
-        if (v !== null) { total += v; found = true; }
+        const v = parseNum(row.khm_dt); if (v !== null) { total += v; found = true; }
       }
     });
   });
   return found ? total : null;
 }
-
 function calcMetrics(raw, khmTotal, manualSpend) {
   const chitieu = manualSpend !== null ? manualSpend : parseNum(raw.chitieu);
   if (manualSpend !== null) raw.chitieu = fmtNum(manualSpend);
@@ -803,146 +655,68 @@ function calcMetrics(raw, khmTotal, manualSpend) {
 async function fetchWithRetry(url, options, retries = 5) {
   let delay = 1000;
   for (let i = 0; i < retries; i++) {
-    try {
-      const res = await fetch(url, options);
-      if (res.ok) return res;
-      if (i === retries - 1) throw new Error(`Lỗi HTTP ${res.status}: Không thể kết nối tới Google Gemini API.`);
-    } catch (e) {
-      if (i === retries - 1) throw e;
-    }
-    await new Promise(r => setTimeout(r, delay));
-    delay *= 2;
+    try { const res = await fetch(url, options); if (res.ok) return res; if (i === retries - 1) throw new Error(`Lỗi HTTP ${res.status}: Không thể kết nối tới Google Gemini API.`); } 
+    catch (e) { if (i === retries - 1) throw e; }
+    await new Promise(r => setTimeout(r, delay)); delay *= 2;
   }
 }
 
 function sortHtmlTable(th, colIdx) {
-    const table = th.closest('table');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
+    const table = th.closest('table'); const tbody = table.querySelector('tbody'); const rows = Array.from(tbody.querySelectorAll('tr'));
     let isAsc = th.classList.contains('asc');
-    table.querySelectorAll('th').forEach(h => { 
-        h.classList.remove('asc', 'desc'); 
-        h.innerHTML = h.innerHTML.replace(' ↑', '').replace(' ↓', '').replace(' ↕', '') + ' ↕'; 
-    });
-    
-    th.classList.toggle('asc', !isAsc);
-    th.classList.toggle('desc', isAsc);
-    th.innerHTML = th.innerHTML.replace(' ↕', '') + (isAsc ? ' ↓' : ' ↑');
-
+    table.querySelectorAll('th').forEach(h => { h.classList.remove('asc', 'desc'); h.innerHTML = h.innerHTML.replace(' ↑', '').replace(' ↓', '').replace(' ↕', '') + ' ↕'; });
+    th.classList.toggle('asc', !isAsc); th.classList.toggle('desc', isAsc); th.innerHTML = th.innerHTML.replace(' ↕', '') + (isAsc ? ' ↓' : ' ↑');
     rows.sort((a, b) => {
-        let valA = a.cells[colIdx].innerText.trim();
-        let valB = b.cells[colIdx].innerText.trim();
-        
-        let numA = parseAnyNum(valA.replace('%', ''));
-        let numB = parseAnyNum(valB.replace('%', ''));
-        
-        if (!isNaN(numA) && !isNaN(numB) && valA !== '—' && valB !== '—') {
-            return isAsc ? numA - numB : numB - numA;
-        }
+        let valA = a.cells[colIdx].innerText.trim(); let valB = b.cells[colIdx].innerText.trim();
+        let numA = parseAnyNum(valA.replace('%', '')); let numB = parseAnyNum(valB.replace('%', ''));
+        if (!isNaN(numA) && !isNaN(numB) && valA !== '—' && valB !== '—') return isAsc ? numA - numB : numB - numA;
         return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
     });
-
-    tbody.innerHTML = '';
-    rows.forEach(r => tbody.appendChild(r));
+    tbody.innerHTML = ''; rows.forEach(r => tbody.appendChild(r));
 }
 
 function showLoad() {
-  document.getElementById('out').innerHTML = `
-    <div class="s-load">
-      <div class="spinner"></div>
-      <div class="lsteps">
-        <div class="lstep on" id="ls0"><div class="sdot"></div>Đang gửi dữ liệu cho AI...</div>
-        <div class="lstep" id="ls1"><div class="sdot"></div>AI đang phân tích số liệu...</div>
-        <div class="lstep" id="ls2"><div class="sdot"></div>Đang tổng hợp báo cáo...</div>
-      </div>
-    </div>`;
+  document.getElementById('out').innerHTML = `<div class="s-load"><div class="spinner"></div><div class="lsteps"><div class="lstep on" id="ls0"><div class="sdot"></div>Đang gửi dữ liệu cho AI...</div><div class="lstep" id="ls1"><div class="sdot"></div>AI đang phân tích số liệu...</div><div class="lstep" id="ls2"><div class="sdot"></div>Đang tổng hợp báo cáo...</div></div></div>`;
 }
-
 function setStep(n) {
   for (let i = 0; i < n; i++) { const e = document.getElementById('ls' + i); if (e) { e.classList.remove('on'); e.classList.add('dn'); } }
   const c = document.getElementById('ls' + n); if (c) c.classList.add('on');
 }
-
-function mcHtml(lbl, val, cls = '', formula = '') {
-  return `<div class="mc"><div class="mlbl">${lbl}${formula ? `<span class="calc-badge">tính</span>` : ''}</div><div class="mval ${cls}">${val || '—'}</div>${formula ? `<div class="mcalc">${formula}</div>` : ''}</div>`;
-}
-
+function mcHtml(lbl, val, cls = '', formula = '') { return `<div class="mc"><div class="mlbl">${lbl}${formula ? `<span class="calc-badge">tính</span>` : ''}</div><div class="mval ${cls}">${val || '—'}</div>${formula ? `<div class="mcalc">${formula}</div>` : ''}</div>`; }
 function nguonHtml(list) {
   if (!list || !list.length || !list[0].kenh || list[0].kenh === '—') return '';
-  const rows = list.map(n => `<tr>
-    <td>${n.kenh || '—'}</td>
-    <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px">${n.sotien || '—'}</td>
-    <td style="text-align:right;color:var(--warn);font-family:'JetBrains Mono',monospace;font-size:11px">${n.pct || '—'}</td>
-  </tr>`).join('');
-  return `<div class="nblk"><strong>Nguồn bán hàng:</strong>
-    <table style="width:100%;margin-top:6px;border-collapse:collapse">
-      <tr style="color:var(--tx3);font-size:9px">
-        <th style="text-align:left;padding:3px 0;font-weight:700">Kênh</th>
-        <th style="text-align:right;font-weight:700">Doanh thu</th>
-        <th style="text-align:right;font-weight:700">% DTT</th>
-      </tr>${rows}
-    </table>
-  </div>`;
+  const rows = list.map(n => `<tr><td>${n.kenh || '—'}</td><td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px">${n.sotien || '—'}</td><td style="text-align:right;color:var(--warn);font-family:'JetBrains Mono',monospace;font-size:11px">${n.pct || '—'}</td></tr>`).join('');
+  return `<div class="nblk"><strong>Nguồn bán hàng:</strong><table style="width:100%;margin-top:6px;border-collapse:collapse"><tr style="color:var(--tx3);font-size:9px"><th style="text-align:left;padding:3px 0;font-weight:700">Kênh</th><th style="text-align:right;font-weight:700">Doanh thu</th><th style="text-align:right;font-weight:700">% DTT</th></tr>${rows}</table></div>`;
 }
-
-function spHtml(list) {
-  if (!list || !list.length) return '';
-  return `<div class="nblk"><strong>Sản phẩm bán chạy:</strong> ${list.map(s => `<span class="chip">${s}</span>`).join(' ')}</div>`;
-}
-
+function spHtml(list) { if (!list || !list.length) return ''; return `<div class="nblk"><strong>Sản phẩm bán chạy:</strong> ${list.map(s => `<span class="chip">${s}</span>`).join(' ')}</div>`; }
 function dgHtml(dg, yoy) {
   if (!dg && !yoy) return '';
-  let h = '<div class="nblk">';
-  if (dg) h += `<strong>Đánh giá:</strong> ${dg}<br>`;
-  if (yoy && yoy !== '—') h += `<span style="color:var(--tx3)">So với cùng kỳ năm trước: </span><strong style="color:var(--warn)">${yoy}</strong>`;
+  let h = '<div class="nblk">'; if (dg) h += `<strong>Đánh giá:</strong> ${dg}<br>`; if (yoy && yoy !== '—') h += `<span style="color:var(--tx3)">So với cùng kỳ năm trước: </span><strong style="color:var(--warn)">${yoy}</strong>`;
   return h + '</div>';
 }
-
 function storeTbl(s, regionName) {
   if (!s || !s.rows || s.rows.length === 0) return '';
   const rows = s.rows.map(r => {
-    const isGunze = r.cat && r.cat.toLowerCase() === 'đồ lót';
-    const isMp = r.cat && r.cat.toLowerCase() === 'mp';
+    const isGunze = r.cat && r.cat.toLowerCase() === 'đồ lót'; const isMp = r.cat && r.cat.toLowerCase() === 'mp';
     const dtCls = isGunze ? ' class="proj-g"' : isMp ? ' class="proj-m"' : '';
-    return `<tr ${(isGunze||isMp)?'style="background:rgba(255,255,255,.02)"':''}>
-      <td${dtCls}>${r.cat||'—'}${isGunze?' <span style="font-size:9px;color:var(--gunze);opacity:.7">Gunze</span>':''}${isMp?' <span style="font-size:9px;color:var(--mp);opacity:.7">MP</span>':''}</td>
-      <td>${r.dt||'—'}</td><td${dtCls}>${r.khm_dt||'—'}</td>
-    </tr>`;
+    return `<tr ${(isGunze||isMp)?'style="background:rgba(255,255,255,.02)"':''}><td${dtCls}>${r.cat||'—'}${isGunze?' <span style="font-size:9px;color:var(--gunze);opacity:.7">Gunze</span>':''}${isMp?' <span style="font-size:9px;color:var(--mp);opacity:.7">MP</span>':''}</td><td>${r.dt||'—'}</td><td${dtCls}>${r.khm_dt||'—'}</td></tr>`;
   }).join('');
   return `<table class="stbl"><thead><tr><th style="text-align:left">${s.name || regionName}</th><th>Doanh Thu Thuần</th><th>Doanh Thu KHM</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderTuan(d, gc, mc, gTot, gHCM, gHN, mTot, mHCM, mHN, period, from, to) {
   const g = d.gunze || {}, m = d.mp || {};
-  const dr = (from && to) ? ` — ${from} đến ${to}` : '';
-  const rperiod = period ? `Tuần ${period}` : '';
+  const dr = (from && to) ? ` — ${from} đến ${to}` : ''; const rperiod = period ? `Tuần ${period}` : '';
   const kpiCls = v => v && parseInt(v) >= 100 ? 'g' : 'w';
-
-  const formatDetail = (hcm, hn) => {
-    let parts = [];
-    if (hcm !== null) parts.push(`HCM: ${fmtNum(hcm)}`);
-    if (hn !== null) parts.push(`HN: ${fmtNum(hn)}`);
-    return parts.length > 0 ? `(${parts.join(' + ')})` : '';
-  };
-
-  const khmNoteHtml = (gTot !== null || mTot !== null) ? `<div class="khm-note">
-    ${gTot !== null ? `<div class="khm-item"><span>Tổng KHM Đồ lót:</span><div><span class="khm-detail">${formatDetail(gHCM, gHN)}</span> <strong style="color:var(--gunze)">${fmtNum(gTot)}</strong></div></div>` : ''}
-    ${mTot !== null ? `<div class="khm-item"><span>Tổng KHM Mỹ phẩm:</span><div><span class="khm-detail">${formatDetail(mHCM, mHN)}</span> <strong style="color:var(--mp)">${fmtNum(mTot)}</strong></div></div>` : ''}
-  </div>` : '';
-
+  const formatDetail = (hcm, hn) => { let parts = []; if (hcm !== null) parts.push(`HCM: ${fmtNum(hcm)}`); if (hn !== null) parts.push(`HN: ${fmtNum(hn)}`); return parts.length > 0 ? `(${parts.join(' + ')})` : ''; };
+  const khmNoteHtml = (gTot !== null || mTot !== null) ? `<div class="khm-note">${gTot !== null ? `<div class="khm-item"><span>Tổng KHM Đồ lót:</span><div><span class="khm-detail">${formatDetail(gHCM, gHN)}</span> <strong style="color:var(--gunze)">${fmtNum(gTot)}</strong></div></div>` : ''}${mTot !== null ? `<div class="khm-item"><span>Tổng KHM Mỹ phẩm:</span><div><span class="khm-detail">${formatDetail(mHCM, mHN)}</span> <strong style="color:var(--mp)">${fmtNum(mTot)}</strong></div></div>` : ''}</div>` : '';
   let storesHtml = '', storesContent = '';
   if (d.stores_hcm && d.stores_hcm.length) storesContent += d.stores_hcm.map(s => storeTbl(s, 'Cửa hàng HCM')).join('<div class="sdiv"></div>');
-  if (d.stores_hn && d.stores_hn.length) {
-    if (storesContent) storesContent += '<div class="sdiv"></div>';
-    storesContent += d.stores_hn.map(s => storeTbl(s, 'Cửa hàng HN')).join('<div class="sdiv"></div>');
-  }
-
+  if (d.stores_hn && d.stores_hn.length) { if (storesContent) storesContent += '<div class="sdiv"></div>'; storesContent += d.stores_hn.map(s => storeTbl(s, 'Cửa hàng HN')).join('<div class="sdiv"></div>'); }
   if (storesContent) storesHtml = `<div class="pb"><div class="phdr"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">Dữ liệu từ Cửa hàng</div></div>${khmNoteHtml}<div class="ssec">${storesContent}</div></div>`;
 
   document.getElementById('out').innerHTML = `<div class="report" id="rpt">
     <div class="rh"><div class="rweek">${rperiod}</div><div class="rtitle">Báo Cáo Tuần${dr}</div></div>
-    
     <div class="pb">
       <div class="phdr"><div class="pdot" style="background:var(--gunze)"></div><div class="pname" style="color:var(--gunze)">Dự án Gunze</div></div>
       <div class="mgrid">
@@ -955,11 +729,8 @@ function renderTuan(d, gc, mc, gTot, gHCM, gHN, mTot, mHCM, mHN, period, from, t
         ${mcHtml('Chiết khấu', g.chietkhau ? g.chietkhau + (g.chietkhau_pct ? ' (' + g.chietkhau_pct + ')' : '') : '—')}
         ${mcHtml('Hàng trả lại', g.hangtralai ? g.hangtralai + (g.hangtralai_pct ? ' (' + g.hangtralai_pct + ')' : '') : '—')}
       </div>
-      ${nguonHtml(g.nguon)}
-      ${spHtml(g.sp)}
-      ${dgHtml(g.danhgia, g.yoy)}
+      ${nguonHtml(g.nguon)} ${spHtml(g.sp)} ${dgHtml(g.danhgia, g.yoy)}
     </div>
-
     <div class="pb">
       <div class="phdr"><div class="pdot" style="background:var(--mp)"></div><div class="pname" style="color:var(--mp)">Dự án Mỹ phẩm</div></div>
       <div class="mgrid">
@@ -976,742 +747,225 @@ function renderTuan(d, gc, mc, gTot, gHCM, gHN, mTot, mHCM, mHN, period, from, t
         <div class="mc"><div class="mlbl">Data Page</div><div class="mval">${m.page_sl || '—'} <span style="font-size:10px;color:var(--tx2)">${m.page_dat ? '(' + m.page_dat + ')' : ''}</span></div>${m.page_chot ? `<div class="mcalc">Tỷ lệ chốt: ${m.page_chot}</div>` : ''}</div>
         <div class="mc"></div>
       </div>
-      ${nguonHtml(m.nguon)}
-      ${spHtml(m.sp)}
-      ${dgHtml(m.danhgia, m.yoy)}
+      ${nguonHtml(m.nguon)} ${spHtml(m.sp)} ${dgHtml(m.danhgia, m.yoy)}
     </div>
     ${storesHtml}
   </div>`;
 }
 
 function renderThang(data, period, from, to) {
-  const dr = (from && to) ? ` — ${from} đến ${to}` : '';
-  const rperiod = period ? `Tháng ${period}` : '';
-  
-  let html = `<div class="report" id="rpt">
-    <div class="rh"><div class="rweek" style="color:var(--acc2)">${rperiod}</div><div class="rtitle">Báo Cáo Tháng${dr}</div></div>`;
+  const dr = (from && to) ? ` — ${from} đến ${to}` : ''; const rperiod = period ? `Tháng ${period}` : '';
+  let html = `<div class="report" id="rpt"><div class="rh"><div class="rweek" style="color:var(--acc2)">${rperiod}</div><div class="rtitle">Báo Cáo Tháng${dr}</div></div>`;
 
   const buildSection = (key, title, colorVar) => {
-    const d = data[key];
-    if (!d || !d.metrics || d.metrics.length === 0) return '';
-    
-    let gridHtml = d.metrics.map(item => {
-      let extra = item.kpi_trend && item.kpi_trend !== '—' ? `<div class="mcalc">${item.kpi_trend}</div>` : '';
-      return `<div class="mc"><div class="mlbl">${item.name}</div><div class="mval">${item.value}</div>${extra}</div>`;
-    }).join('');
-
+    const d = data[key]; if (!d || !d.metrics || d.metrics.length === 0) return '';
+    let gridHtml = d.metrics.map(item => { let extra = item.kpi_trend && item.kpi_trend !== '—' ? `<div class="mcalc">${item.kpi_trend}</div>` : ''; return `<div class="mc"><div class="mlbl">${item.name}</div><div class="mval">${item.value}</div>${extra}</div>`; }).join('');
     let evalHtml = `<div class="eval-content">`;
-    if (d.danh_gia && d.danh_gia.length) {
-      evalHtml += `<ul class="eval-list">`;
-      d.danh_gia.forEach(item => evalHtml += `<li>${item}</li>`);
-      evalHtml += `</ul>`;
-    }
-    if (d.ket_luan) {
-      evalHtml += `<div><span class="ket-luan-text">Kết luận: </span><span class="ket-luan-text" style="font-weight:normal">${d.ket_luan.replace(/^Kết luận:\s*/i, '')}</span></div>`;
-    }
+    if (d.danh_gia && d.danh_gia.length) { evalHtml += `<ul class="eval-list">`; d.danh_gia.forEach(item => evalHtml += `<li>${item}</li>`); evalHtml += `</ul>`; }
+    if (d.ket_luan) { evalHtml += `<div><span class="ket-luan-text">Kết luận: </span><span class="ket-luan-text" style="font-weight:normal">${d.ket_luan.replace(/^Kết luận:\s*/i, '')}</span></div>`; }
     evalHtml += `</div>`;
-
-    return `
-      <div class="pb">
-        <div class="phdr"><div class="pdot" style="background:${colorVar}"></div><div class="pname" style="color:${colorVar}">${title}</div></div>
-        <div class="mgrid">${gridHtml}</div>
-        <div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-left:none; border-top: 1px solid var(--bdr);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-            <div class="analysis-title" style="margin-bottom:0;">Đánh giá:</div>
-            <button class="btn-magic" style="display:inline-flex; align-items:center; padding:4px 8px; font-size:10px;" onclick="regenerateEval(this, '${title}')">🔄 Viết lại đánh giá</button>
-          </div>
-          ${evalHtml}
-        </div>
-      </div>`;
+    return `<div class="pb"><div class="phdr"><div class="pdot" style="background:${colorVar}"></div><div class="pname" style="color:${colorVar}">${title}</div></div><div class="mgrid">${gridHtml}</div><div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-left:none; border-top: 1px solid var(--bdr);"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;"><div class="analysis-title" style="margin-bottom:0;">Đánh giá:</div><button class="btn-magic" style="display:inline-flex; align-items:center; padding:4px 8px; font-size:10px;" onclick="regenerateEval(this, '${title}')">🔄 Viết lại đánh giá</button></div>${evalHtml}</div></div>`;
   };
 
-  html += buildSection('gunze', 'Dự án Gunze', 'var(--gunze)');
-  html += buildSection('mp', 'Dự án Mỹ phẩm', 'var(--mp)');
+  html += buildSection('gunze', 'Dự án Gunze', 'var(--gunze)'); html += buildSection('mp', 'Dự án Mỹ phẩm', 'var(--mp)');
 
-  // KHỐI CỬA HÀNG
   if (data.stores) {
-    const st = data.stores;
-    let tq = st.tong_quan || {};
-    let tqHtml = `<div class="mgrid">
-      ${mcHtml('Chi phí chạy cửa hàng', tq.chi_phi, 'b', tq.chi_phi_tt ? tq.chi_phi_tt + ' so với TT' : '')}
-      ${mcHtml('Hiển thị', tq.hien_thi, '', tq.hien_thi_tt ? tq.hien_thi_tt + ' so với TT' : '')}
-      ${mcHtml('Tiếp cận (unique)', tq.tiep_can, '', tq.tiep_can_tt ? tq.tiep_can_tt + ' so với TT' : '')}
-    </div>`;
-
-    let maxKhm = 0, maxDoPhu = 0;
-    const safeParse = (v) => parseFloat(String(v).replace(/[^0-9.-]+/g,"")) || 0;
-
-    (st.danh_sach || []).forEach(r => {
-      let khmVal = safeParse(r.khm);
-      let doPhuVal = safeParse(r.do_phu);
-      if (khmVal > maxKhm) maxKhm = khmVal;
-      if (doPhuVal > maxDoPhu) maxDoPhu = doPhuVal;
-    });
-
+    const st = data.stores; let tq = st.tong_quan || {};
+    let tqHtml = `<div class="mgrid">${mcHtml('Chi phí chạy cửa hàng', tq.chi_phi, 'b', tq.chi_phi_tt ? tq.chi_phi_tt + ' so với TT' : '')}${mcHtml('Hiển thị', tq.hien_thi, '', tq.hien_thi_tt ? tq.hien_thi_tt + ' so với TT' : '')}${mcHtml('Tiếp cận (unique)', tq.tiep_can, '', tq.tiep_can_tt ? tq.tiep_can_tt + ' so với TT' : '')}</div>`;
+    let maxKhm = 0, maxDoPhu = 0; const safeParse = (v) => parseFloat(String(v).replace(/[^0-9.-]+/g,"")) || 0;
+    (st.danh_sach || []).forEach(r => { let khmVal = safeParse(r.khm); let doPhuVal = safeParse(r.do_phu); if (khmVal > maxKhm) maxKhm = khmVal; if (doPhuVal > maxDoPhu) maxDoPhu = doPhuVal; });
     let tblRows = (st.danh_sach || []).map(r => {
-      let khmVal = safeParse(r.khm);
-      let doPhuVal = safeParse(r.do_phu);
-      let khmPct = maxKhm > 0 ? (khmVal / maxKhm * 100) : 0;
-      let doPhuPct = maxDoPhu > 0 ? (doPhuVal / maxDoPhu * 100) : 0;
-
+      let khmVal = safeParse(r.khm); let doPhuVal = safeParse(r.do_phu); let khmPct = maxKhm > 0 ? (khmVal / maxKhm * 100) : 0; let doPhuPct = maxDoPhu > 0 ? (doPhuVal / maxDoPhu * 100) : 0;
       let khmBg = r.khm !== '—' && r.khm ? `linear-gradient(90deg, rgba(56,224,176,0.2) ${khmPct}%, transparent ${khmPct}%)` : '';
       let doPhuBg = r.do_phu !== '—' && r.do_phu ? `linear-gradient(90deg, rgba(79,124,255,0.2) ${doPhuPct}%, transparent ${doPhuPct}%)` : '';
-
-      return `
-      <tr>
-        <td style="font-weight:700; color:var(--tx)">${r.ten}</td>
-        <td>${r.chi_phi}</td><td>${r.so_kh}</td><td style="color:var(--acc2);font-weight:700">${r.doanh_thu}</td>
-        <td style="color:var(--warn)">${r.kpi_pct}</td>
-        <td style="background: ${khmBg};">${r.khm}</td>
-        <td style="background: ${doPhuBg};">${r.do_phu}</td>
-      </tr>`;
+      return `<tr><td style="font-weight:700; color:var(--tx)">${r.ten}</td><td>${r.chi_phi}</td><td>${r.so_kh}</td><td style="color:var(--acc2);font-weight:700">${r.doanh_thu}</td><td style="color:var(--warn)">${r.kpi_pct}</td><td style="background: ${khmBg};">${r.khm}</td><td style="background: ${doPhuBg};">${r.do_phu}</td></tr>`;
     }).join('');
-    
-    let tblHtml = `<div style="overflow-x:auto"><table class="stbl" style="margin-bottom:0;">
-      <thead><tr>
-        <th class="sortable" onclick="sortHtmlTable(this, 0)">Cửa hàng ↕</th>
-        <th class="sortable" onclick="sortHtmlTable(this, 1)">Chi phí ↕</th>
-        <th class="sortable" onclick="sortHtmlTable(this, 2)">Số lượng KH ↕</th>
-        <th class="sortable" onclick="sortHtmlTable(this, 3)">Doanh thu ↕</th>
-        <th class="sortable" onclick="sortHtmlTable(this, 4)">So với KPI ↕</th>
-        <th class="sortable" onclick="sortHtmlTable(this, 5)">%KHM ↕</th>
-        <th class="sortable" onclick="sortHtmlTable(this, 6)">Độ phủ (hiển thị) ↕</th>
-      </tr></thead>
-      <tbody>${tblRows}</tbody>
-    </table></div>`;
-
-    let pt = st.phan_tich || {};
-    let hnHtml = (pt.hn || []).map(i => `<li>${i}</li>`).join('');
-    let hcmHtml = (pt.hcm || []).map(i => `<li>${i}</li>`).join('');
-    let phanTichHtml = `<div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-top: 1px solid var(--bdr);">
-      <div style="font-size:12px; margin-bottom:10px;"><strong>Đánh giá chung:</strong> ${pt.chung || ''}</div>
-      <div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hà Nội</div>
-      <ul class="eval-list" style="margin-bottom:5px;">${hnHtml}</ul>
-      <div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hồ Chí Minh</div>
-      <ul class="eval-list" style="margin-bottom:15px;">${hcmHtml}</ul>
-      <div><span class="ket-luan-text">Kết Luận: </span><span style="color:var(--tx)">${(pt.ket_luan || '').replace(/^Kết luận:\s*/i, '')}</span></div>
-    </div>`;
-
-    html += `<div class="pb">
-      <div class="phdr"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">MARKETING PERFORMANCE - Kênh Cửa hàng</div><button class="btn-magic" style="display:inline-flex; align-items:center; margin-left:auto; padding:4px 8px; font-size:10px;" onclick="analyzeStoreData(this)">✨ Chẩn đoán Cửa hàng</button></div>
-      ${tqHtml}
-      ${tblHtml}
-      ${phanTichHtml}
-    </div>`;
+    let tblHtml = `<div style="overflow-x:auto"><table class="stbl" style="margin-bottom:0;"><thead><tr><th class="sortable" onclick="sortHtmlTable(this, 0)">Cửa hàng ↕</th><th class="sortable" onclick="sortHtmlTable(this, 1)">Chi phí ↕</th><th class="sortable" onclick="sortHtmlTable(this, 2)">Số lượng KH ↕</th><th class="sortable" onclick="sortHtmlTable(this, 3)">Doanh thu ↕</th><th class="sortable" onclick="sortHtmlTable(this, 4)">So với KPI ↕</th><th class="sortable" onclick="sortHtmlTable(this, 5)">%KHM ↕</th><th class="sortable" onclick="sortHtmlTable(this, 6)">Độ phủ (hiển thị) ↕</th></tr></thead><tbody>${tblRows}</tbody></table></div>`;
+    let pt = st.phan_tich || {}; let hnHtml = (pt.hn || []).map(i => `<li>${i}</li>`).join(''); let hcmHtml = (pt.hcm || []).map(i => `<li>${i}</li>`).join('');
+    let phanTichHtml = `<div class="analysis-box" style="border-radius:0 0 12px 12px; margin-bottom:0; border-top: 1px solid var(--bdr);"><div style="font-size:12px; margin-bottom:10px;"><strong>Đánh giá chung:</strong> ${pt.chung || ''}</div><div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hà Nội</div><ul class="eval-list" style="margin-bottom:5px;">${hnHtml}</ul><div style="font-weight:700; color:var(--tx); margin-top:10px;">- Khu vực Hồ Chí Minh</div><ul class="eval-list" style="margin-bottom:15px;">${hcmHtml}</ul><div><span class="ket-luan-text">Kết Luận: </span><span style="color:var(--tx)">${(pt.ket_luan || '').replace(/^Kết luận:\s*/i, '')}</span></div></div>`;
+    html += `<div class="pb"><div class="phdr"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">MARKETING PERFORMANCE - Kênh Cửa hàng</div><button class="btn-magic" style="display:inline-flex; align-items:center; margin-left:auto; padding:4px 8px; font-size:10px;" onclick="analyzeStoreData(this)">✨ Chẩn đoán Cửa hàng</button></div>${tqHtml}${tblHtml}${phanTichHtml}</div>`;
   }
-  
-  html += `</div>`;
-  document.getElementById('out').innerHTML = html;
+  html += `</div>`; document.getElementById('out').innerHTML = html;
 }
 
 async function gen() {
   const type = document.querySelector('input[name="rtype"]:checked').value;
   const url = getApiUrl();
-
-  document.getElementById('hist-sel').value = ""; 
-  viewHist(); 
-  document.getElementById('gbtn').disabled = true;
-  document.getElementById('magic-btn').style.display = 'none';
-  
+  document.getElementById('hist-sel').value = ""; viewHist(); 
+  document.getElementById('gbtn').disabled = true; document.getElementById('magic-btn').style.display = 'none';
   showLoad();
+
+  const customNote = document.getElementById('ai-custom-note') ? document.getElementById('ai-custom-note').value.trim() : '';
+  const extraPrompt = customNote ? `\n\n=== LƯU Ý ĐẶC BIỆT TỪ NGƯỜI DÙNG ===\n${customNote}\n(Hãy BẮT BUỘC tuân thủ lưu ý này khi viết phần Đánh giá và Kết luận).` : '';
 
   try {
     if (type === 'Tuần') {
-      const week = document.getElementById('week').value.trim();
-      const from = document.getElementById('dfrom').value.trim();
-      const to = document.getElementById('dto').value.trim();
-      const valSpendG = parseNum(document.getElementById('spend-g').value.trim());
-      const valSpendM = parseNum(document.getElementById('spend-m').value.trim());
-      const sg = document.getElementById('sg').value.trim();
-      const sm = document.getElementById('sm').value.trim();
+      const week = document.getElementById('week').value.trim(); const from = document.getElementById('dfrom').value.trim(); const to = document.getElementById('dto').value.trim();
+      const valSpendG = parseNum(document.getElementById('spend-g').value.trim()); const valSpendM = parseNum(document.getElementById('spend-m').value.trim());
+      const sg = document.getElementById('sg').value.trim(); const sm = document.getElementById('sm').value.trim();
+      if (!sg && !sm && imgs.hcm.length === 0 && imgs.hn.length === 0) { alert('Vui lòng paste dữ liệu Sale hoặc upload ảnh cửa hàng!'); document.getElementById('gbtn').disabled = false; document.getElementById('out').innerHTML = ''; return; }
 
-      if (!sg && !sm && imgs.hcm.length === 0 && imgs.hn.length === 0) { 
-        alert('Vui lòng paste dữ liệu Sale hoặc upload ảnh cửa hàng!'); 
-        document.getElementById('gbtn').disabled = false;
-        document.getElementById('out').innerHTML = '';
-        return; 
-      }
-
-      const sys = `Bạn là trợ lý đọc báo cáo bán hàng. Trích xuất số liệu từ text Sale và đọc bảng từ ảnh cửa hàng. Trả về JSON thuần (không markdown, không text thêm).
-
-KHÔNG tự tính DT hệ thống, CP QC.
-Giữ nguyên định dạng số có dấu chấm phân cách nghìn. Thiếu thông tin ghi "—".
-
-LƯU Ý QUAN TRỌNG VỀ ẢNH CỬA HÀNG:
-1. Ảnh HCM: Cột "Doanh thu KHM" gán vào trường "khm_dt".
-2. Ảnh HN: Cột "DTT KHM" gán vào trường "khm_dt". Cột "Ngành hàng" gán vào "cat". Cột "Tổng DTT" gán vào "dt".
-
+      const sys = `Bạn là trợ lý đọc báo cáo bán hàng. Trích xuất số liệu từ text Sale và đọc bảng từ ảnh cửa hàng. Trả về JSON thuần. KHÔNG tự tính DT hệ thống, CP QC. Giữ nguyên định dạng số có dấu chấm phân cách nghìn. Thiếu thông tin ghi "—". LƯU Ý QUAN TRỌNG VỀ ẢNH CỬA HÀNG: 1. Ảnh HCM: Cột "Doanh thu KHM" gán vào trường "khm_dt". 2. Ảnh HN: Cột "DTT KHM" gán vào trường "khm_dt". Cột "Ngành hàng" gán vào "cat". Cột "Tổng DTT" gán vào "dt".
 JSON output:
 {
-  "gunze": {
-    "chitieu": "", "data": "", "dtt": "", "dtt_kpi": "", "tlchot": "", "gttb": "",
-    "chietkhau": "", "chietkhau_pct": "", "hangtralai": "", "hangtralai_pct": "",
-    "nguon": [{"kenh":"","sotien":"","pct":""}], "sp": [], "danhgia": "", "yoy": ""
-  },
-  "mp": {
-    "chitieu": "", "dtt": "", "dtt_kpi": "", "gttb": "",
-    "chietkhau": "", "chietkhau_pct": "", "hangtralai": "", "hangtralai_pct": "",
-    "web_sl": "", "web_dat": "", "web_chot": "",
-    "page_sl": "", "page_dat": "", "page_chot": "",
-    "nguon": [{"kenh":"","sotien":"","pct":""}], "sp": [], "danhgia": "", "yoy": ""
-  },
-  "stores_hcm": [
-    {
-      "name": "",
-      "rows": [
-        {"cat":"Thời trang","dt":"","khm_dt":""},
-        {"cat":"Đồ lót",    "dt":"","khm_dt":""},
-        {"cat":"Giày",      "dt":"","khm_dt":""},
-        {"cat":"MP",        "dt":"","khm_dt":""},
-        {"cat":"CSSK",      "dt":"","khm_dt":""}
-      ]
-    }
-  ],
-  "stores_hn": [
-    {
-      "name": "",
-      "rows": [
-        {"cat":"Giày",      "dt":"","khm_dt":""},
-        {"cat":"Đồ lót",    "dt":"","khm_dt":""},
-        {"cat":"TT",        "dt":"","khm_dt":""},
-        {"cat":"CS",        "dt":"","khm_dt":""},
-        {"cat":"MP",        "dt":"","khm_dt":""},
-        {"cat":"TP",        "dt":"","khm_dt":""},
-        {"cat":"GD",        "dt":"","khm_dt":""}
-      ]
-    }
-  ]
+  "gunze": { "chitieu": "", "data": "", "dtt": "", "dtt_kpi": "", "tlchot": "", "gttb": "", "chietkhau": "", "chietkhau_pct": "", "hangtralai": "", "hangtralai_pct": "", "nguon": [{"kenh":"","sotien":"","pct":""}], "sp": [], "danhgia": "", "yoy": "" },
+  "mp": { "chitieu": "", "dtt": "", "dtt_kpi": "", "gttb": "", "chietkhau": "", "chietkhau_pct": "", "hangtralai": "", "hangtralai_pct": "", "web_sl": "", "web_dat": "", "web_chot": "", "page_sl": "", "page_dat": "", "page_chot": "", "nguon": [{"kenh":"","sotien":"","pct":""}], "sp": [], "danhgia": "", "yoy": "" },
+  "stores_hcm": [ { "name": "", "rows": [ {"cat":"Thời trang","dt":"","khm_dt":""}, {"cat":"Đồ lót", "dt":"","khm_dt":""}, {"cat":"Giày", "dt":"","khm_dt":""}, {"cat":"MP", "dt":"","khm_dt":""}, {"cat":"CSSK", "dt":"","khm_dt":""} ] } ],
+  "stores_hn": [ { "name": "", "rows": [ {"cat":"Giày", "dt":"","khm_dt":""}, {"cat":"Đồ lót", "dt":"","khm_dt":""}, {"cat":"TT", "dt":"","khm_dt":""}, {"cat":"CS", "dt":"","khm_dt":""}, {"cat":"MP", "dt":"","khm_dt":""}, {"cat":"TP", "dt":"","khm_dt":""}, {"cat":"GD", "dt":"","khm_dt":""} ] } ]
 }`;
-
-      const parts = [];
-      let txt = sys + extraPrompt + '\n\n';
-      if (sg) txt += `=== SALE GUNZE ===\n${sg}\n\n`;
-      if (sm) txt += `=== SALE MỸ PHẨM ===\n${sm}\n\n`;
+      const parts = []; let txt = sys + extraPrompt + '\n\n';
+      if (sg) txt += `=== SALE GUNZE ===\n${sg}\n\n`; if (sm) txt += `=== SALE MỸ PHẨM ===\n${sm}\n\n`;
       parts.push({ text: txt });
-
       if (imgs.hcm.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG KHU VỰC HCM ===" }); imgs.hcm.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
       if (imgs.hn.length > 0) { parts.push({ text: "\n\n=== ẢNH CỬA HÀNG KHU VỰC HN ===" }); imgs.hn.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-
       setStep(1);
-      const reqOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) };
-      const res = await fetchWithRetry(url, reqOptions);
-      
+      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) });
       setStep(2);
       const d = await res.json();
-      
-      let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || "";
-      let firstIdx = rawResponse.indexOf('{');
-      let lastIdx = rawResponse.lastIndexOf('}');
-      if (firstIdx !== -1 && lastIdx !== -1) {
-          rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
-      }
+      let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || ""; let firstIdx = rawResponse.indexOf('{'); let lastIdx = rawResponse.lastIndexOf('}');
+      if (firstIdx !== -1 && lastIdx !== -1) rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
       const parsed = JSON.parse(rawResponse);
-
-      const khmGunzeHCM = sumKhmByCategory(parsed.stores_hcm, 'Đồ lót');
-      const khmMpHCM = sumKhmByCategory(parsed.stores_hcm, 'MP');
-      const khmGunzeHN = sumKhmByCategory(parsed.stores_hn, 'Đồ lót');
-      const khmMpHN = sumKhmByCategory(parsed.stores_hn, 'MP');
-      
-      const khmGunzeTotal = safeAdd(khmGunzeHCM, khmGunzeHN);
-      const khmMpTotal = safeAdd(khmMpHCM, khmMpHN);
-
-      const gc = calcMetrics(parsed.gunze || {}, khmGunzeTotal, valSpendG);
-      const mc = calcMetrics(parsed.mp || {}, khmMpTotal, valSpendM);
-
-      setStep(3);
-      renderTuan(parsed, gc, mc, khmGunzeTotal, khmGunzeHCM, khmGunzeHN, khmMpTotal, khmMpHCM, khmMpHN, week, from, to);
+      const khmGunzeHCM = sumKhmByCategory(parsed.stores_hcm, 'Đồ lót'); const khmMpHCM = sumKhmByCategory(parsed.stores_hcm, 'MP'); const khmGunzeHN = sumKhmByCategory(parsed.stores_hn, 'Đồ lót'); const khmMpHN = sumKhmByCategory(parsed.stores_hn, 'MP');
+      const khmGunzeTotal = safeAdd(khmGunzeHCM, khmGunzeHN); const khmMpTotal = safeAdd(khmMpHCM, khmMpHN);
+      const gc = calcMetrics(parsed.gunze || {}, khmGunzeTotal, valSpendG); const mc = calcMetrics(parsed.mp || {}, khmMpTotal, valSpendM);
+      setStep(3); renderTuan(parsed, gc, mc, khmGunzeTotal, khmGunzeHCM, khmGunzeHN, khmMpTotal, khmMpHCM, khmMpHN, week, from, to);
       saveHist('Tuần', week, document.getElementById('out').innerHTML);
-
     } else {
-      const period = document.getElementById('month').value.trim();
-      const from = document.getElementById('m-from').value.trim();
-      const to = document.getElementById('m-to').value.trim();
-
-      if (imgs.kpi.length === 0 || (imgs.thang_gunze.length === 0 && imgs.thang_mp.length === 0 && imgs.thang_cuahang.length === 0 && !excelTextData)) {
-        alert('Vui lòng upload File KPI và ít nhất 1 ảnh Số liệu dự án/cửa hàng (hoặc CSV)!'); 
-        document.getElementById('gbtn').disabled = false;
-        document.getElementById('out').innerHTML = '';
-        return;
-      }
-
+      const period = document.getElementById('month').value.trim(); const from = document.getElementById('m-from').value.trim(); const to = document.getElementById('m-to').value.trim();
+      if (imgs.kpi.length === 0 || (imgs.thang_gunze.length === 0 && imgs.thang_mp.length === 0 && imgs.thang_cuahang.length === 0 && !excelTextData)) { alert('Vui lòng upload File KPI và ít nhất 1 ảnh Số liệu dự án/cửa hàng (hoặc CSV)!'); document.getElementById('gbtn').disabled = false; document.getElementById('out').innerHTML = ''; return; }
       const sysThang = `Bạn là Chuyên gia Phân tích Marketing. LÀM TỪNG BƯỚC và ĐỐI CHIẾU CHÍNH XÁC:
-
 === DỰ ÁN GUNZE & MỸ PHẨM ===
 1. Đọc Ảnh KPI để lấy Mục tiêu (KPI) của tất cả các chỉ số.
 2. Đọc Ảnh Số liệu dự án để trích xuất đầy đủ: Doanh thu thuần (tuyệt đối KHÔNG lấy doanh thu tổng), Chi tiêu, Me/Re, Tổng Data, Đơn hàng, Tỷ lệ chốt tổng.
 3. RIÊNG DỰ ÁN MỸ PHẨM: Phải trích xuất tách biệt rõ "Data Web", "Tỷ lệ chốt Web" và "Data Page", "Tỷ lệ chốt Page".
-4. BẮT BUỘC FORMAT TẤT CẢ CHỈ SỐ: 
-   - Dòng 'value' CỦA MỌI CHỈ SỐ (Doanh thu thuần, Chi tiêu, Data, Tỷ lệ chốt...) BẮT BUỘC ghi "Thực đạt / Mục tiêu KPI" (VD: 135.000.000 / 158.942.737). Nếu thiếu KPI thì điền Thực đạt.
-   - Trường 'kpi_trend' dùng để ghi số liệu so sánh với tháng trước (VD: Tăng 15% so với TT, Giảm 5% so với TT).
-5. Viết "Đánh giá" dưới dạng mảng các câu nhận xét (bullet points). BẮT BUỘC GIỮ NGUYÊN QUY TẮC NÀY:
-   - Nhận xét tỷ lệ % hoàn thành KPI Doanh thu thuần và % tăng/giảm so với tháng trước.
-   - Nhận xét chi phí, data, tỷ lệ chốt.
-   - Riêng Mỹ phẩm: Bắt buộc phải có 1 gạch đầu dòng đánh giá và so sánh mức độ hiệu quả giữa kênh Web và kênh Page dựa trên tỷ lệ chốt của 2 hình thức này.
+4. BẮT BUỘC FORMAT TẤT CẢ CHỈ SỐ: - Dòng 'value' CỦA MỌI CHỈ SỐ BẮT BUỘC ghi "Thực đạt / Mục tiêu KPI". Nếu thiếu KPI thì điền Thực đạt. - Trường 'kpi_trend' dùng để ghi số liệu so sánh với tháng trước.
+5. Viết "Đánh giá" dưới dạng mảng các câu nhận xét (bullet points). BẮT BUỘC GIỮ NGUYÊN QUY TẮC NÀY: - Nhận xét tỷ lệ % hoàn thành KPI Doanh thu thuần và % tăng/giảm so với tháng trước. - Nhận xét chi phí, data, tỷ lệ chốt. - Riêng Mỹ phẩm: Bắt buộc phải có 1 gạch đầu dòng đánh giá và so sánh mức độ hiệu quả giữa kênh Web và kênh Page.
 6. Viết "Kết luận" tổng quan.
-
 === KHỐI CỬA HÀNG ===
-7. TỪ DỮ LIỆU EXCEL: Lấy các số đã tính sẵn. Gán "TỔNG HỆ THỐNG" vào 'tong_quan'. ĐỐI VỚI TỪNG CỬA HÀNG trong 'danh_sach': Gán CHÍNH XÁC "Chi phí" vào 'chi_phi', "Hiển thị" vào 'do_phu' (Tuyệt đối lấy từ text Excel, không bịa số).
+7. TỪ DỮ LIỆU EXCEL: Lấy các số đã tính sẵn. Gán "TỔNG HỆ THỐNG" vào 'tong_quan'. ĐỐI VỚI TỪNG CỬA HÀNG: Gán CHÍNH XÁC "Chi phí" vào 'chi_phi', "Hiển thị" vào 'do_phu'.
 8. TỪ ẢNH KPI: Lấy "Mục tiêu" làm KPI ("CH Mỗ Lao" = "Hà Đông").
 9. TỪ ẢNH THỰC ĐẠT: Lấy Số lượng KH (hoặc "Số bill") vào 'so_kh'. Doanh thu (hoặc "Số tổng") vào 'doanh_thu'. Cột chứa dấu % (như %KHM, Tỷ lệ KHM) vào 'khm'.
 10. TÍNH TOÁN CỬA HÀNG: 'kpi_pct' = (Doanh thu Thực đạt / Mục tiêu KPI) * 100, format "X%". Nếu thiếu data ghi "—".
-11. ĐÁNH GIÁ CỬA HÀNG:
-   - "chung": Tổng quan toàn hệ thống.
-   - "hn": Nhận xét Hà Nội (ĐQ, Trung H, HĐ, Mỹ Đình, TĐN, Times City, NGĐ).
-   - "hcm": Nhận xét HCM (LVS, NTT, HBT).
-   - "ket_luan": Phương hướng tháng tới.
-
-Trả về JSON thuần. Giữ format số có chấm phân cách nghìn. Cấu trúc BẮT BUỘC:
+11. ĐÁNH GIÁ CỬA HÀNG: - "chung": Tổng quan. - "hn": Nhận xét Hà Nội. - "hcm": Nhận xét HCM. - "ket_luan": Phương hướng.
+Trả về JSON thuần. Cấu trúc BẮT BUỘC:
 {
-  "gunze": {
-    "metrics": [
-      {"name": "Doanh thu thuần", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Chi tiêu", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Me/Re", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Data", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Đơn hàng", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Tỷ lệ chốt", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."}
-    ],
-    "danh_gia": [
-      "Nhận xét về doanh thu thuần và KPI...",
-      "Nhận xét về chi phí, data, tỷ lệ chốt..."
-    ],
-    "ket_luan": "Kết luận tổng quan..."
-  },
-  "mp": {
-    "metrics": [
-      {"name": "Doanh thu thuần", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Chi tiêu", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Me/Re", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Data Tổng", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Data Web", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Tỷ lệ chốt Web", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Data Page", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."},
-      {"name": "Tỷ lệ chốt Page", "value": "Thực đạt / KPI", "kpi_trend": "So sánh với TT..."}
-    ],
-    "danh_gia": [
-      "Nhận xét về doanh thu thuần và KPI...",
-      "Nhận xét so sánh hiệu quả chốt đơn giữa kênh Web và kênh Page...",
-      "Nhận xét về chi phí chung..."
-    ],
-    "ket_luan": "Kết luận tổng quan..."
-  },
-  "stores": {
-    "tong_quan": {"chi_phi": "...", "chi_phi_tt": "...", "hien_thi": "...", "hien_thi_tt": "...", "tiep_can": "...", "tiep_can_tt": "..."},
-    "danh_sach": [
-      {"ten": "Đỗ Quang", "chi_phi": "...", "so_kh": "...", "doanh_thu": "...", "kpi_pct": "...", "khm": "...", "do_phu": "..."}
-    ],
-    "phan_tich": {"chung": "...", "hn": ["..."], "hcm": ["..."], "ket_luan": "..."}
-  }
+  "gunze": { "metrics": [ {"name": "Doanh thu thuần", "value": "Thực đạt / KPI", "kpi_trend": "..."} ], "danh_gia": [ "..." ], "ket_luan": "..." },
+  "mp": { "metrics": [ {"name": "Doanh thu thuần", "value": "Thực đạt / KPI", "kpi_trend": "..."} ], "danh_gia": [ "..." ], "ket_luan": "..." },
+  "stores": { "tong_quan": {"chi_phi": "...", "chi_phi_tt": "...", "hien_thi": "...", "hien_thi_tt": "...", "tiep_can": "...", "tiep_can_tt": "..."}, "danh_sach": [ {"ten": "Đỗ Quang", "chi_phi": "...", "so_kh": "...", "doanh_thu": "...", "kpi_pct": "...", "khm": "...", "do_phu": "..."} ], "phan_tich": {"chung": "...", "hn": ["..."], "hcm": ["..."], "ket_luan": "..."} }
 }`;
-      
       const parts = [{ text: sysThang + extraPrompt }];
-      
       if (excelTextData) parts.push({ text: `\n\n=== FILE DỮ LIỆU EXCEL KHỐI CỬA HÀNG ===\n${excelTextData}` });
-
       if (imgs.kpi.length > 0) { parts.push({ text: "\n\n=== ẢNH KPI THÁNG NÀY ===" }); imgs.kpi.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-      if (imgs.thang_gunze.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN GUNZE (THÁNG NÀY & THÁNG TRƯỚC) ===` }); imgs.thang_gunze.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-      if (imgs.thang_mp.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN MỸ PHẨM (THÁNG NÀY & THÁNG TRƯỚC) ===` }); imgs.thang_mp.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_gunze.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN GUNZE ===` }); imgs.thang_gunze.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
+      if (imgs.thang_mp.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU DỰ ÁN MỸ PHẨM ===` }); imgs.thang_mp.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
       if (imgs.thang_cuahang.length > 0) { parts.push({ text: `\n\n=== ẢNH SỐ LIỆU THỰC ĐẠT CỬA HÀNG ===` }); imgs.thang_cuahang.forEach(img => parts.push({ inlineData: { mimeType: img.type, data: img.data } })); }
-
       setStep(1);
-      const reqOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) };
-      const res = await fetchWithRetry(url, reqOptions);
-
+      const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" } }) });
       setStep(2);
       const d = await res.json();
-      
-      let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || "";
-      let firstIdx = rawResponse.indexOf('{');
-      let lastIdx = rawResponse.lastIndexOf('}');
-      if (firstIdx !== -1 && lastIdx !== -1) {
-          rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
-      }
+      let rawResponse = d.candidates?.[0]?.content?.parts?.[0]?.text || ""; let firstIdx = rawResponse.indexOf('{'); let lastIdx = rawResponse.lastIndexOf('}');
+      if (firstIdx !== -1 && lastIdx !== -1) rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
       const parsed = JSON.parse(rawResponse);
-
-      setStep(3);
-      renderThang(parsed, period, from, to);
+      setStep(3); renderThang(parsed, period, from, to);
       saveHist('Tháng', period, document.getElementById('out').innerHTML);
     }
-    
     document.getElementById('magic-btn').style.display = 'inline-block';
+    
+    // Hiện khung chat sau khi tạo xong
+    const chatBox = document.getElementById('ai-chat-box');
+    if(chatBox) chatBox.style.display = 'flex';
 
-  } catch (e) {
-    console.error(e);
-    document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">⚠️</div><p style="color:var(--danger)">Lỗi: ${e.message}</p></div>`;
-  }
+  } catch (e) { document.getElementById('out').innerHTML = `<div class="s-empty"><div class="ico">⚠️</div><p style="color:var(--danger)">Lỗi: ${e.message}</p></div>`; }
   document.getElementById('gbtn').disabled = false;
 }
 
-// --- TÍNH NĂNG MỚI: AI CỐ VẤN CHIẾN LƯỢC ---
 async function getAiInsights() {
-  const rptEl = document.getElementById('rpt');
-  if (!rptEl) return;
-
-  const url = getApiUrl();
-
-  const magicBtn = document.getElementById('magic-btn');
-  const originalText = magicBtn.innerHTML;
-  magicBtn.innerHTML = '⏳ Phân tích...';
-  magicBtn.disabled = true;
-
-  const reportText = rptEl.innerText;
-  const prompt = `Bạn là Giám đốc Marketing (CMO) và Chuyên gia phân tích dữ liệu xuất sắc. 
-Dựa vào báo cáo kinh doanh thực tế dưới đây, hãy:
-1. Tóm tắt nhanh gọn tình hình (Executive Summary) cho Ban Giám Đốc.
-2. Đưa ra 3-5 đề xuất/hành động chiến lược TỐI ƯU NHẤT để cải thiện doanh thu, tăng tỷ lệ chốt và tối ưu chi phí quảng cáo cho giai đoạn tiếp theo.
-
-Yêu cầu trình bày: Ngắn gọn, súc tích, chia thành các gạch đầu dòng rõ ràng, không dùng các ký hiệu format phức tạp.
-
-=== DỮ LIỆU BÁO CÁO ===
-${reportText}`;
-
+  const rptEl = document.getElementById('rpt'); if (!rptEl) return; const url = getApiUrl();
+  const magicBtn = document.getElementById('magic-btn'); const originalText = magicBtn.innerHTML; magicBtn.innerHTML = '⏳ Phân tích...'; magicBtn.disabled = true;
+  const prompt = `Bạn là Giám đốc Marketing (CMO). Dựa vào báo cáo kinh doanh thực tế dưới đây: 1. Tóm tắt nhanh gọn tình hình. 2. Đưa ra 3-5 đề xuất chiến lược TỐI ƯU NHẤT để cải thiện. Trình bày ngắn gọn, gạch đầu dòng rõ ràng, không dùng các ký hiệu format phức tạp. === DỮ LIỆU ===\n${rptEl.innerText}`;
   try {
-    const reqOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "text/plain" }
-      })
-    };
-    const res = await fetchWithRetry(url, reqOptions);
-    const d = await res.json();
-    const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!text) throw new Error('Không lấy được phản hồi từ AI');
-
+    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "text/plain" } }) });
+    const d = await res.json(); const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Không lấy được phản hồi');
     let insightBox = document.getElementById('ai-insight-box');
-    if (!insightBox) {
-      insightBox = document.createElement('div');
-      insightBox.id = 'ai-insight-box';
-      insightBox.className = 'pb ai-insight-box';
-      insightBox.style.borderColor = 'var(--warn)';
-      rptEl.appendChild(insightBox);
-    }
-
-    insightBox.innerHTML = `
-      <div class="phdr" style="background: rgba(255,188,87,0.1); border-bottom: 1px solid rgba(255,188,87,0.3);">
-        <div class="pdot" style="background:var(--warn)"></div>
-        <div class="pname" style="color:var(--warn)">✨ AI Cố Vấn: Góc Nhìn & Đề Xuất Chiến Lược</div>
-      </div>
-      <div class="nblk ai-insight-content" style="white-space: pre-wrap; font-size: 13px; line-height: 1.7; padding: 18px 20px;">${text}</div>
-    `;
-
+    if (!insightBox) { insightBox = document.createElement('div'); insightBox.id = 'ai-insight-box'; insightBox.className = 'pb ai-insight-box'; insightBox.style.borderColor = 'var(--warn)'; rptEl.appendChild(insightBox); }
+    insightBox.innerHTML = `<div class="phdr" style="background: rgba(255,188,87,0.1); border-bottom: 1px solid rgba(255,188,87,0.3);"><div class="pdot" style="background:var(--warn)"></div><div class="pname" style="color:var(--warn)">✨ AI Cố Vấn: Góc Nhìn & Đề Xuất Chiến Lược</div></div><div class="nblk ai-insight-content" style="white-space: pre-wrap; font-size: 13px; line-height: 1.7; padding: 18px 20px;">${text}</div>`;
     insightBox.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    
-    const val = document.getElementById('hist-sel').value;
-    if (val) {
-        const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        hist[val] = document.getElementById('out').innerHTML;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
-    }
-
-  } catch (e) {
-    alert('Lỗi phân tích: ' + e.message);
-  } finally {
-    magicBtn.innerHTML = originalText;
-    magicBtn.disabled = false;
-  }
+    const val = document.getElementById('hist-sel').value; if (val) { const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); hist[val] = document.getElementById('out').innerHTML; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); }
+  } catch (e) { alert('Lỗi phân tích: ' + e.message); } finally { magicBtn.innerHTML = originalText; magicBtn.disabled = false; }
 }
 
 async function analyzeStoreData(btn) {
-  const pb = btn.closest('.pb');
-  const table = pb.querySelector('.stbl');
-  if (!table) {
-      alert("Không tìm thấy dữ liệu bảng cửa hàng để phân tích.");
-      return;
-  }
-
-  const url = getApiUrl();
-
-  const originalText = btn.innerHTML;
-  btn.innerHTML = '⏳ Phân tích...';
-  btn.disabled = true;
-
-  let dataStr = "";
-  table.querySelectorAll('tr').forEach(tr => {
-    const rowData = Array.from(tr.querySelectorAll('th, td')).map(td => td.innerText).join(' | ');
-    dataStr += rowData + '\n';
-  });
-
-  const prompt = `Bạn là Chuyên gia Phân tích Bán lẻ. Dựa vào bảng số liệu hiệu quả của các cửa hàng dưới đây, hãy:
-1. Xác định "Ngôi sao" (Cửa hàng hiệu quả nhất) và giải thích ngắn gọn (tương quan Chi phí, Doanh thu, Độ phủ, %KHM).
-2. Xác định "Báo động đỏ" (Cửa hàng kém hiệu quả nhất) và bắt bệnh (Ví dụ: Độ phủ cao nhưng không chốt được khách).
-3. Gợi ý 2 hành động tối ưu cục bộ cho các cửa hàng này.
-
-Trình bày bằng các gạch đầu dòng ngắn gọn, chuyên nghiệp. Tuyệt đối không sử dụng markdown phức tạp.
-
-=== DỮ LIỆU BẢNG ===\n${dataStr}`;
-
+  const pb = btn.closest('.pb'); const table = pb.querySelector('.stbl'); if (!table) return; const url = getApiUrl();
+  const originalText = btn.innerHTML; btn.innerHTML = '⏳ Phân tích...'; btn.disabled = true;
+  let dataStr = ""; table.querySelectorAll('tr').forEach(tr => { const rowData = Array.from(tr.querySelectorAll('th, td')).map(td => td.innerText).join(' | '); dataStr += rowData + '\n'; });
+  const prompt = `Bạn là Chuyên gia Phân tích Bán lẻ. Dựa vào bảng số liệu sau, hãy: 1. Xác định "Ngôi sao" và giải thích ngắn gọn. 2. Xác định "Báo động đỏ" và bắt bệnh. 3. Gợi ý hành động. Trình bày ngắn gọn, không dùng markdown phức tạp.\n=== DỮ LIỆU ===\n${dataStr}`;
   try {
-    const reqOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "text/plain" }
-      })
-    };
-    const res = await fetchWithRetry(url, reqOptions);
-    const d = await res.json();
-    const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!text) throw new Error('Không lấy được phản hồi từ AI');
-
+    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "text/plain" } }) });
+    const d = await res.json(); const text = d.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Không lấy được phản hồi');
     let resultDiv = pb.querySelector('.store-ai-result');
-    if (!resultDiv) {
-      resultDiv = document.createElement('div');
-      resultDiv.className = 'store-ai-result analysis-box';
-      resultDiv.style.margin = '15px';
-      resultDiv.style.backgroundColor = 'rgba(56, 224, 176, 0.05)';
-      resultDiv.style.border = '1px solid rgba(56, 224, 176, 0.3)';
-      resultDiv.style.borderRadius = '8px';
-      pb.appendChild(resultDiv);
-    }
-    
+    if (!resultDiv) { resultDiv = document.createElement('div'); resultDiv.className = 'store-ai-result analysis-box'; resultDiv.style.margin = '15px'; resultDiv.style.backgroundColor = 'rgba(56, 224, 176, 0.05)'; resultDiv.style.border = '1px solid rgba(56, 224, 176, 0.3)'; resultDiv.style.borderRadius = '8px'; pb.appendChild(resultDiv); }
     resultDiv.innerHTML = `<div class="analysis-title" style="color:var(--acc2); font-size:14px; margin-bottom:8px;">✨ AI Khám Phá: Điểm mù Cửa hàng</div><div class="store-ai-result-content" style="font-size: 12px; line-height: 1.6; white-space: pre-wrap; color:var(--tx);">${text}</div>`;
-
-    const val = document.getElementById('hist-sel').value;
-    if (val) {
-        const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        hist[val] = document.getElementById('out').innerHTML;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
-    }
-  } catch (e) {
-    alert('Lỗi chẩn đoán: ' + e.message);
-  } finally {
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-  }
+    const val = document.getElementById('hist-sel').value; if (val) { const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); hist[val] = document.getElementById('out').innerHTML; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); }
+  } catch (e) { alert('Lỗi chẩn đoán: ' + e.message); } finally { btn.innerHTML = originalText; btn.disabled = false; }
 }
 
 async function regenerateEval(btn, projectName) {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-      alert("⚠️ Cần API Key để sử dụng tính năng này!");
-      return;
-  }
-
-  const pb = btn.closest('.pb');
-  const evalContent = pb.querySelector('.eval-content');
-  if (!evalContent) return;
-
-  const url = getApiUrl();
-  const originalText = btn.innerHTML;
-  btn.innerHTML = '⏳ Đang viết lại...';
-  btn.disabled = true;
-
-  let dataStr = "";
-  pb.querySelectorAll('.mc').forEach(mc => {
-    let lbl = mc.querySelector('.mlbl')?.textContent.replace('tính', '').trim() || '';
-    let val = mc.querySelector('.mval')?.textContent.trim() || '';
-    let extra = mc.querySelector('.mcalc')?.textContent.trim() || '';
-    if (lbl) dataStr += `- ${lbl}: ${val} ${extra ? '('+extra+')' : ''}\n`;
-  });
-
+  const apiKey = getApiKey(); if (!apiKey) { alert("⚠️ Cần API Key!"); return; }
+  const pb = btn.closest('.pb'); const evalContent = pb.querySelector('.eval-content'); if (!evalContent) return;
+  const url = getApiUrl(); const originalText = btn.innerHTML; btn.innerHTML = '⏳ Đang viết lại...'; btn.disabled = true;
+  let dataStr = ""; pb.querySelectorAll('.mc').forEach(mc => { let lbl = mc.querySelector('.mlbl')?.textContent.replace('tính', '').trim() || ''; let val = mc.querySelector('.mval')?.textContent.trim() || ''; let extra = mc.querySelector('.mcalc')?.textContent.trim() || ''; if (lbl) dataStr += `- ${lbl}: ${val} ${extra ? '('+extra+')' : ''}\n`; });
   const isMp = projectName.toLowerCase().includes('mỹ phẩm');
-  
-  const prompt = `Bạn là Chuyên gia Marketing. Dựa vào các chỉ số kinh doanh thực tế của ${projectName} dưới đây, hãy phân tích lại và viết phần đánh giá mới.
-  
-=== SỐ LIỆU HIỆN TẠI ===
-${dataStr}
-
-=== YÊU CẦU ===
-1. Đưa ra 3-4 gạch đầu dòng nhận xét chuyên sâu (đánh giá mức độ hoàn thành KPI, biến động chi phí, data, tỷ lệ chốt). ${isMp ? 'BẮT BUỘC so sánh hiệu quả chốt đơn giữa kênh Web và Page.' : ''}
-2. Đưa ra 1 câu kết luận định hướng (không viết lan man, tập trung vào số liệu).
-
-Trả về JSON thuần (không chứa markdown), theo cấu trúc:
-{
-  "danh_gia": ["nhận xét 1", "nhận xét 2", "nhận xét 3"],
-  "ket_luan": "câu kết luận"
-}`;
-
+  const prompt = `Bạn là Chuyên gia Marketing. Dựa vào các chỉ số kinh doanh thực tế dưới đây, hãy phân tích lại và viết phần đánh giá mới.\n=== SỐ LIỆU ===\n${dataStr}\n=== YÊU CẦU ===\n1. Đưa ra 3-4 gạch đầu dòng nhận xét chuyên sâu. ${isMp ? 'BẮT BUỘC so sánh hiệu quả kênh Web và Page.' : ''}\n2. Đưa ra 1 câu kết luận.\nTrả về JSON thuần: {"danh_gia": ["..."], "ket_luan": "..."}`;
   try {
-    const reqOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "application/json" }
-      })
-    };
-    const res = await fetchWithRetry(url, reqOptions);
-    const d = await res.json();
-    
-    if (!d.candidates || !d.candidates[0]) throw new Error(d.error?.message || "AI từ chối phản hồi.");
-    
-    let rawResponse = d.candidates[0].content?.parts?.[0]?.text || "";
-    let firstIdx = rawResponse.indexOf('{');
-    let lastIdx = rawResponse.lastIndexOf('}');
-    if (firstIdx !== -1 && lastIdx !== -1) {
-        rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
-    }
+    const res = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } }) });
+    const d = await res.json(); if (!d.candidates || !d.candidates[0]) throw new Error("AI từ chối phản hồi.");
+    let rawResponse = d.candidates[0].content?.parts?.[0]?.text || ""; let firstIdx = rawResponse.indexOf('{'); let lastIdx = rawResponse.lastIndexOf('}');
+    if (firstIdx !== -1 && lastIdx !== -1) rawResponse = rawResponse.substring(firstIdx, lastIdx + 1);
     const parsed = JSON.parse(rawResponse);
-
     let newEvalHtml = '';
-    if (parsed.danh_gia && parsed.danh_gia.length) {
-      newEvalHtml += `<ul class="eval-list">`;
-      parsed.danh_gia.forEach(item => newEvalHtml += `<li>${item}</li>`);
-      newEvalHtml += `</ul>`;
-    }
-    if (parsed.ket_luan) {
-      newEvalHtml += `<div><span class="ket-luan-text">Kết luận: </span><span class="ket-luan-text" style="font-weight:normal">${parsed.ket_luan.replace(/^Kết luận:\s*/i, '')}</span></div>`;
-    }
-    
+    if (parsed.danh_gia && parsed.danh_gia.length) { newEvalHtml += `<ul class="eval-list">`; parsed.danh_gia.forEach(item => newEvalHtml += `<li>${item}</li>`); newEvalHtml += `</ul>`; }
+    if (parsed.ket_luan) { newEvalHtml += `<div><span class="ket-luan-text">Kết luận: </span><span class="ket-luan-text" style="font-weight:normal">${parsed.ket_luan.replace(/^Kết luận:\s*/i, '')}</span></div>`; }
     evalContent.innerHTML = newEvalHtml;
-
-    const val = document.getElementById('hist-sel').value;
-    if (val) {
-        const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        hist[val] = document.getElementById('out').innerHTML;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
-    }
-  } catch (e) {
-    alert('Lỗi tạo lại đánh giá: ' + e.message);
-  } finally {
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-  }
+    const val = document.getElementById('hist-sel').value; if (val) { const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); hist[val] = document.getElementById('out').innerHTML; localStorage.setItem(STORAGE_KEY, JSON.stringify(hist)); }
+  } catch (e) { alert('Lỗi: ' + e.message); } finally { btn.innerHTML = originalText; btn.disabled = false; }
 }
 
 function doCopy() {
-  const el = document.getElementById('rpt');
-  if (!el) return;
-  const lines = [];
-  el.querySelectorAll('.rweek,.rtitle').forEach(e => lines.push(e.textContent.trim()));
-  lines.push('');
-  
+  const el = document.getElementById('rpt'); if (!el) return; const lines = [];
+  el.querySelectorAll('.rweek,.rtitle').forEach(e => lines.push(e.textContent.trim())); lines.push('');
   el.querySelectorAll('.pb').forEach(b => {
     lines.push('=== ' + (b.querySelector('.pname')?.textContent || '').toUpperCase() + ' ===');
-    
-    b.querySelectorAll('.mc').forEach(c => {
-      const l = c.querySelector('.mlbl')?.textContent?.replace('tính', '').trim() || '';
-      const v = c.querySelector('.mval')?.textContent || '';
-      const ex = c.querySelector('.mcalc')?.textContent || '';
-      if (l && v.trim()) lines.push(`- ${l}: ${v.trim()} ${ex ? '('+ex+')' : ''}`);
-    });
-
+    b.querySelectorAll('.mc').forEach(c => { const l = c.querySelector('.mlbl')?.textContent?.replace('tính', '').trim() || ''; const v = c.querySelector('.mval')?.textContent || ''; const ex = c.querySelector('.mcalc')?.textContent || ''; if (l && v.trim()) lines.push(`- ${l}: ${v.trim()} ${ex ? '('+ex+')' : ''}`); });
     b.querySelectorAll('.nblk').forEach(n => lines.push(n.textContent.trim().replace(/\s+/g, ' ')));
-    
-    if(b.classList.contains('ai-insight-box')) {
-        const aiContent = b.querySelector('.ai-insight-content');
-        if (aiContent) lines.push(aiContent.textContent.trim());
-    }
-
-    b.querySelectorAll('.khm-item').forEach(k => {
-      lines.push('- ' + k.textContent.trim().replace(/\s+/g, ' '));
-    });
-
+    if(b.classList.contains('ai-insight-box')) { const aiContent = b.querySelector('.ai-insight-content'); if (aiContent) lines.push(aiContent.textContent.trim()); }
+    b.querySelectorAll('.khm-item').forEach(k => { lines.push('- ' + k.textContent.trim().replace(/\s+/g, ' ')); });
     const evalTitle = b.querySelector('.analysis-title');
-    if (evalTitle && !b.classList.contains('store-ai-result')) {
-       lines.push('\nĐánh giá:');
-       b.querySelectorAll('.eval-list li').forEach(li => lines.push(`- ${li.textContent.trim()}`));
-       const conc = b.querySelector('.ket-luan-text');
-       if (conc) lines.push(`\nKết luận: ${conc.parentNode.textContent.replace(/^Kết luận:\s*/i, '').trim()}`);
-    }
-    
-    b.querySelectorAll('.stbl tr').forEach(r => {
-      const cs = Array.from(r.querySelectorAll('th,td')).map(c => c.textContent.trim());
-      if (cs.some(c => c)) lines.push(cs.join(' | '));
-    });
-
-    const storeAi = b.querySelector('.store-ai-result-content');
-    if (storeAi) {
-       lines.push('\n✨ CHẨN ĐOÁN CỬA HÀNG (AI):');
-       lines.push(storeAi.textContent.trim());
-    }
-
+    if (evalTitle && !b.classList.contains('store-ai-result')) { lines.push('\nĐánh giá:'); b.querySelectorAll('.eval-list li').forEach(li => lines.push(`- ${li.textContent.trim()}`)); const conc = b.querySelector('.ket-luan-text'); if (conc) lines.push(`\nKết luận: ${conc.parentNode.textContent.replace(/^Kết luận:\s*/i, '').trim()}`); }
+    b.querySelectorAll('.stbl tr').forEach(r => { const cs = Array.from(r.querySelectorAll('th,td')).map(c => c.textContent.trim()); if (cs.some(c => c)) lines.push(cs.join(' | ')); });
+    const storeAi = b.querySelector('.store-ai-result-content'); if (storeAi) { lines.push('\n✨ CHẨN ĐOÁN CỬA HÀNG (AI):'); lines.push(storeAi.textContent.trim()); }
     lines.push('');
   });
-  
-  const textToCopy = lines.join('\n');
-  const textArea = document.createElement("textarea");
-  textArea.value = textToCopy;
-  
-  textArea.style.position = "fixed";
-  textArea.style.left = "-999999px";
-  textArea.style.top = "-999999px";
-  document.body.appendChild(textArea);
-  
-  textArea.focus();
-  textArea.select();
-
-  try {
-    document.execCommand('copy');
-    const b = document.getElementById('cbtn');
-    b.textContent = '✓ Đã sao chép'; b.classList.add('ok');
-    setTimeout(() => { b.innerHTML = '⎘ Sao chép'; b.classList.remove('ok'); }, 2200);
-  } catch (err) {
-    console.error('Không thể sao chép', err);
-    alert('Trình duyệt của bạn chặn sao chép tự động. Vui lòng bôi đen văn bản để copy thủ công.');
-  }
-  
-  document.body.removeChild(textArea);
+  const textToCopy = lines.join('\n'); const textArea = document.createElement("textarea"); textArea.value = textToCopy; textArea.style.position = "fixed"; textArea.style.left = "-999999px"; textArea.style.top = "-999999px"; document.body.appendChild(textArea); textArea.focus(); textArea.select();
+  try { document.execCommand('copy'); const b = document.getElementById('cbtn'); b.textContent = '✓ Đã sao chép'; b.classList.add('ok'); setTimeout(() => { b.innerHTML = '⎘ Sao chép'; b.classList.remove('ok'); }, 2200); } 
+  catch (err) { alert('Trình duyệt chặn sao chép tự động.'); } document.body.removeChild(textArea);
 }
 
-// --- TÍNH NĂNG XUẤT FILE ẢNH VÀ PDF ---
-
-// Hàm xuất báo cáo thành Ảnh (PNG)
 async function exportImage() {
-  const rptEl = document.getElementById('rpt');
-  if (!rptEl) { alert('⚠️ Chưa có báo cáo nào để tải!'); return; }
-  
-  const btn = document.getElementById('img-btn');
-  const ogText = btn.innerHTML;
-  btn.innerHTML = '⏳ Đang xử lý...';
-  btn.disabled = true;
-
-  try {
-    const canvas = await html2canvas(rptEl, { 
-      backgroundColor: '#0f1117',
-      scale: 2 // Tăng độ nét gấp đôi
-    });
-    
-    const link = document.createElement('a');
-    link.download = `Bao_Cao_${new Date().toISOString().slice(0,10)}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    
-    btn.innerHTML = '✓ Đã tải Ảnh';
-    btn.classList.add('ok');
-    setTimeout(() => { btn.innerHTML = ogText; btn.classList.remove('ok'); }, 2000);
-  } catch(e) { 
-    alert('Lỗi xuất ảnh: ' + e); 
-    btn.innerHTML = ogText;
-  } finally {
-    btn.disabled = false;
-  }
+  const rptEl = document.getElementById('rpt'); if (!rptEl) return;
+  const btn = document.getElementById('img-btn'); const ogText = btn.innerHTML; btn.innerHTML = '⏳ Đang xử lý...'; btn.disabled = true;
+  try { const canvas = await html2canvas(rptEl, { backgroundColor: '#0f1117', scale: 2 }); const link = document.createElement('a'); link.download = `Bao_Cao_${new Date().toISOString().slice(0,10)}.png`; link.href = canvas.toDataURL('image/png'); link.click(); btn.innerHTML = '✓ Đã tải Ảnh'; btn.classList.add('ok'); setTimeout(() => { btn.innerHTML = ogText; btn.classList.remove('ok'); }, 2000); } 
+  catch(e) { alert('Lỗi: ' + e); btn.innerHTML = ogText; } finally { btn.disabled = false; }
 }
 
-// Hàm xuất báo cáo thành PDF
 function exportPDF() {
-  const rptEl = document.getElementById('rpt');
-  if (!rptEl) { alert('⚠️ Chưa có báo cáo nào để tải!'); return; }
-  
-  const btn = document.getElementById('pdf-btn');
-  const ogText = btn.innerHTML;
-  btn.innerHTML = '⏳ Đang xử lý...';
-  btn.disabled = true;
-  
-  const opt = {
-    margin:       10, 
-    filename:     `Bao_Cao_${new Date().toISOString().slice(0,10)}.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, backgroundColor: '#0f1117' },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  
-  html2pdf().set(opt).from(rptEl).save().then(() => {
-    btn.innerHTML = '✓ Đã tải PDF';
-    btn.classList.add('ok');
-    setTimeout(() => { btn.innerHTML = ogText; btn.classList.remove('ok'); }, 2000);
-    btn.disabled = false;
-  }).catch(err => {
-    alert('Lỗi xuất PDF: ' + err);
-    btn.innerHTML = ogText;
-    btn.disabled = false;
-  });
+  const rptEl = document.getElementById('rpt'); if (!rptEl) return;
+  const btn = document.getElementById('pdf-btn'); const ogText = btn.innerHTML; btn.innerHTML = '⏳ Đang xử lý...'; btn.disabled = true;
+  const opt = { margin: 10, filename: `Bao_Cao_${new Date().toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, backgroundColor: '#0f1117' }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+  html2pdf().set(opt).from(rptEl).save().then(() => { btn.innerHTML = '✓ Đã tải PDF'; btn.classList.add('ok'); setTimeout(() => { btn.innerHTML = ogText; btn.classList.remove('ok'); }, 2000); btn.disabled = false; }).catch(err => { alert('Lỗi: ' + err); btn.innerHTML = ogText; btn.disabled = false; });
 }
+
 // --- LOGIC XỬ LÝ CHATBOT ---
 async function sendChat() {
   const inputEl = document.getElementById('chat-input');
@@ -1750,7 +1004,6 @@ async function sendChat() {
     document.getElementById(aiWaitId).outerHTML = `<div style="background: rgba(255, 95, 126, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 8px; align-self: flex-start;">⚠️ Lỗi kết nối AI.</div>`;
   }
 }
-  
 </script>
 </body>
 </html>
